@@ -5,76 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniqueChatHub - Workspace</title>
     <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at top left, #1e1b4b 0%, #0f172a 100%);
+            --panel-bg: rgba(22, 22, 34, 0.85);
+            --sidebar-bg: #0f0f18;
+            --chat-bg: #11111b;
+            --card-bg: rgba(30, 30, 46, 0.7);
+            --text-color: #f3f4f6;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --input-bg: #0f0f18;
+            --msg-received-bg: #1e1e2f;
+            --header-bg: #161622;
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #f0f2f5 0%, #e2e8f0 100%);
+            --panel-bg: rgba(255, 255, 255, 0.9);
+            --sidebar-bg: #ffffff;
+            --chat-bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --input-bg: #f1f5f9;
+            --msg-received-bg: #e2e8f0;
+            --header-bg: #f1f5f9;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        /* Smooth Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #11111b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3b3b54;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a855f7;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--sidebar-bg); }
+        ::-webkit-scrollbar-thumb { background: #3b3b54; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a855f7; }
 
         body {
-            background: radial-gradient(circle at top left, #1e1b4b 0%, #0f172a 100%);
+            background: var(--bg-gradient);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 12px;
-            color: #f3f4f6;
+            color: var(--text-color);
         }
 
-        /* Glassmorphism Forms Container */
         .form-container {
-            background: rgba(30, 30, 46, 0.7);
+            background: var(--card-bg);
             backdrop-filter: blur(12px);
             padding: 32px;
             border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 420px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            animation: fadeIn 0.4s ease-out;
+            border: 1px solid var(--border-color);
         }
 
-        /* ---------------- MOBILE & DESKTOP CORE HUB ---------------- */
         .dashboard-layout {
             max-width: 1100px;
             width: 100%;
             height: 90vh;
-            background: rgba(22, 22, 34, 0.85);
+            background: var(--panel-bg);
             backdrop-filter: blur(16px);
             border-radius: 24px;
             display: flex;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
             overflow: hidden;
             position: relative;
         }
 
-        /* Sidebar Adaptive Column */
         .sidebar {
             width: 340px;
-            background: #0f0f18;
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
         }
 
         .user-bar {
@@ -82,8 +95,8 @@
             align-items: center;
             gap: 12px;
             padding: 18px 20px;
-            background: rgba(26, 26, 38, 0.5);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .user-bar img {
@@ -93,311 +106,124 @@
             object-fit: cover;
             border: 2px solid #c084fc;
             cursor: pointer;
-            transition: transform 0.2s;
         }
-        .user-bar img:hover { transform: scale(1.05); }
 
-        .user-details {
-            cursor: pointer;
-            flex: 1;
-        }
-        .user-details h3 { font-size: 15px; color: #fff; font-weight: 600; }
+        .user-details { flex: 1; cursor: pointer; }
+        .user-details h3 { font-size: 15px; font-weight: 600; }
         .user-details p { color: #c084fc; font-size: 12px; font-weight: 500; }
 
-        .friend-system {
-            padding: 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .friend-input-group {
-            display: flex;
-            gap: 8px;
-            background: #161622;
-            padding: 4px 6px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .friend-input-group input {
-            flex: 1;
-            padding: 10px;
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .friend-btn {
-            padding: 0 16px;
-            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
-            transition: opacity 0.2s;
-        }
-        .friend-btn:hover { opacity: 0.9; }
-
-        .friends-list-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
-        }
-
-        .friends-list-heading {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #94a3b8;
-            font-weight: 700;
-            margin-bottom: 12px;
-            padding-left: 8px;
-            letter-spacing: 0.05em;
-        }
-
-        .friend-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            margin-bottom: 4px;
-        }
-        .friend-item:hover { background: rgba(255, 255, 255, 0.04); }
-        .friend-item.active { background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.25); }
-
-        .friend-item img {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .friend-item .info h4 { font-size: 14px; color: #fff; font-weight: 600; }
-        .friend-item .info p { font-size: 12px; color: #94a3b8; }
-
-        /* Chat view window panel */
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #11111b;
-        }
-
-        .chat-header {
-            padding: 16px 20px;
-            background: #161622;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* Back Arrow for Mobile View Flow */
-        .back-arrow {
-            display: none;
+        .settings-icon-btn {
             background: none;
             border: none;
-            color: #c084fc;
             font-size: 20px;
             cursor: pointer;
-            padding-right: 8px;
+            padding: 5px;
         }
 
-        .chat-header h3 { font-size: 16px; color: #fff; font-weight: 600; }
+        .friend-system { padding: 16px; border-bottom: 1px solid var(--border-color); }
+        .friend-input-group {
+            display: flex; gap: 8px; background: var(--input-bg); padding: 4px 6px; border-radius: 12px; border: 1px solid var(--border-color);
+        }
+        .friend-input-group input { flex: 1; padding: 10px; background: transparent; border: none; color: var(--text-color); font-size: 14px; outline: none; }
+
+        .friend-btn {
+            padding: 0 16px; background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 13px;
+        }
+
+        .friends-list-container { flex: 1; overflow-y: auto; padding: 12px; }
+        .friends-list-heading { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; padding-left: 8px; letter-spacing: 0.05em; }
+
+        .friend-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; cursor: pointer; margin-bottom: 4px; }
+        .friend-item:hover { background: rgba(168, 85, 247, 0.05); }
+        .friend-item.active { background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.25); }
+        .friend-item img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+        .friend-item .info h4 { font-size: 14px; font-weight: 600; }
+        .friend-item .info p { font-size: 12px; color: var(--text-muted); }
+
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); position: relative; }
+        .chat-header { padding: 16px 20px; background: var(--header-bg); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
+        .back-arrow { display: none; background: none; border: none; color: #a855f7; font-size: 20px; cursor: pointer; }
+        .chat-header h3 { font-size: 16px; font-weight: 600; }
 
         .view-profile-btn {
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            color: #c084fc;
-            padding: 6px 14px;
+            background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); color: #c084fc; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: 600; margin-left: auto;
+        }
+
+        .messages-box { flex: 1; overflow-y: auto; padding: 24px 24px 100px 24px; display: flex; flex-direction: column; gap: 14px; }
+        
+        .msg { max-width: 70%; padding: 12px 16px; border-radius: 16px; font-size: 14.5px; line-line: 1.45; word-wrap: break-word; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .msg.sent { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg.received { background: var(--msg-received-bg); color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
+        .msg img { max-width: 100%; border-radius: 10px; margin-top: 6px; display: block; max-height: 240px; object-fit: cover; }
+
+        /* ---------------- FLOATING INPUT BOX ---------------- */
+        .chat-input-container-floating {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 650px;
+            background: var(--header-bg);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
             border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-left: auto;
-            transition: background 0.2s;
-        }
-        .view-profile-btn:hover { background: rgba(168, 85, 247, 0.2); }
-
-        .messages-box {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 0);
-            background-size: 24px 24px;
-        }
-
-        .msg {
-            max-width: 70%;
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 14.5px;
-            line-height: 1.45;
-            word-wrap: break-word;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .msg.sent {
-            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .msg.received {
-            background: #1e1e2f;
-            color: #f3f4f6;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .msg img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-top: 6px;
-            display: block;
-            max-height: 240px;
-            object-fit: cover;
-        }
-
-        .chat-input-area {
-            padding: 16px 20px;
-            background: #161622;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             gap: 12px;
             align-items: center;
-        }
-
-        .chat-input-area input[type="text"] {
-            flex: 1;
-            padding: 12px 16px;
-            background: #0f0f18;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            color: white;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .chat-input-area input[type="text"]:focus { border-color: #a855f7; }
-
-        .attach-btn {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-size: 16px;
-        }
-        .attach-btn:hover { background: rgba(255, 255, 255, 0.1); }
-
-        .send-btn {
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .send-btn:hover { opacity: 0.9; }
-
-        /* ---------------- MODALS SYSTEM ---------------- */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             backdrop-filter: blur(8px);
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            padding: 16px;
         }
 
-        .modal-content {
-            background: #161622;
-            padding: 28px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        .chat-input-container-floating input[type="text"] {
+            flex: 1; padding: 12px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 14px; color: var(--text-color); font-size: 14px; outline: none;
         }
 
-        .close-modal {
-            position: absolute;
-            top: 15px; right: 20px;
-            font-size: 24px;
-            color: #94a3b8;
-            cursor: pointer;
-        }
+        .attach-btn { background: rgba(168, 85, 247, 0.1); color: #c084fc; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 16px; }
+        .send-btn { padding: 12px 20px; background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
-        /* Forms Layout Parameters */
-        h2 { color: #fff; margin-bottom: 8px; font-size: 26px; font-weight: 700; }
-        .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
-        .input-group { margin-bottom: 18px; text-align: left; }
-        .input-group label { display: block; color: #cbd5e1; font-size: 13.5px; margin-bottom: 6px; font-weight: 600; }
-        .input-group input { width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; font-size: 14.5px; background-color: #0f0f18; color: #fff; outline: none; }
-        .input-group input:focus { border-color: #a855f7; }
+        /* Modals rules */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); justify-content: center; align-items: center; z-index: 100; padding: 16px; }
+        .modal-content { background: var(--card-bg); backdrop-filter: blur(16px); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); width: 100%; max-width: 400px; text-align: center; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2); color: var(--text-color); }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; }
+
+        h2 { margin-bottom: 8px; font-size: 26px; font-weight: 700; }
+        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
+        .input-group { margin-bottom: 16px; text-align: left; }
+        .input-group label { display: block; color: var(--text-color); font-size: 13.5px; margin-bottom: 6px; font-weight: 600; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 14.5px; background-color: var(--input-bg); color: var(--text-color); outline: none; }
         .main-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .danger-btn { width: 100%; padding: 10px; background: #ef4444; color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         
-        .google-btn { width: 100%; padding: 12px; background: #0f0f18; color: #fff; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; font-size: 14.5px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 12px; cursor: pointer; }
+        .google-btn { width: 100%; padding: 12px; background: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 10px; font-size: 14.5px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 12px; cursor: pointer; }
         .google-btn img { width: 18px; height: 18px; }
         .profile-pic-group { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
-        .avatar-preview-wrapper { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid #a855f7; margin-bottom: 12px; background: #0f0f18; }
+        .avatar-preview-wrapper { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid #a855f7; margin-bottom: 12px; background: var(--input-bg); }
         .avatar-preview-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .file-upload-btn { background: rgba(168, 85, 247, 0.15); color: #e9d5ff; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .file-upload-btn { background: rgba(168, 85, 247, 0.15); color: #c084fc; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
         #loading-screen { color: white; font-size: 18px; font-weight: 600; }
-        .logout-btn { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; }
-        .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: #64748b; font-size: 15px; padding: 20px; text-align: center; }
+        .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: var(--text-muted); font-size: 15px; padding: 20px; text-align: center; }
 
-        /* Animation Frameworks */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
-
-        /* ---------------- MOBILE RESPONSIVE ENGINE MEDIA OVERRIDES ---------------- */
         @media (max-width: 768px) {
             body { padding: 0; align-items: stretch; }
             .dashboard-layout { height: 100vh; border-radius: 0; border: none; }
-            
-            /* Responsive View Toggle */
             .sidebar { width: 100%; flex: 1; }
             .chat-area { display: none; width: 100%; }
-            
-            /* Active Mode Classes */
             .dashboard-layout.chat-active .sidebar { display: none; }
             .dashboard-layout.chat-active .chat-area { display: flex; }
             .back-arrow { display: block; }
-            
             .msg { max-width: 85%; }
+            .chat-input-container-floating { width: 95%; bottom: 10px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">Syncing responsive core...</div>
+    <div id="loading-screen">Syncing layout workspace...</div>
 
     <div id="login-container" class="form-container" style="display: none;">
         <h2>Welcome Back</h2>
         <p class="subtitle">Enter the UniqueChatHub workspace</p>
-        
         <div class="input-group">
             <label for="login-email">Email Address</label>
             <input type="email" id="login-email" placeholder="you@example.com">
@@ -407,11 +233,9 @@
             <input type="password" id="login-password" placeholder="••••••••">
         </div>
         <button id="email-login-btn" class="main-btn">Sign In</button>
-
-        <div class="divider" style="margin:16px 0; color:#475569; font-size:13px;">or</div>
-
+        <div style="margin:16px 0; color:var(--text-muted); font-size:13px;">or</div>
         <button id="google-login-btn" class="google-btn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
             Sign in with Google
         </button>
     </div>
@@ -419,46 +243,40 @@
     <div id="profile-setup-container" class="form-container" style="display: none;">
         <h2>Create Profile</h2>
         <p class="subtitle">Set up your global search identity</p>
-        
         <form id="profile-form">
             <div class="profile-pic-group">
-                <div class="avatar-preview-wrapper">
-                    <img id="avatar-preview" src="https://via.placeholder.com/150" alt="Preview">
-                </div>
+                <div class="avatar-preview-wrapper"><img id="avatar-preview" src="https://via.placeholder.com/150"></div>
                 <label for="profile-pic-input" class="file-upload-btn">Choose Picture</label>
                 <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
             </div>
             <div class="input-group">
-                <label for="setup-username">Unique Username</label>
+                <label>Unique Username</label>
                 <input type="text" id="setup-username" placeholder="username123" required>
             </div>
             <div class="input-group">
-                <label for="setup-name">Full Name</label>
+                <label>Full Name</label>
                 <input type="text" id="setup-name" placeholder="Alex Carter" required>
             </div>
-            <button type="submit" class="main-btn">Save & Launch Workspace</button>
+            <button type="submit" class="main-btn">Launch Workspace</button>
         </form>
     </div>
 
     <div id="dashboard-container" class="dashboard-layout" style="display: none;">
-        
         <div class="sidebar">
             <div class="user-bar">
-                <img id="dash-avatar" src="" alt="Avatar" onclick="openEditProfileModal()">
-                <div class="user-details" onclick="openEditProfileModal()">
+                <img id="dash-avatar" src="" onclick="openSettingsModal()">
+                <div class="user-details" onclick="openSettingsModal()">
                     <h3 id="dash-display-name">Loading...</h3>
                     <p id="dash-username"></p>
                 </div>
-                <button id="logout-btn" class="logout-btn">Exit</button>
+                <button class="settings-icon-btn" onclick="openSettingsModal()">⚙️</button>
             </div>
-
             <div class="friend-system">
                 <div class="friend-input-group">
                     <input type="text" id="friend-username-input" placeholder="Add friend by username...">
                     <button id="add-friend-btn" class="friend-btn">Add</button>
                 </div>
             </div>
-
             <div class="friends-list-container">
                 <div class="friends-list-heading">Direct Messages</div>
                 <div id="friends-list"></div>
@@ -468,62 +286,73 @@
         <div class="chat-area">
             <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1;">
                 <div class="chat-header">
-                    <button class="back-arrow" onclick="exitChatToSidebar()">➔</button>
+                    <button class="back-arrow" onclick="exitChatToSidebar()">⬅</button>
                     <h3 id="chat-with-heading">Chat Window</h3>
                     <button id="view-friend-profile-header-btn" class="view-profile-btn">Profile</button>
                 </div>
                 <div id="messages-box" class="messages-box"></div>
-                <div class="chat-input-area">
+                
+                <div class="chat-input-container-floating">
                     <label for="chat-image-input" class="attach-btn">📷</label>
                     <input type="file" id="chat-image-input" accept="image/*" style="display: none;">
-                    
                     <input type="text" id="message-input" placeholder="Type a message...">
                     <button id="send-msg-btn" class="send-btn">Send</button>
                 </div>
             </div>
             <div id="no-chat-fallback" class="no-chat-selected">
-                <p>Select a friend from the left panel to begin a conversation</p>
+                <p>Select a friend from the left panel to begin chatting</p>
             </div>
         </div>
     </div>
 
-    <div id="edit-profile-modal" class="modal">
+    <div id="settings-modal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeEditProfileModal()">&times;</span>
-            <h3 style="color:#fff;">Edit Profile</h3>
-            <br>
+            <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
+            <h2>Workspace Settings</h2>
+            <p class="subtitle">Customize and manage your account hub</p>
             <div class="profile-pic-group">
-                <div class="avatar-preview-wrapper">
-                    <img id="edit-avatar-preview" src="" alt="Avatar">
-                </div>
-                <label for="edit-profile-pic-input" class="file-upload-btn">Change Picture</label>
-                <input type="file" id="edit-profile-pic-input" accept="image/*" style="display: none;">
+                <div class="avatar-preview-wrapper"><img id="settings-avatar-preview" src=""></div>
+                <label for="settings-profile-pic-input" class="file-upload-btn">Change Picture</label>
+                <input type="file" id="settings-profile-pic-input" accept="image/*" style="display: none;">
+            </div>
+            <div class="input-group">
+                <label>Theme Display Mode</label>
+                <button class="main-btn" id="theme-toggle-btn" onclick="toggleThemeInterface()" style="background:#4b5563;">Switch to Light Mode</button>
             </div>
             <div class="input-group">
                 <label>Full Name</label>
-                <input type="text" id="edit-fullname-input">
+                <input type="text" id="settings-fullname-input">
             </div>
-            <button class="main-btn" onclick="saveEditedProfile()">Save Changes</button>
+            <div class="input-group">
+                <label>Change Unique Username</label>
+                <input type="text" id="settings-username-input">
+            </div>
+            <div class="input-group">
+                <label>Mobile Phone Number</label>
+                <input type="tel" id="settings-phone-input" placeholder="+1 (555) 000-0000">
+            </div>
+            <button class="main-btn" onclick="saveSettingsChanges()">Save Structural Updates</button>
+            <button class="danger-btn" style="background:#f59e0b;" onclick="triggerLogoutSession()">Log Out Session</button>
+            <button class="danger-btn" onclick="abandonUserAccountRecord()">Abandon Account Permanently</button>
         </div>
     </div>
 
     <div id="view-profile-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeViewProfileModal()">&times;</span>
-            <h3 id="view-modal-title" style="color:#fff;">User Profile</h3>
+            <h3 style="color:var(--text-color);">User Profile Card</h3>
             <br>
-            <div class="avatar-preview-wrapper" style="margin: 0 auto 16px auto; width:110px; height:110px;">
-                <img id="view-modal-avatar" src="" alt="Avatar">
-            </div>
+            <div class="avatar-preview-wrapper" style="margin: 0 auto 16px auto; width:110px; height:110px;"><img id="view-modal-avatar" src=""></div>
             <h2 id="view-modal-name" style="font-size:22px;">Name</h2>
-            <p id="view-modal-username" style="color:#a855f7; font-weight:bold; margin-bottom:10px;">@username</p>
+            <p id="view-modal-username" style="color:#a855f7; font-weight:bold;">@username</p>
+            <p id="view-modal-phone" style="font-size:13px; margin-top:6px; color:var(--text-muted);"></p>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
@@ -549,7 +378,6 @@
         const profilePicInput = document.getElementById('profile-pic-input');
         const avatarPreview = document.getElementById('avatar-preview');
         const profileForm = document.getElementById('profile-form');
-        const logoutBtn = document.getElementById('logout-btn');
         
         const addFriendBtn = document.getElementById('add-friend-btn');
         const friendsListElement = document.getElementById('friends-list');
@@ -563,42 +391,80 @@
         let base64Image = "https://via.placeholder.com/150";
         let activeChatFriendData = null;
         let unsubscribeChatListener = null;
+        let currentThemeMode = "dark";
 
-        // Interactive UI Window Management Toggles
-        window.openEditProfileModal = function() {
-            document.getElementById('edit-avatar-preview').src = userDataRecord.photoURL;
-            document.getElementById('edit-fullname-input').value = userDataRecord.fullName;
-            document.getElementById('edit-profile-modal').style.display = 'flex';
+        // Global Modals Setup Interface Methods mapping
+        window.openSettingsModal = function() {
+            document.getElementById('settings-avatar-preview').src = userDataRecord.photoURL;
+            document.getElementById('settings-fullname-input').value = userDataRecord.fullName;
+            document.getElementById('settings-username-input').value = userDataRecord.username;
+            document.getElementById('settings-phone-input').value = userDataRecord.phone || "";
+            document.getElementById('settings-modal').style.display = 'flex';
         }
-        window.closeEditProfileModal = function() { document.getElementById('edit-profile-modal').style.display = 'none'; }
+        window.closeSettingsModal = function() { document.getElementById('settings-modal').style.display = 'none'; }
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; }
+        window.exitChatToSidebar = function() { dashboardContainer.classList.remove('chat-active'); }
 
-        // Mobile UI Panel View State Controller
-        window.exitChatToSidebar = function() {
-            dashboardContainer.classList.remove('chat-active');
+        // Light/Dark Config Management Switcher Toggle Engine
+        window.toggleThemeInterface = function() {
+            if(currentThemeMode === "dark") {
+                document.body.setAttribute('data-theme', 'light');
+                currentThemeMode = "light";
+                document.getElementById('theme-toggle-btn').innerText = "Switch to Dark Mode";
+            } else {
+                document.body.removeAttribute('data-theme');
+                currentThemeMode = "dark";
+                document.getElementById('theme-toggle-btn').innerText = "Switch to Light Mode";
+            }
         }
 
-        document.getElementById('edit-profile-pic-input').addEventListener('change', function(e) {
+        document.getElementById('settings-profile-pic-input').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(file) {
                 const r = new FileReader();
-                r.onload = function(ev) { document.getElementById('edit-avatar-preview').src = ev.target.result; };
+                r.onload = function(ev) { document.getElementById('settings-avatar-preview').src = ev.target.result; };
                 r.readAsDataURL(file);
             }
         });
 
-        window.saveEditedProfile = async function() {
-            const newName = document.getElementById('edit-fullname-input').value.trim();
-            const newImg = document.getElementById('edit-avatar-preview').src;
-            if(!newName) return;
+        // Save Dashboard Form Edits
+        window.saveSettingsChanges = async function() {
+            const updatedName = document.getElementById('settings-fullname-input').value.trim();
+            const updatedUsername = document.getElementById('settings-username-input').value.trim().toLowerCase();
+            const updatedPhone = document.getElementById('settings-phone-input').value.trim();
+            const updatedImg = document.getElementById('settings-avatar-preview').src;
+
+            if(!updatedName || updatedUsername.length < 3) { alert("Invalid entry lengths."); return; }
 
             try {
-                await updateDoc(doc(db, "users", currentUser.uid), { fullName: newName, photoURL: newImg });
-                userDataRecord.fullName = newName;
-                userDataRecord.photoURL = newImg;
-                document.getElementById('dash-avatar').src = newImg;
-                document.getElementById('dash-display-name').innerText = newName;
-                closeEditProfileModal();
+                if(updatedUsername !== userDataRecord.username) {
+                    const snap = await getDocs(query(collection(db, "users"), where("username", "==", updatedUsername)));
+                    if(!snap.empty) { alert("That username is already claimed!"); return; }
+                }
+
+                const ref = doc(db, "users", currentUser.uid);
+                const completePayload = { fullName: updatedName, username: updatedUsername, phone: updatedPhone || "None", photoURL: updatedImg };
+                await updateDoc(ref, completePayload);
+
+                userDataRecord = { ...userDataRecord, ...completePayload };
+                launchDashboard(userDataRecord);
+                closeSettingsModal();
+                alert("Profile changes synchronized successfully.");
+            } catch(e) { alert("Save error: " + e.message); }
+        }
+
+        window.triggerLogoutSession = function() {
+            if(unsubscribeChatListener) unsubscribeChatListener();
+            signOut(auth);
+        }
+
+        // Permanent Account Abandonment Routine
+        window.abandonUserAccountRecord = async function() {
+            if(!confirm("Are you absolutely sure you want to completely abandon this profile? All saved database files will be wiped permanently.")) return;
+            try {
+                await deleteDoc(doc(db, "users", currentUser.uid));
+                alert("Account records deleted.");
+                window.triggerLogoutSession();
             } catch(e) { alert(e.message); }
         }
 
@@ -607,10 +473,11 @@
             document.getElementById('view-modal-avatar').src = activeChatFriendData.photoURL;
             document.getElementById('view-modal-name').innerText = activeChatFriendData.fullName;
             document.getElementById('view-modal-username').innerText = "@" + activeChatFriendData.username;
+            document.getElementById('view-modal-phone').innerText = "Contact: " + (activeChatFriendData.phone || "None listed");
             document.getElementById('view-profile-modal').style.display = 'flex';
         });
 
-        // User Session Memory Checkers
+        // Handle Active Auth Sessions
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -630,9 +497,7 @@
             }
         });
 
-        googleLoginBtn.addEventListener('click', () => {
-            signInWithPopup(auth, provider).catch(err => alert(err.message));
-        });
+        googleLoginBtn.addEventListener('click', () => { signInWithPopup(auth, provider).catch(err => alert(err.message)); });
 
         function showProfileSetup(user) {
             loginContainer.style.display = 'none';
@@ -662,7 +527,7 @@
                 const snap = await getDocs(query(collection(db, "users"), where("username", "==", rawUsername)));
                 if (!snap.empty) { alert("Username taken!"); return; }
 
-                const profileData = { uid: currentUser.uid, username: rawUsername, fullName: fullName, photoURL: base64Image, friends: [] };
+                const profileData = { uid: currentUser.uid, username: rawUsername, fullName: fullName, photoURL: base64Image, phone: "None", friends: [] };
                 await setDoc(doc(db, "users", currentUser.uid), profileData);
                 userDataRecord = profileData;
                 launchDashboard(profileData);
@@ -680,14 +545,13 @@
             loadFriendsSidebarList();
         }
 
-        // Add Contact Pipeline
         addFriendBtn.addEventListener('click', async () => {
             const target = document.getElementById('friend-username-input').value.trim().toLowerCase();
             if(!target || target === userDataRecord.username) return;
 
             try {
                 const snap = await getDocs(query(collection(db, "users"), where("username", "==", target)));
-                if(snap.empty) { alert("User not found!"); return; }
+                if(snap.empty) { alert("User profile not found!"); return; }
 
                 const friendDoc = snap.docs[0].data();
                 const friendUid = friendDoc.uid;
@@ -729,7 +593,6 @@
                         </div>
                     `;
                     item.addEventListener('click', () => {
-                        // Highlight active selected item panel row element visually
                         document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
                         item.classList.add('active');
                         openChatWindow(fData);
@@ -739,14 +602,11 @@
             }
         }
 
-        // Interactive Messaging Pipeline
         function openChatWindow(friendData) {
             activeChatFriendData = friendData;
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
             document.getElementById('chat-with-heading').innerText = `${friendData.fullName} (@${friendData.username})`;
-
-            // Active responsive media state toggle trigger for smaller displays 
             dashboardContainer.classList.add('chat-active');
 
             const roomKey = currentUser.uid < friendData.uid ? 
@@ -778,7 +638,7 @@
         chatImageInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(file) {
-                if(file.size > 800000) { alert("Image size too large for free database tier payload strings!"); return; }
+                if(file.size > 800000) { alert("File exceeds direct free tier database strings size limits!"); return; }
                 const reader = new FileReader();
                 reader.onload = function(evt) { sendMsgPayload("image", evt.target.result); };
                 reader.readAsDataURL(file);
@@ -797,8 +657,6 @@
             chatImageInput.value = "";
             await addDoc(collection(db, "messages", roomKey, "records"), payload);
         }
-
-        logoutBtn.addEventListener('click', () => { if(unsubscribeChatListener) unsubscribeChatListener(); signOut(auth); });
     </script>
 </body>
 </html>
