@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniqueChatHub - Login & Setup</title>
+    <title>UniqueChatHub - Workspace</title>
     <style>
         * {
             box-sizing: border-box;
@@ -29,6 +29,33 @@
             width: 100%;
             max-width: 450px;
             text-align: center;
+        }
+
+        /* Dashboard specific styling */
+        .dashboard-layout {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .user-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .user-bar img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         h2 {
@@ -159,11 +186,20 @@
             font-weight: 600;
             cursor: pointer;
         }
+
+        /* Loading Spinner */
+        #loading-screen {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
 
-    <div id="login-container" class="form-container">
+    <div id="loading-screen">Checking your account status...</div>
+
+    <div id="login-container" class="form-container" style="display: none;">
         <h2>Welcome Back</h2>
         <p class="subtitle">Log in to enter your workspace</p>
         
@@ -187,7 +223,7 @@
 
     <div id="profile-setup-container" class="form-container" style="display: none;">
         <h2>Complete Your Profile</h2>
-        <p class="subtitle">Just a few more details to get you started</p>
+        <p class="subtitle">Pick a completely unique username to finish setting up</p>
         
         <form id="profile-form">
             <div class="profile-pic-group">
@@ -196,6 +232,11 @@
                 </div>
                 <label for="profile-pic-input" class="file-upload-btn">Choose Profile Picture</label>
                 <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
+            </div>
+
+            <div class="input-group">
+                <label for="setup-username">Unique Username</label>
+                <input type="text" id="setup-username" placeholder="epic_chatter123" required>
             </div>
 
             <div class="input-group">
@@ -213,19 +254,30 @@
                 <input type="tel" id="setup-phone" placeholder="+1 (555) 000-0000">
             </div>
 
-            <button type="submit" class="main-btn">Save & Continue</button>
+            <button type="submit" class="main-btn">Save & Launch Hub</button>
         </form>
     </div>
 
-    <div id="dashboard-container" class="form-container" style="display: none;">
-        <h2>Welcome to UniqueChatHub!</h2>
-        <p class="subtitle">Your profile setup is complete.</p>
-        <p>Loading your chat channels workspace...</p>
+    <div id="dashboard-container" class="dashboard-layout" style="display: none;">
+        <div class="user-bar">
+            <img id="dash-avatar" src="" alt="Avatar">
+            <div>
+                <h3 id="dash-display-name">Loading...</h3>
+                <p id="dash-username" style="color: #667eea; font-weight: 600; font-size: 14px;"></p>
+            </div>
+            <button id="logout-btn" style="margin-left: auto; background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">Logout</button>
+        </div>
+        
+        <div>
+            <h4>UniqueChatHub Chat Workspace Dashboard</h4>
+            <p style="color: #666; margin-top: 10px;">The database is connected! In the next update, we will add your theme customizer and your friend search bar right here.</p>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
@@ -239,49 +291,131 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
+        // Screen selectors
+        const loadingScreen = document.getElementById('loading-screen');
         const loginContainer = document.getElementById('login-container');
         const profileSetupContainer = document.getElementById('profile-setup-container');
         const dashboardContainer = document.getElementById('dashboard-container');
         
+        // Buttons & inputs
         const googleLoginBtn = document.getElementById('google-login-btn');
         const profilePicInput = document.getElementById('profile-pic-input');
         const avatarPreview = document.getElementById('avatar-preview');
         const profileForm = document.getElementById('profile-form');
+        const logoutBtn = document.getElementById('logout-btn');
 
-        googleLoginBtn.addEventListener('click', () => {
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    showProfileSetup(result.user);
-                })
-                .catch((error) => {
-                    alert("Auth Error: " + error.message);
-                });
+        let currentUser = null;
+        let base64Image = "https://via.placeholder.com/150";
+
+        // 1. PERSISTENT LOGIN CHECKER (Keeps you logged in forever)
+        onAuthStateChanged(auth, async (user) => {
+            loadingScreen.style.display = 'none';
+            if (user) {
+                currentUser = user;
+                // Check if user already has a saved database document
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (userDocSnap.exists()) {
+                    // Profile already exists! Skip directly to dashboard
+                    launchDashboard(userDocSnap.data());
+                } else {
+                    // New user! Bring up setup screen
+                    showProfileSetup(user);
+                }
+            } else {
+                // No user found, go back to login panel
+                loginContainer.style.display = 'block';
+                profileSetupContainer.style.display = 'none';
+                dashboardContainer.style.display = 'none';
+            }
         });
 
+        // Trigger Google Auth Popup
+        googleLoginBtn.addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(err => alert("Error: " + err.message));
+        });
+
+        // Show setup panel and populate defaults
         function showProfileSetup(user) {
             loginContainer.style.display = 'none';
             profileSetupContainer.style.display = 'block';
             if (user.displayName) document.getElementById('setup-name').value = user.displayName;
-            if (user.photoURL) avatarPreview.src = user.photoURL;
+            if (user.photoURL) {
+                avatarPreview.src = user.photoURL;
+                base64Image = user.photoURL;
+            }
         }
 
+        // Image local FileReader conversion logic
         profilePicInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     avatarPreview.src = event.target.result;
+                    base64Image = event.target.result; // Saves image data string directly
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        profileForm.addEventListener('submit', function(e) {
+        // 2. CHECK UNIQUE USERNAME AND SAVE PROFILE
+        profileForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const rawUsername = document.getElementById('setup-username').value.trim().toLowerCase();
+            const fullName = document.getElementById('setup-name').value;
+            const birthday = document.getElementById('setup-birthday').value;
+            const phone = document.getElementById('setup-phone').value;
+
+            // Simple validation check for custom characters
+            if(rawUsername.length < 3) {
+                alert("Username must be at least 3 characters long.");
+                return;
+            }
+
+            // Query database collection to see if username is already claimed
+            const usernameQuery = query(collection(db, "users"), where("username", "==", rawUsername));
+            const querySnapshot = await getDocs(usernameQuery);
+
+            if (!querySnapshot.empty) {
+                alert("That username is already taken! Please pick another one.");
+                return;
+            }
+
+            // Build profile payload data object
+            const profileData = {
+                uid: currentUser.uid,
+                username: rawUsername,
+                fullName: fullName,
+                birthday: birthday,
+                phone: phone || "None",
+                photoURL: base64Image
+            };
+
+            // Write securely to Firestore database
+            await setDoc(doc(db, "users", currentUser.uid), profileData);
+            launchDashboard(profileData);
+        });
+
+        // Open core app dashboard view
+        function launchDashboard(data) {
             profileSetupContainer.style.display = 'none';
-            dashboardContainer.style.display = 'block';
+            loginContainer.style.display = 'none';
+            dashboardContainer.style.display = 'flex';
+            
+            document.getElementById('dash-avatar').src = data.photoURL;
+            document.getElementById('dash-display-name').innerText = data.fullName;
+            document.getElementById('dash-username').innerText = "@" + data.username;
+        }
+
+        // Handle Logout Action
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth);
         });
     </script>
 </body>
