@@ -29,7 +29,6 @@
             width: 100%;
             max-width: 450px;
             text-align: center;
-            transition: all 0.3s ease;
         }
 
         h2 {
@@ -63,7 +62,6 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 15px;
-            transition: border-color 0.2s;
         }
 
         .input-group input:focus {
@@ -87,12 +85,7 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s;
             margin-top: 10px;
-        }
-
-        .main-btn:hover {
-            background: #5a6fd6;
         }
 
         .divider {
@@ -127,20 +120,13 @@
             align-items: center;
             gap: 12px;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .google-btn:hover {
-            background: #f7f7f7;
         }
 
         .google-btn img {
             width: 18px;
             height: 18px;
-            display: block;
         }
 
-        /* Profile Setup Styles */
         .profile-pic-group {
             display: flex;
             flex-direction: column;
@@ -155,7 +141,6 @@
             overflow: hidden;
             border: 3px solid #667eea;
             margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             background: #eee;
         }
 
@@ -173,12 +158,6 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .file-upload-btn:hover {
-            background: #667eea;
-            color: white;
         }
     </style>
 </head>
@@ -201,7 +180,7 @@
         <div class="divider">or</div>
 
         <button id="google-login-btn" class="google-btn">
-            <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" alt="Google Logo">
+            <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" alt="Google">
             Sign in with Google
         </button>
     </div>
@@ -213,7 +192,7 @@
         <form id="profile-form">
             <div class="profile-pic-group">
                 <div class="avatar-preview-wrapper">
-                    <img id="avatar-preview" src="https://via.placeholder.com/150" alt="Profile Preview">
+                    <img id="avatar-preview" src="https://via.placeholder.com/150" alt="Preview">
                 </div>
                 <label for="profile-pic-input" class="file-upload-btn">Choose Profile Picture</label>
                 <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
@@ -234,7 +213,7 @@
                 <input type="tel" id="setup-phone" placeholder="+1 (555) 000-0000">
             </div>
 
-            <button type="submit" id="save-profile-btn" class="main-btn">Save & Continue</button>
+            <button type="submit" class="main-btn">Save & Continue</button>
         </form>
     </div>
 
@@ -248,18 +227,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Real credentials successfully integrated
-        const firebaseConfig = {
-           // Real credentials successfully integrated
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
-            authDomain: "commoftheworld.firebaseapp.com", // <-- MAKE SURE IT SAYS THIS
+            authDomain: "commoftheworld.firebaseapp.com", 
             projectId: "commoftheworld",
             storageBucket: "commoftheworld.firebasestorage.app",
             messagingSenderId: "322496812191",
             appId: "1:322496812191:web:1bf0048089df350acb7eaa",
             measurementId: "G-KFELX29065"
-        };
         };
 
         const app = initializeApp(firebaseConfig);
@@ -275,7 +250,6 @@
         const avatarPreview = document.getElementById('avatar-preview');
         const profileForm = document.getElementById('profile-form');
 
-        // Authentication Event
         googleLoginBtn.addEventListener('click', () => {
             signInWithPopup(auth, provider)
                 .then((result) => {
@@ -286,20 +260,13 @@
                 });
         });
 
-        // Interface transition setup
         function showProfileSetup(user) {
             loginContainer.style.display = 'none';
             profileSetupContainer.style.display = 'block';
-            
-            if (user.displayName) {
-                document.getElementById('setup-name').value = user.displayName;
-            }
-            if (user.photoURL) {
-                avatarPreview.src = user.photoURL;
-            }
+            if (user.displayName) document.getElementById('setup-name').value = user.displayName;
+            if (user.photoURL) avatarPreview.src = user.photoURL;
         }
 
-        // Image Handling Preview Link
         profilePicInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -311,7 +278,6 @@
             }
         });
 
-        // Form Process Completion
         profileForm.addEventListener('submit', function(e) {
             e.preventDefault();
             profileSetupContainer.style.display = 'none';
