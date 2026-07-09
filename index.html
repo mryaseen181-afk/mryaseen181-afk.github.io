@@ -3,336 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Auth App</title>
+    <title>UniqueChatHub - Login & Setup</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: radial-gradient(circle at 0% 0%, #1a1c29 0%, #0d0e15 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            overflow-x: hidden;
-            color: #ffffff;
-        }
-
-        .bg-glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 70%);
-            top: -10%;
-            left: -10%;
-            z-index: 0;
-        }
-
-        .auth-container {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 40px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            z-index: 1;
-            display: none; /* Controlled via JS switching */
-        }
-
-        /* Show the active card layout */
-        .auth-container.active {
-            display: block;
-        }
-
-        .auth-header {
-            margin-bottom: 28px;
-            text-align: center;
-        }
-
-        .auth-header h2 {
-            font-size: 26px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-
-        .auth-header p {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-
-        .google-btn {
-            width: 100%;
-            height: 44px;
-            background-color: #ffffff;
-            border: none;
-            border-radius: 8px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 12px;
-            color: #1f1f1f;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            margin-bottom: 24px;
-        }
-
-        .google-btn:hover { background-color: #f2f2f2; }
-        .google-btn:active { transform: scale(0.98); }
-        .google-icon { width: 18px; height: 18px; }
-
-        .separator {
-            display: flex;
             align-items: center;
-            text-align: center;
-            color: #64748b;
-            font-size: 12px;
-            margin-bottom: 24px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            padding: 20px;
         }
 
-        .separator::before, .separator::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            transition: all 0.3s ease;
         }
-        .separator:not(:empty)::before { margin-right: .5em; }
-        .separator:not(:empty)::after { margin-left: .5em; }
+
+        h2 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
 
         .input-group {
             margin-bottom: 20px;
+            text-align: left;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #cbd5e1;
-            font-size: 13px;
+            color: #444;
+            font-size: 14px;
+            margin-bottom: 6px;
+            font-weight: 600;
         }
 
         .input-group input {
             width: 100%;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border: 2px solid #ddd;
             border-radius: 8px;
-            color: #ffffff;
             font-size: 15px;
-            outline: none;
-            transition: all 0.2s;
+            transition: border-color 0.2s;
         }
 
         .input-group input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            border-color: #667eea;
+            outline: none;
         }
 
-        .remember-forget {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            font-size: 13px;
+        .optional-tag {
+            font-size: 12px;
+            color: #9ca3af;
+            font-weight: normal;
         }
 
-        .remember-forget label { display: flex; align-items: center; color: #94a3b8; cursor: pointer; }
-        .remember-forget input { margin-right: 8px; accent-color: #6366f1; }
-        
-        .link-btn {
-            color: #6366f1;
-            text-decoration: none;
-            background: none;
-            border: none;
-            font-size: 13px;
-            cursor: pointer;
-        }
-        .link-btn:hover { color: #818cf8; text-decoration: underline; }
-
-        .action-btn {
+        .main-btn {
             width: 100%;
             padding: 12px;
-            background: #6366f1;
+            background: #667eea;
+            color: white;
             border: none;
             border-radius: 8px;
-            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .main-btn:hover {
+            background: #5a6fd6;
+        }
+
+        .divider {
+            margin: 20px 0;
+            color: #aaa;
+            position: relative;
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 38%;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: #444;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             font-size: 15px;
             font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-
-        .action-btn:hover { background: #4f46e5; }
-        .action-btn:active { transform: scale(0.98); }
-
-        .switch-text {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 14px;
-            color: #94a3b8;
-        }
-
-        /* Dashboard specific styles */
-        .dashboard-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 40px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            z-index: 1;
-            display: none;
-            text-align: center;
-        }
-        .dashboard-card.active { display: block; }
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: #6366f1;
-            margin: 0 auto 20px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-        }
-        .logout-btn {
-            margin-top: 30px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid #ef4444;
-            color: #fca5a5;
-            padding: 10px 24px;
-            border-radius: 6px;
+            align-items: center;
+            gap: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
-        .logout-btn:hover { background: #ef4444; color: white; }
+
+        .google-btn:hover {
+            background: #f7f7f7;
+        }
+
+        .google-btn img {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        /* Profile Setup Styles */
+        .profile-pic-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .avatar-preview-wrapper {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #667eea;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: #eee;
+        }
+
+        .avatar-preview-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .file-upload-btn {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .file-upload-btn:hover {
+            background: #667eea;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
-
-    <div id="login-screen" class="auth-container active">
-        <div class="auth-header">
-            <h2>Welcome back</h2>
-            <p>Please enter your credentials.</p>
+    <div id="login-container" class="form-container">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Log in to enter your workspace</p>
+        
+        <div class="input-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" placeholder="you@example.com">
         </div>
+        <div class="input-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="••••••••">
+        </div>
+        <button id="email-login-btn" class="main-btn">Sign In</button>
 
-        <button type="button" class="google-btn" onclick="signInWithGoogle()">
-            <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        <div class="divider">or</div>
+
+        <button id="google-login-btn" class="google-btn">
+            <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" alt="Google Logo">
             Sign in with Google
         </button>
-
-        <div class="separator">or</div>
-
-        <form onsubmit="handleEmailLogin(event)">
-            <div class="input-group">
-                <label for="login-email">Email Address</label>
-                <input type="email" id="login-email" required placeholder="name@example.com">
-            </div>
-            <div class="input-group">
-                <label for="login-password">Password</label>
-                <input type="password" id="login-password" required placeholder="••••••••">
-            </div>
-            <div class="remember-forget">
-                <label><input type="checkbox"> Remember me</label>
-                <button type="button" class="link-btn" onclick="showScreen('forgot-screen')">Forgot password?</button>
-            </div>
-            <button type="submit" class="action-btn">Sign In</button>
-        </form>
-        <div class="switch-text">
-            Don't have an account? <button class="link-btn" onclick="showScreen('signup-screen')">Sign up</button>
-        </div>
     </div>
 
-    <div id="signup-screen" class="auth-container">
-        <div class="auth-header">
-            <h2>Create Account</h2>
-            <p>Join us today! It takes less than a minute.</p>
-        </div>
-        <form onsubmit="handleEmailSignUp(event)">
-            <div class="input-group">
-                <label for="signup-email">Email Address</label>
-                <input type="email" id="signup-email" required placeholder="name@example.com">
-            </div>
-            <div class="input-group">
-                <label for="signup-password">Password</label>
-                <input type="password" id="signup-password" required placeholder="Minimum 6 characters">
-            </div>
-            <button type="submit" class="action-btn">Register</button>
-        </form>
-        <div class="switch-text">
-            Already have an account? <button class="link-btn" onclick="showScreen('login-screen')">Sign in</button>
-        </div>
-    </div>
-
-    <div id="forgot-screen" class="auth-container">
-        <div class="auth-header">
-            <h2>Reset Password</h2>
-            <p>We'll send a recovery link to your inbox.</p>
-        </div>
-        <form onsubmit="handlePasswordReset(event)">
-            <div class="input-group">
-                <label for="reset-email">Your Email Address</label>
-                <input type="email" id="reset-email" required placeholder="name@example.com">
-            </div>
-            <button type="submit" class="action-btn">Send Recovery Link</button>
-        </form>
-        <div class="switch-text">
-            Back to <button class="link-btn" onclick="showScreen('login-screen')">Sign In</button>
-        </div>
-    </div>
-
-    <div id="dashboard-screen" class="dashboard-card">
-        <div class="user-avatar" id="user-avatar">U</div>
-        <h1 style="font-size: 28px; margin-bottom: 10px;">Login Successful!</h1>
-        <p id="welcome-message" style="color: #94a3b8; font-size: 16px;">Welcome back to your workspace.</p>
+    <div id="profile-setup-container" class="form-container" style="display: none;">
+        <h2>Complete Your Profile</h2>
+        <p class="subtitle">Just a few more details to get you started</p>
         
-        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0;">
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;">
-            <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                <h4 style="color: #6366f1;">Account Status</h4>
-                <p style="font-size: 13px; margin-top: 5px; color: #cbd5e1;">Active Premium Tier</p>
+        <form id="profile-form">
+            <div class="profile-pic-group">
+                <div class="avatar-preview-wrapper">
+                    <img id="avatar-preview" src="https://via.placeholder.com/150" alt="Profile Preview">
+                </div>
+                <label for="profile-pic-input" class="file-upload-btn">Choose Profile Picture</label>
+                <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
             </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                <h4 style="color: #6366f1;">Security Check</h4>
-                <p style="font-size: 13px; margin-top: 5px; color: #cbd5e1;">Multi-factor Verified</p>
-            </div>
-        </div>
 
-        <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
+            <div class="input-group">
+                <label for="setup-name">Full Name</label>
+                <input type="text" id="setup-name" placeholder="John Doe" required>
+            </div>
+
+            <div class="input-group">
+                <label for="setup-birthday">Birthday</label>
+                <input type="date" id="setup-birthday" required>
+            </div>
+
+            <div class="input-group">
+                <label for="setup-phone">Phone Number <span class="optional-tag">(Optional)</span></label>
+                <input type="tel" id="setup-phone" placeholder="+1 (555) 000-0000">
+            </div>
+
+            <button type="submit" id="save-profile-btn" class="main-btn">Save & Continue</button>
+        </form>
     </div>
 
+    <div id="dashboard-container" class="form-container" style="display: none;">
+        <h2>Welcome to UniqueChatHub!</h2>
+        <p class="subtitle">Your profile setup is complete.</p>
+        <p>Loading your chat channels workspace...</p>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword,
-            sendPasswordResetEmail,
-            signInWithPopup, 
-            GoogleAuthProvider,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Integrated with your custom project keys
+        // Real credentials successfully integrated
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
-            authDomain: "commoftheworld.firebaseapp.com",
+            authDomain: "uniquechathub.vercel.app", 
             projectId: "commoftheworld",
             storageBucket: "commoftheworld.firebasestorage.app",
             messagingSenderId: "322496812191",
@@ -340,88 +259,61 @@
             measurementId: "G-KFELX29065"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // Screen view switching navigation logic
-        window.showScreen = function(screenId) {
-            document.querySelectorAll('.auth-container, .dashboard-card').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.getElementById(screenId).classList.add('active');
-        }
+        const loginContainer = document.getElementById('login-container');
+        const profileSetupContainer = document.getElementById('profile-setup-container');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const profilePicInput = document.getElementById('profile-pic-input');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const profileForm = document.getElementById('profile-form');
 
-        // Google Sign-In Handler
-        window.signInWithGoogle = async function() {
-            try {
-                const result = await signInWithPopup(auth, provider);
-                const user = result.user;
-                loadDashboard(user.email, user.photoURL);
-            } catch (error) {
-                alert(error.message);
+        // Authentication Event
+        googleLoginBtn.addEventListener('click', () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    showProfileSetup(result.user);
+                })
+                .catch((error) => {
+                    alert("Auth Error: " + error.message);
+                });
+        });
+
+        // Interface transition setup
+        function showProfileSetup(user) {
+            loginContainer.style.display = 'none';
+            profileSetupContainer.style.display = 'block';
+            
+            if (user.displayName) {
+                document.getElementById('setup-name').value = user.displayName;
+            }
+            if (user.photoURL) {
+                avatarPreview.src = user.photoURL;
             }
         }
 
-        // Email & Password Register Handler
-        window.handleEmailSignUp = async function(e) {
+        // Image Handling Preview Link
+        profilePicInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    avatarPreview.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Form Process Completion
+        profileForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                loadDashboard(email);
-            } catch (error) {
-                alert(error.message);
-            }
-        }
-
-        // Standard Email Login Handler
-        window.handleEmailLogin = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                loadDashboard(email);
-            } catch (error) {
-                alert(error.message);
-            }
-        }
-
-        // Password Reset Request Handler
-        window.handlePasswordReset = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('reset-email').value;
-            try {
-                await sendPasswordResetEmail(auth, email);
-                alert("Password reset link sent successfully to your inbox!");
-                showScreen('login-screen');
-            } catch (error) {
-                alert(error.message);
-            }
-        }
-
-        // Sign Out Handler
-        window.handleLogout = async function() {
-            await signOut(auth);
-            document.getElementById('login-email').value = "";
-            document.getElementById('login-password').value = "";
-            showScreen('login-screen');
-        }
-
-        // Dashboard View Renderer
-        function loadDashboard(email, photoUrl = null) {
-            document.getElementById('welcome-message').innerText = `Logged in as: ${email}`;
-            const avatar = document.getElementById('user-avatar');
-            if (photoUrl) {
-                avatar.innerHTML = `<img src="${photoUrl}" style="width:100%; height:100%; border-radius:50%;">`;
-            } else {
-                avatar.innerHTML = email.charAt(0).toUpperCase();
-            }
-            showScreen('dashboard-screen');
-        }
+            profileSetupContainer.style.display = 'none';
+            dashboardContainer.style.display = 'block';
+        });
     </script>
 </body>
 </html>
