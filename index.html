@@ -35,9 +35,9 @@
 
         /* ---------------- DASHBOARD INTERFACE ---------------- */
         .dashboard-layout {
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
-            height: 80vh;
+            height: 85vh;
             background: #1a1a26;
             border-radius: 16px;
             display: flex;
@@ -70,6 +70,12 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #a855f7;
+            cursor: pointer;
+        }
+
+        .user-details {
+            cursor: pointer;
+            flex: 1;
         }
 
         .user-details h3 {
@@ -150,6 +156,10 @@
             object-fit: cover;
         }
 
+        .friend-item .info {
+            flex: 1;
+        }
+
         .friend-item .info h4 {
             font-size: 14px;
             color: #fff;
@@ -158,6 +168,15 @@
         .friend-item .info p {
             font-size: 12px;
             color: #9ca3af;
+        }
+
+        .view-profile-btn {
+            background: none;
+            border: none;
+            color: #a855f7;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         /* Chat view window panel */
@@ -174,7 +193,7 @@
             border-bottom: 1px solid #2d2d44;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
         }
 
         .chat-header h3 {
@@ -214,15 +233,23 @@
             border-bottom-left-radius: 2px;
         }
 
+        .msg img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 5px;
+            display: block;
+        }
+
         .chat-input-area {
             padding: 20px;
             background: #1a1a26;
             border-top: 1px solid #2d2d44;
             display: flex;
             gap: 12px;
+            align-items: center;
         }
 
-        .chat-input-area input {
+        .chat-input-area input[type="text"] {
             flex: 1;
             padding: 14px;
             background: #13131f;
@@ -237,8 +264,18 @@
             outline: none;
         }
 
+        .attach-btn {
+            background: #2d2d44;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
         .send-btn {
-            padding: 0 24px;
+            padding: 14px 24px;
             background: #a855f7;
             color: white;
             border: none;
@@ -247,21 +284,45 @@
             cursor: pointer;
         }
 
-        /* Generic forms structural layout setup */
+        /* ---------------- MODAL POPUPS (Profiles) ---------------- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: #1a1a26;
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid #2d2d44;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        /* Global generic structural designs */
         h2 { color: #fff; margin-bottom: 8px; font-size: 28px; }
         .subtitle { color: #9ca3af; font-size: 14px; margin-bottom: 24px; }
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; color: #d1d5db; font-size: 14px; margin-bottom: 6px; font-weight: 600; }
         .input-group input { width: 100%; padding: 12px; border: 1px solid #3b3b54; border-radius: 8px; font-size: 15px; background-color: #13131f; color: #fff; }
-        .input-group input:focus { border-color: #a855f7; outline: none; }
         .main-btn { width: 100%; padding: 12px; background: #a855f7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .divider { margin: 20px 0; color: #4b5563; position: relative; }
-        .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 35%; height: 1px; background: #374151; }
-        .divider::before { left: 0; } .divider::after { right: 0; }
         
-        .google-btn {
-            width: 100%; padding: 12px; background: #13131f; color: #fff; border: 1px solid #3b3b54; border-radius: 8px; font-size: 15px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 12px; cursor: pointer;
-        }
+        .google-btn { width: 100%; padding: 12px; background: #13131f; color: #fff; border: 1px solid #3b3b54; border-radius: 8px; font-size: 15px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 12px; cursor: pointer; }
         .google-btn img { width: 20px; height: 20px; }
         .profile-pic-group { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
         .avatar-preview-wrapper { width: 110px; height: 110px; border-radius: 50%; overflow: hidden; border: 3px solid #a855f7; margin-bottom: 12px; background: #13131f; }
@@ -274,7 +335,7 @@
 </head>
 <body>
 
-    <div id="loading-screen">Syncing app module infrastructure...</div>
+    <div id="loading-screen">Syncing workspace modules...</div>
 
     <div id="login-container" class="form-container" style="display: none;">
         <h2>Welcome Back</h2>
@@ -290,7 +351,7 @@
         </div>
         <button id="email-login-btn" class="main-btn">Sign In</button>
 
-        <div class="divider">or</div>
+        <div class="divider" style="margin:20px 0; color:#4b5563;">or</div>
 
         <button id="google-login-btn" class="google-btn">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
@@ -300,7 +361,7 @@
 
     <div id="profile-setup-container" class="form-container" style="display: none;">
         <h2>Create Profile</h2>
-        <p class="subtitle">Set up a distinct custom username</p>
+        <p class="subtitle">Set up a unique database username</p>
         
         <form id="profile-form">
             <div class="profile-pic-group">
@@ -325,8 +386,8 @@
     <div id="dashboard-container" class="dashboard-layout" style="display: none;">
         <div class="sidebar">
             <div class="user-bar">
-                <img id="dash-avatar" src="" alt="Avatar">
-                <div class="user-details">
+                <img id="dash-avatar" src="" alt="Avatar" onclick="openEditProfileModal()">
+                <div class="user-details" onclick="openEditProfileModal()">
                     <h3 id="dash-display-name">Loading...</h3>
                     <p id="dash-username"></p>
                 </div>
@@ -335,7 +396,7 @@
 
             <div class="friend-system">
                 <div class="friend-input-group">
-                    <input type="text" id="friend-username-input" placeholder="Type user's username...">
+                    <input type="text" id="friend-username-input" placeholder="Enter friend's username...">
                     <button id="add-friend-btn" class="friend-btn">Add</button>
                 </div>
             </div>
@@ -350,9 +411,13 @@
             <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1;">
                 <div class="chat-header">
                     <h3 id="chat-with-heading">Chat Window</h3>
+                    <button id="view-friend-profile-header-btn" class="view-profile-btn" style="font-size:14px;">View Profile</button>
                 </div>
                 <div id="messages-box" class="messages-box"></div>
                 <div class="chat-input-area">
+                    <label for="chat-image-input" class="attach-btn">📷</label>
+                    <input type="file" id="chat-image-input" accept="image/*" style="display: none;">
+                    
                     <input type="text" id="message-input" placeholder="Type a secure message...">
                     <button id="send-msg-btn" class="send-btn">Send</button>
                 </div>
@@ -363,10 +428,43 @@
         </div>
     </div>
 
+    <div id="edit-profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditProfileModal()">&times;</span>
+            <h3>Edit Your Profile</h3>
+            <br>
+            <div class="profile-pic-group">
+                <div class="avatar-preview-wrapper">
+                    <img id="edit-avatar-preview" src="" alt="Avatar">
+                </div>
+                <label for="edit-profile-pic-input" class="file-upload-btn">Change Picture</label>
+                <input type="file" id="edit-profile-pic-input" accept="image/*" style="display: none;">
+            </div>
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="edit-fullname-input">
+            </div>
+            <button class="main-btn" onclick="saveEditedProfile()">Save Changes</button>
+        </div>
+    </div>
+
+    <div id="view-profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeViewProfileModal()">&times;</span>
+            <h3 id="view-modal-title">User Profile</h3>
+            <br>
+            <div class="avatar-preview-wrapper" style="margin: 0 auto 15px auto; width:120px; height:120px;">
+                <img id="view-modal-avatar" src="" alt="User avatar">
+            </div>
+            <h2 id="view-modal-name" style="font-size:22px;">Name</h2>
+            <p id="view-modal-username" style="color:#a855f7; font-weight:bold; margin-bottom:15px;">@username</p>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
@@ -383,11 +481,13 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
+        // Containers
         const loadingScreen = document.getElementById('loading-screen');
         const loginContainer = document.getElementById('login-container');
         const profileSetupContainer = document.getElementById('profile-setup-container');
         const dashboardContainer = document.getElementById('dashboard-container');
         
+        // Form & triggers
         const googleLoginBtn = document.getElementById('google-login-btn');
         const profilePicInput = document.getElementById('profile-pic-input');
         const avatarPreview = document.getElementById('avatar-preview');
@@ -399,13 +499,63 @@
         const sendMsgBtn = document.getElementById('send-msg-btn');
         const messageInput = document.getElementById('message-input');
         const messagesBox = document.getElementById('messages-box');
+        const chatImageInput = document.getElementById('chat-image-input');
 
         let currentUser = null;
         let userDataRecord = null;
         let base64Image = "https://via.placeholder.com/150";
-        let activeChatFriendUid = null;
+        let activeChatFriendData = null;
         let unsubscribeChatListener = null;
 
+        // Modals management mapping out to global windows scope
+        window.openEditProfileModal = function() {
+            document.getElementById('edit-avatar-preview').src = userDataRecord.photoURL;
+            document.getElementById('edit-fullname-input').value = userDataRecord.fullName;
+            document.getElementById('edit-profile-modal').style.display = 'flex';
+        }
+        window.closeEditProfileModal = function() { document.getElementById('edit-profile-modal').style.display = 'none'; }
+        
+        window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; }
+
+        document.getElementById('edit-profile-pic-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const r = new FileReader();
+                r.onload = function(ev) {
+                    document.getElementById('edit-avatar-preview').src = ev.target.result;
+                };
+                r.readAsDataURL(file);
+            }
+        });
+
+        window.saveEditedProfile = async function() {
+            const newName = document.getElementById('edit-fullname-input').value.trim();
+            const newImg = document.getElementById('edit-avatar-preview').src;
+            if(!newName) return;
+
+            try {
+                const ref = doc(db, "users", currentUser.uid);
+                await updateDoc(ref, { fullName: newName, photoURL: newImg });
+                userDataRecord.fullName = newName;
+                userDataRecord.photoURL = newImg;
+                
+                document.getElementById('dash-avatar').src = newImg;
+                document.getElementById('dash-display-name').innerText = newName;
+                closeEditProfileModal();
+                alert("Profile updated!");
+            } catch(e) { alert(e.message); }
+        }
+
+        document.getElementById('view-friend-profile-header-btn').addEventListener('click', () => {
+            if(!activeChatFriendData) return;
+            document.getElementById('view-modal-title').innerText = "Friend Info";
+            document.getElementById('view-modal-avatar').src = activeChatFriendData.photoURL;
+            document.getElementById('view-modal-name').innerText = activeChatFriendData.fullName;
+            document.getElementById('view-modal-username').innerText = "@" + activeChatFriendData.username;
+            document.getElementById('view-profile-modal').style.display = 'flex';
+        });
+
+        // Track Login Sessions
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -432,7 +582,7 @@
         });
 
         googleLoginBtn.addEventListener('click', () => {
-            signInWithPopup(auth, provider).catch(err => alert("Auth Window Error: " + err.message));
+            signInWithPopup(auth, provider).catch(err => alert(err.message));
         });
 
         function showProfileSetup(user) {
@@ -465,7 +615,7 @@
             try {
                 const usernameQuery = query(collection(db, "users"), where("username", "==", rawUsername));
                 const querySnapshot = await getDocs(usernameQuery);
-                if (!querySnapshot.empty) { alert("That username is taken!"); return; }
+                if (!querySnapshot.empty) { alert("Username taken!"); return; }
 
                 const profileData = {
                     uid: currentUser.uid,
@@ -478,7 +628,7 @@
                 await setDoc(doc(db, "users", currentUser.uid), profileData);
                 userDataRecord = profileData;
                 launchDashboard(profileData);
-            } catch(error) { alert("Error: " + error.message); }
+            } catch(error) { alert(error.message); }
         });
 
         function launchDashboard(data) {
@@ -493,38 +643,35 @@
             loadFriendsSidebarList();
         }
 
-        // ---------------- FRIEND SYSTEM ENGINE ----------------
+        // Add Friend Logic
         addFriendBtn.addEventListener('click', async () => {
-            const searchTargetUsername = document.getElementById('friend-username-input').value.trim().toLowerCase();
-            if(!searchTargetUsername) return;
-            if(searchTargetUsername === userDataRecord.username) { alert("You can't add yourself!"); return; }
+            const target = document.getElementById('friend-username-input').value.trim().toLowerCase();
+            if(!target || target === userDataRecord.username) return;
 
             try {
-                const q = query(collection(db, "users"), where("username", "==", searchTargetUsername));
+                const q = query(collection(db, "users"), where("username", "==", target));
                 const snap = await getDocs(q);
-
                 if(snap.empty) { alert("User not found!"); return; }
 
                 const friendDoc = snap.docs[0].data();
                 const friendUid = friendDoc.uid;
 
-                let currentFriendsList = userDataRecord.friends || [];
-                if(currentFriendsList.includes(friendUid)) { alert("Already friends!"); return; }
+                let fList = userDataRecord.friends || [];
+                if(fList.includes(friendUid)) { alert("Already added!"); return; }
 
-                currentFriendsList.push(friendUid);
-                await setDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList }, { merge: true });
-                userDataRecord.friends = currentFriendsList;
+                fList.push(friendUid);
+                await updateDoc(doc(db, "users", currentUser.uid), { friends: fList });
+                userDataRecord.friends = fList;
 
-                let targetUserFriendsList = friendDoc.friends || [];
-                if(!targetUserFriendsList.includes(currentUser.uid)) {
-                    targetUserFriendsList.push(currentUser.uid);
-                    await setDoc(doc(db, "users", friendUid), { friends: targetUserFriendsList }, { merge: true });
+                let tfList = friendDoc.friends || [];
+                if(!tfList.includes(currentUser.uid)) {
+                    tfList.push(currentUser.uid);
+                    await updateDoc(doc(db, "users", friendUid), { friends: tfList });
                 }
 
                 document.getElementById('friend-username-input').value = "";
-                alert("Friend added successfully!");
                 loadFriendsSidebarList();
-            } catch(err) { alert("Error adding friend: " + err.message); }
+            } catch(err) { alert(err.message); }
         });
 
         async function loadFriendsSidebarList() {
@@ -532,15 +679,13 @@
             const currentFriendsUids = userDataRecord.friends || [];
 
             for(let fUid of currentFriendsUids) {
-                const fDocRef = doc(db, "users", fUid);
-                const fDocSnap = await getDoc(fDocRef);
-
+                const fDocSnap = await getDoc(doc(db, "users", fUid));
                 if(fDocSnap.exists()) {
                     const friendData = fDocSnap.data();
                     const item = document.createElement('div');
                     item.className = 'friend-item';
                     item.innerHTML = `
-                        <img src="${friendData.photoURL}" alt="User Profile Image">
+                        <img src="${friendData.photoURL}">
                         <div class="info">
                             <h4>${friendData.fullName}</h4>
                             <p>@${friendData.username}</p>
@@ -552,55 +697,72 @@
             }
         }
 
-        // ---------------- REALTIME LIVE CHAT ENGINE ----------------
+        // Open chat window and parse content records
         function openChatWindow(friendData) {
-            activeChatFriendUid = friendData.uid;
+            activeChatFriendData = friendData;
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
             document.getElementById('chat-with-heading').innerText = `${friendData.fullName} (@${friendData.username})`;
 
-            // Highlighting active contact item inside the sidebar layout view list panel row 
-            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
-            
-            // Build absolute uniquely isolated string signature channel room key ID between users 
-            const channelRoomId = currentUser.uid < friendData.uid ? 
+            const roomKey = currentUser.uid < friendData.uid ? 
                 `${currentUser.uid}_${friendData.uid}` : `${friendData.uid}_${currentUser.uid}`;
 
             if(unsubscribeChatListener) unsubscribeChatListener();
 
-            const chatQuery = query(collection(db, "messages", channelRoomId, "records"), orderBy("timestamp", "asc"));
-            
+            const chatQuery = query(collection(db, "messages", roomKey, "records"), orderBy("timestamp", "asc"));
             unsubscribeChatListener = onSnapshot(chatQuery, (snapshot) => {
                 messagesBox.innerHTML = "";
                 snapshot.forEach((doc) => {
-                    const msgData = doc.data();
+                    const msg = doc.data();
                     const bubble = document.createElement('div');
-                    bubble.className = `msg ${msgData.senderId === currentUser.uid ? 'sent' : 'received'}`;
-                    bubble.innerText = msgData.text;
+                    bubble.className = `msg ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`;
+                    
+                    if(msg.type === "image") {
+                        bubble.innerHTML = `${msg.text ? `<p>${msg.text}</p>` : ''}<img src="${msg.mediaData}">`;
+                    } else {
+                        bubble.innerText = msg.text;
+                    }
                     messagesBox.appendChild(bubble);
                 });
                 messagesBox.scrollTop = messagesBox.scrollHeight;
             });
         }
 
-        sendMsgBtn.addEventListener('click', sendTextMessagePayload);
-        messageInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendTextMessagePayload(); });
+        sendMsgBtn.addEventListener('click', () => sendMsgPayload("text", null));
+        messageInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMsgPayload("text", null); });
 
-        async function sendTextMessagePayload() {
-            const rawTextContent = messageInput.value.trim();
-            if(!rawTextContent || !activeChatFriendUid) return;
+        // Local inline Image FileReader share processing trigger
+        chatImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(file) {
+                if(file.size > 800000) { alert("Image size too large for free tier database string capacity!"); return; }
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    sendMsgPayload("image", evt.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
-            const channelRoomId = currentUser.uid < activeChatFriendUid ? 
-                `${currentUser.uid}_${activeChatFriendUid}` : `${activeChatFriendUid}_${currentUser.uid}`;
+        async function sendMsgPayload(type, mediaData) {
+            const txt = messageInput.value.trim();
+            if(!txt && !mediaData) return;
+            if(!activeChatFriendData) return;
 
-            const messagePayload = {
+            const roomKey = currentUser.uid < activeChatFriendData.uid ? 
+                `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
+
+            const payload = {
                 senderId: currentUser.uid,
-                text: rawTextContent,
+                text: txt,
+                type: type,
+                mediaData: mediaData || "",
                 timestamp: new Date().getTime()
             };
 
             messageInput.value = "";
-            await addDoc(collection(db, "messages", channelRoomId, "records"), messagePayload);
+            chatImageInput.value = "";
+            await addDoc(collection(db, "messages", roomKey, "records"), payload);
         }
 
         logoutBtn.addEventListener('click', () => { if(unsubscribeChatListener) unsubscribeChatListener(); signOut(auth); });
