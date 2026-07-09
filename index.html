@@ -13,210 +13,272 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e1e2f 0%, #11111b 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: #f3f4f6;
         }
 
         .form-container {
-            background: #ffffff;
+            background: #1a1a26;
             padding: 40px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             width: 100%;
             max-width: 450px;
             text-align: center;
+            border: 1px solid #2d2d44;
         }
 
+        /* ---------------- DASHBOARD INTERFACE ---------------- */
         .dashboard-layout {
-            max-width: 600px;
+            max-width: 1000px;
             width: 100%;
-            background: white;
+            height: 80vh;
+            background: #1a1a26;
             border-radius: 16px;
-            padding: 30px;
+            display: flex;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2d2d44;
+            overflow: hidden;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 320px;
+            background: #13131f;
+            border-right: 1px solid #2d2d44;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .user-bar {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #eee;
+            gap: 12px;
+            padding: 20px;
+            background: #1a1a26;
+            border-bottom: 1px solid #2d2d44;
         }
 
         .user-bar img {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             object-fit: cover;
+            border: 2px solid #a855f7;
         }
 
-        h2 {
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 28px;
+        .user-details h3 {
+            font-size: 15px;
+            color: #fff;
         }
 
-        .subtitle {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            color: #444;
-            font-size: 14px;
-            margin-bottom: 6px;
+        .user-details p {
+            color: #a855f7;
+            font-size: 12px;
             font-weight: 600;
         }
 
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
+        .friend-system {
+            padding: 15px;
+            border-bottom: 1px solid #2d2d44;
+        }
+
+        .friend-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .friend-input-group input {
+            flex: 1;
+            padding: 10px;
+            background: #1a1a26;
+            border: 1px solid #3b3b54;
             border-radius: 8px;
-            font-size: 15px;
-            background-color: #fff;
-            color: #333;
+            color: #fff;
+            font-size: 13px;
         }
 
-        .input-group input:focus {
-            border-color: #667eea;
-            outline: none;
-        }
-
-        .optional-tag {
-            font-size: 12px;
-            color: #9ca3af;
-            font-weight: normal;
-        }
-
-        .main-btn {
-            width: 100%;
-            padding: 12px;
-            background: #667eea;
+        .friend-btn {
+            padding: 10px 14px;
+            background: #a855f7;
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s;
+            font-size: 13px;
         }
 
-        .main-btn:hover {
-            background: #5a6fd6;
+        .friends-list-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
         }
 
-        .divider {
-            margin: 20px 0;
-            color: #aaa;
-            position: relative;
+        .friends-list-heading {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6b7280;
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding-left: 10px;
         }
 
-        .divider::before, .divider::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            width: 35%;
-            height: 1px;
-            background: #ddd;
-        }
-
-        .divider::before { left: 0; }
-        .divider::after { right: 0; }
-
-        .google-btn {
-            width: 100%;
-            padding: 12px;
-            background: white;
-            color: #444;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
+        .friend-item {
             display: flex;
-            justify-content: center;
             align-items: center;
             gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
             cursor: pointer;
             transition: background 0.2s;
         }
 
-        .google-btn:hover {
-            background: #f7f7f7;
+        .friend-item:hover, .friend-item.active {
+            background: #252538;
         }
 
-        .google-btn img {
-            width: 20px;
-            height: 20px;
-            display: inline-block;
-        }
-
-        .profile-pic-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .avatar-preview-wrapper {
-            width: 110px;
-            height: 110px;
+        .friend-item img {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid #667eea;
-            margin-bottom: 12px;
-            background: #eee;
-        }
-
-        .avatar-preview-wrapper img {
-            width: 100%;
-            height: 100%;
             object-fit: cover;
         }
 
-        .file-upload-btn {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            padding: 8px 16px;
-            border-radius: 20px;
+        .friend-item .info h4 {
             font-size: 14px;
-            font-weight: 600;
+            color: #fff;
+        }
+
+        .friend-item .info p {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        /* Chat view window panel */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #161622;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: #1a1a26;
+            border-bottom: 1px solid #2d2d44;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-header h3 {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .messages-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .msg {
+            max-width: 65%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .msg.sent {
+            background: #a855f7;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg.received {
+            background: #2d2d44;
+            color: #f3f4f6;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: #1a1a26;
+            border-top: 1px solid #2d2d44;
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 14px;
+            background: #13131f;
+            border: 1px solid #2d2d44;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .chat-input-area input:focus {
+            border-color: #a855f7;
+            outline: none;
+        }
+
+        .send-btn {
+            padding: 0 24px;
+            background: #a855f7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
             cursor: pointer;
         }
 
-        #loading-screen {
-            color: white;
-            font-size: 20px;
-            font-weight: 600;
-            background: rgba(0,0,0,0.1);
-            padding: 20px;
-            border-radius: 12px;
+        /* Generic forms structural layout setup */
+        h2 { color: #fff; margin-bottom: 8px; font-size: 28px; }
+        .subtitle { color: #9ca3af; font-size: 14px; margin-bottom: 24px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; color: #d1d5db; font-size: 14px; margin-bottom: 6px; font-weight: 600; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #3b3b54; border-radius: 8px; font-size: 15px; background-color: #13131f; color: #fff; }
+        .input-group input:focus { border-color: #a855f7; outline: none; }
+        .main-btn { width: 100%; padding: 12px; background: #a855f7; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .divider { margin: 20px 0; color: #4b5563; position: relative; }
+        .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 35%; height: 1px; background: #374151; }
+        .divider::before { left: 0; } .divider::after { right: 0; }
+        
+        .google-btn {
+            width: 100%; padding: 12px; background: #13131f; color: #fff; border: 1px solid #3b3b54; border-radius: 8px; font-size: 15px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 12px; cursor: pointer;
         }
+        .google-btn img { width: 20px; height: 20px; }
+        .profile-pic-group { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
+        .avatar-preview-wrapper { width: 110px; height: 110px; border-radius: 50%; overflow: hidden; border: 3px solid #a855f7; margin-bottom: 12px; background: #13131f; }
+        .avatar-preview-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .file-upload-btn { background: rgba(168, 85, 247, 0.2); color: #c084fc; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        #loading-screen { color: white; font-size: 20px; font-weight: 600; }
+        .logout-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: #6b7280; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">Syncing account workspace...</div>
+    <div id="loading-screen">Syncing app module infrastructure...</div>
 
     <div id="login-container" class="form-container" style="display: none;">
         <h2>Welcome Back</h2>
-        <p class="subtitle">Log in to enter your workspace</p>
+        <p class="subtitle">Log in to enter UniqueChatHub</p>
         
         <div class="input-group">
             <label for="login-email">Email Address</label>
@@ -231,68 +293,80 @@
         <div class="divider">or</div>
 
         <button id="google-login-btn" class="google-btn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
             Sign in with Google
         </button>
     </div>
 
     <div id="profile-setup-container" class="form-container" style="display: none;">
-        <h2>Complete Your Profile</h2>
-        <p class="subtitle">Pick a completely unique username to finish setting up</p>
+        <h2>Create Profile</h2>
+        <p class="subtitle">Set up a distinct custom username</p>
         
         <form id="profile-form">
             <div class="profile-pic-group">
                 <div class="avatar-preview-wrapper">
                     <img id="avatar-preview" src="https://via.placeholder.com/150" alt="Preview">
                 </div>
-                <label for="profile-pic-input" class="file-upload-btn">Choose Profile Picture</label>
+                <label for="profile-pic-input" class="file-upload-btn">Choose Picture</label>
                 <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
             </div>
-
             <div class="input-group">
                 <label for="setup-username">Unique Username</label>
-                <input type="text" id="setup-username" placeholder="epic_chatter123" required>
+                <input type="text" id="setup-username" placeholder="username123" required>
             </div>
-
             <div class="input-group">
                 <label for="setup-name">Full Name</label>
-                <input type="text" id="setup-name" placeholder="John Doe" required>
+                <input type="text" id="setup-name" placeholder="Alex Carter" required>
             </div>
-
-            <div class="input-group">
-                <label for="setup-birthday">Birthday</label>
-                <input type="date" id="setup-birthday" required>
-            </div>
-
-            <div class="input-group">
-                <label for="setup-phone">Phone Number <span class="optional-tag">(Optional)</span></label>
-                <input type="tel" id="setup-phone" placeholder="+1 (555) 000-0000">
-            </div>
-
-            <button type="submit" class="main-btn">Save & Launch Hub</button>
+            <button type="submit" class="main-btn">Save & Enter Workspace</button>
         </form>
     </div>
 
     <div id="dashboard-container" class="dashboard-layout" style="display: none;">
-        <div class="user-bar">
-            <img id="dash-avatar" src="https://via.placeholder.com/150" alt="Avatar">
-            <div>
-                <h3 id="dash-display-name">Loading Profile...</h3>
-                <p id="dash-username" style="color: #667eea; font-weight: 600; font-size: 14px;"></p>
+        <div class="sidebar">
+            <div class="user-bar">
+                <img id="dash-avatar" src="" alt="Avatar">
+                <div class="user-details">
+                    <h3 id="dash-display-name">Loading...</h3>
+                    <p id="dash-username"></p>
+                </div>
+                <button id="logout-btn" class="logout-btn">Exit</button>
             </div>
-            <button id="logout-btn" style="margin-left: auto; background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">Logout</button>
+
+            <div class="friend-system">
+                <div class="friend-input-group">
+                    <input type="text" id="friend-username-input" placeholder="Type user's username...">
+                    <button id="add-friend-btn" class="friend-btn">Add</button>
+                </div>
+            </div>
+
+            <div class="friends-list-container">
+                <div class="friends-list-heading">Direct Messages</div>
+                <div id="friends-list"></div>
+            </div>
         </div>
-        
-        <div>
-            <h4 style="color:#333; margin-bottom: 8px;">UniqueChatHub Chat Workspace Dashboard</h4>
-            <p style="color: #666; font-size: 14px;">The database is connected! In the next update, we will add your theme customizer and your friend search bar right here.</p>
+
+        <div class="chat-area">
+            <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1;">
+                <div class="chat-header">
+                    <h3 id="chat-with-heading">Chat Window</h3>
+                </div>
+                <div id="messages-box" class="messages-box"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="message-input" placeholder="Type a secure message...">
+                    <button id="send-msg-btn" class="send-btn">Send</button>
+                </div>
+            </div>
+            <div id="no-chat-fallback" class="no-chat-selected">
+                <p>Select a friend from the sidebar column to start chatting</p>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
@@ -319,21 +393,29 @@
         const avatarPreview = document.getElementById('avatar-preview');
         const profileForm = document.getElementById('profile-form');
         const logoutBtn = document.getElementById('logout-btn');
+        
+        const addFriendBtn = document.getElementById('add-friend-btn');
+        const friendsListElement = document.getElementById('friends-list');
+        const sendMsgBtn = document.getElementById('send-msg-btn');
+        const messageInput = document.getElementById('message-input');
+        const messagesBox = document.getElementById('messages-box');
 
         let currentUser = null;
+        let userDataRecord = null;
         let base64Image = "https://via.placeholder.com/150";
+        let activeChatFriendUid = null;
+        let unsubscribeChatListener = null;
 
-        // Login State Evaluator
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 try {
                     const userDocRef = doc(db, "users", user.uid);
                     const userDocSnap = await getDoc(userDocRef);
-
                     loadingScreen.style.display = 'none';
                     if (userDocSnap.exists()) {
-                        launchDashboard(userDocSnap.data());
+                        userDataRecord = userDocSnap.data();
+                        launchDashboard(userDataRecord);
                     } else {
                         showProfileSetup(user);
                     }
@@ -358,10 +440,7 @@
             profileSetupContainer.style.display = 'block';
             dashboardContainer.style.display = 'none';
             if (user.displayName) document.getElementById('setup-name').value = user.displayName;
-            if (user.photoURL) {
-                avatarPreview.src = user.photoURL;
-                base64Image = user.photoURL;
-            }
+            if (user.photoURL) { avatarPreview.src = user.photoURL; base64Image = user.photoURL; }
         }
 
         profilePicInput.addEventListener('change', function(e) {
@@ -378,40 +457,28 @@
 
         profileForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const rawUsername = document.getElementById('setup-username').value.trim().toLowerCase();
             const fullName = document.getElementById('setup-name').value;
-            const birthday = document.getElementById('setup-birthday').value;
-            const phone = document.getElementById('setup-phone').value;
 
-            if(rawUsername.length < 3) {
-                alert("Username must be 3+ characters long.");
-                return;
-            }
+            if(rawUsername.length < 3) { alert("Username must be 3+ characters."); return; }
 
             try {
                 const usernameQuery = query(collection(db, "users"), where("username", "==", rawUsername));
                 const querySnapshot = await getDocs(usernameQuery);
-
-                if (!querySnapshot.empty) {
-                    alert("That username is taken! Choose another one.");
-                    return;
-                }
+                if (!querySnapshot.empty) { alert("That username is taken!"); return; }
 
                 const profileData = {
                     uid: currentUser.uid,
                     username: rawUsername,
                     fullName: fullName,
-                    birthday: birthday,
-                    phone: phone || "None",
-                    photoURL: base64Image
+                    photoURL: base64Image,
+                    friends: []
                 };
 
                 await setDoc(doc(db, "users", currentUser.uid), profileData);
+                userDataRecord = profileData;
                 launchDashboard(profileData);
-            } catch(error) {
-                alert("Database write error: " + error.message);
-            }
+            } catch(error) { alert("Error: " + error.message); }
         });
 
         function launchDashboard(data) {
@@ -422,11 +489,121 @@
             document.getElementById('dash-avatar').src = data.photoURL;
             document.getElementById('dash-display-name').innerText = data.fullName;
             document.getElementById('dash-username').innerText = "@" + data.username;
+            
+            loadFriendsSidebarList();
         }
 
-        logoutBtn.addEventListener('click', () => {
-            signOut(auth);
+        // ---------------- FRIEND SYSTEM ENGINE ----------------
+        addFriendBtn.addEventListener('click', async () => {
+            const searchTargetUsername = document.getElementById('friend-username-input').value.trim().toLowerCase();
+            if(!searchTargetUsername) return;
+            if(searchTargetUsername === userDataRecord.username) { alert("You can't add yourself!"); return; }
+
+            try {
+                const q = query(collection(db, "users"), where("username", "==", searchTargetUsername));
+                const snap = await getDocs(q);
+
+                if(snap.empty) { alert("User not found!"); return; }
+
+                const friendDoc = snap.docs[0].data();
+                const friendUid = friendDoc.uid;
+
+                let currentFriendsList = userDataRecord.friends || [];
+                if(currentFriendsList.includes(friendUid)) { alert("Already friends!"); return; }
+
+                currentFriendsList.push(friendUid);
+                await setDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList }, { merge: true });
+                userDataRecord.friends = currentFriendsList;
+
+                let targetUserFriendsList = friendDoc.friends || [];
+                if(!targetUserFriendsList.includes(currentUser.uid)) {
+                    targetUserFriendsList.push(currentUser.uid);
+                    await setDoc(doc(db, "users", friendUid), { friends: targetUserFriendsList }, { merge: true });
+                }
+
+                document.getElementById('friend-username-input').value = "";
+                alert("Friend added successfully!");
+                loadFriendsSidebarList();
+            } catch(err) { alert("Error adding friend: " + err.message); }
         });
+
+        async function loadFriendsSidebarList() {
+            friendsListElement.innerHTML = "";
+            const currentFriendsUids = userDataRecord.friends || [];
+
+            for(let fUid of currentFriendsUids) {
+                const fDocRef = doc(db, "users", fUid);
+                const fDocSnap = await getDoc(fDocRef);
+
+                if(fDocSnap.exists()) {
+                    const friendData = fDocSnap.data();
+                    const item = document.createElement('div');
+                    item.className = 'friend-item';
+                    item.innerHTML = `
+                        <img src="${friendData.photoURL}" alt="User Profile Image">
+                        <div class="info">
+                            <h4>${friendData.fullName}</h4>
+                            <p>@${friendData.username}</p>
+                        </div>
+                    `;
+                    item.addEventListener('click', () => openChatWindow(friendData));
+                    friendsListElement.appendChild(item);
+                }
+            }
+        }
+
+        // ---------------- REALTIME LIVE CHAT ENGINE ----------------
+        function openChatWindow(friendData) {
+            activeChatFriendUid = friendData.uid;
+            document.getElementById('no-chat-fallback').style.display = 'none';
+            document.getElementById('active-chat-window').style.display = 'flex';
+            document.getElementById('chat-with-heading').innerText = `${friendData.fullName} (@${friendData.username})`;
+
+            // Highlighting active contact item inside the sidebar layout view list panel row 
+            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
+            
+            // Build absolute uniquely isolated string signature channel room key ID between users 
+            const channelRoomId = currentUser.uid < friendData.uid ? 
+                `${currentUser.uid}_${friendData.uid}` : `${friendData.uid}_${currentUser.uid}`;
+
+            if(unsubscribeChatListener) unsubscribeChatListener();
+
+            const chatQuery = query(collection(db, "messages", channelRoomId, "records"), orderBy("timestamp", "asc"));
+            
+            unsubscribeChatListener = onSnapshot(chatQuery, (snapshot) => {
+                messagesBox.innerHTML = "";
+                snapshot.forEach((doc) => {
+                    const msgData = doc.data();
+                    const bubble = document.createElement('div');
+                    bubble.className = `msg ${msgData.senderId === currentUser.uid ? 'sent' : 'received'}`;
+                    bubble.innerText = msgData.text;
+                    messagesBox.appendChild(bubble);
+                });
+                messagesBox.scrollTop = messagesBox.scrollHeight;
+            });
+        }
+
+        sendMsgBtn.addEventListener('click', sendTextMessagePayload);
+        messageInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendTextMessagePayload(); });
+
+        async function sendTextMessagePayload() {
+            const rawTextContent = messageInput.value.trim();
+            if(!rawTextContent || !activeChatFriendUid) return;
+
+            const channelRoomId = currentUser.uid < activeChatFriendUid ? 
+                `${currentUser.uid}_${activeChatFriendUid}` : `${activeChatFriendUid}_${currentUser.uid}`;
+
+            const messagePayload = {
+                senderId: currentUser.uid,
+                text: rawTextContent,
+                timestamp: new Date().getTime()
+            };
+
+            messageInput.value = "";
+            await addDoc(collection(db, "messages", channelRoomId, "records"), messagePayload);
+        }
+
+        logoutBtn.addEventListener('click', () => { if(unsubscribeChatListener) unsubscribeChatListener(); signOut(auth); });
     </script>
 </body>
 </html>
