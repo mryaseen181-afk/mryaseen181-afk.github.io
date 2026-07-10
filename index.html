@@ -19,6 +19,15 @@
             --header-bg: #f1f5f9;
             --accent-purple: #475569;
             --accent-glow: linear-gradient(135deg, #64748b 0%, #334155 100%);
+            
+            /* Dynamic UI Scaling Variables controlled by Device Picker */
+            --workspace-max-width: 1200px;
+            --workspace-height: 90vh;
+            --sidebar-width: 320px;
+            --border-radius-workspace: 24px;
+            --body-padding: 20px;
+            --floating-input-width: 92%;
+            --floating-input-bottom: 20px;
         }
 
         [data-theme="light"] {
@@ -37,6 +46,28 @@
             --accent-glow: linear-gradient(135deg, #64748b 0%, #334155 100%);
         }
 
+        /* FORCE MOBILE UI OVERRIDES (Triggered via picker/settings) */
+        [data-device="mobile"] {
+            --workspace-max-width: 100% !important;
+            --workspace-height: 100vh !important;
+            --sidebar-width: 100% !important;
+            --border-radius-workspace: 0px !important;
+            --body-padding: 0px !important;
+            --floating-input-width: 94% !important;
+            --floating-input-bottom: 12px !important;
+        }
+        [data-device="mobile"] .sidebar { width: 100% !important; }
+        [data-device="mobile"] .chat-area { width: 100% !important; }
+        [data-device="mobile"] .back-arrow { display: block !important; }
+        [data-device="mobile"] .msg { max-width: 85% !important; }
+        [data-device="mobile"] body { padding: 0 !important; align-items: stretch !important; }
+        [data-device="mobile"] .dashboard-layout { border-radius: 0 !important; border: none !important; }
+        
+        /* Layout toggle states inside mobile mode overrides */
+        [data-device="mobile"] .dashboard-layout:not(.chat-active) .chat-area { display: none !important; }
+        [data-device="mobile"] .dashboard-layout.chat-active .sidebar { display: none !important; }
+        [data-device="mobile"] .dashboard-layout.chat-active .chat-area { display: flex !important; }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -54,9 +85,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: var(--body-padding);
             color: var(--text-color);
             overflow: hidden;
+            transition: padding 0.2s ease;
         }
 
         .brand-header {
@@ -67,16 +99,8 @@
             background: rgba(0, 0, 0, 0.02);
             border-bottom: 1px solid var(--border-color);
         }
-        .brand-logo {
-            width: 32px;
-            height: 32px;
-        }
-        .brand-title {
-            font-size: 15px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            color: #334155;
-        }
+        .brand-logo { width: 32px; height: 32px; }
+        .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.5px; color: #334155; }
 
         .form-container {
             background: var(--card-bg);
@@ -87,29 +111,32 @@
             max-width: 420px;
             text-align: center;
             border: 1px solid var(--border-color);
+            z-index: 10;
         }
 
         .dashboard-layout {
             width: 100%;
-            max-width: 1200px;
-            height: 90vh;
+            max-width: var(--workspace-max-width);
+            height: var(--workspace-height);
             background: var(--panel-bg);
-            border-radius: 24px;
+            border-radius: var(--border-radius-workspace);
             display: flex;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
             border: 1px solid var(--border-color);
             overflow: hidden;
             position: relative;
+            transition: all 0.2s ease;
         }
 
         .sidebar {
-            width: 320px;
+            width: var(--sidebar-width);
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             z-index: 5;
             flex-shrink: 0;
+            transition: width 0.2s ease;
         }
 
         .user-bar {
@@ -136,10 +163,9 @@
 
         .settings-icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); padding: 4px; }
 
-        /* Friend System Wrapper and Predictive Suggestion Dropdown Elements */
         .friend-system { padding: 16px; border-bottom: 1px solid var(--border-color); position: relative; }
         .friend-input-group {
-            display: flex; gap: 8px; background: var(--input-bg); padding: 5px 7px; border-radius: 24px; border: 1px solid var(--border-color);
+            display: flex gap: 8px; background: var(--input-bg); padding: 5px 7px; border-radius: 24px; border: 1px solid var(--border-color);
         }
         .friend-input-group input { flex: 1; padding: 8px 12px; background: transparent; border: none; color: var(--text-color); font-size: 14px; outline: none; }
 
@@ -147,29 +173,10 @@
             padding: 0 16px; background: var(--accent-glow); color: white; border: none; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 13px;
         }
 
-        /* Clean Dropdown Suggestion Layer */
         .search-suggestions-dropdown {
-            position: absolute;
-            top: 68px;
-            left: 16px;
-            right: 16px;
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 50;
-            display: none;
+            position: absolute; top: 68px; left: 16px; right: 16px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 12px 24px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto; z-index: 50; display: none;
         }
-        .suggestion-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+        .suggestion-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; transition: background 0.2s; }
         .suggestion-item:hover { background: #f1f5f9; }
         .suggestion-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
         .suggestion-item .sug-info h5 { font-size: 13px; font-weight: 600; }
@@ -178,9 +185,7 @@
         .friends-list-container { flex: 1; overflow-y: auto; padding: 12px; }
         .friends-list-heading { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; padding-left: 10px; letter-spacing: 0.08em; }
 
-        .friend-item { 
-            display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; cursor: pointer; margin-bottom: 6px; position: relative; transition: all 0.2s;
-        }
+        .friend-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; cursor: pointer; margin-bottom: 6px; position: relative; transition: all 0.2s; }
         .friend-item:hover { background: rgba(0, 0, 0, 0.03); }
         .friend-item.active { background: #e2e8f0; border: 1px solid var(--border-color); }
         .friend-item.favorited { border-left: 4px solid #f59e0b; }
@@ -196,102 +201,44 @@
         .back-arrow { display: none; background: none; border: none; color: var(--text-color); font-size: 20px; cursor: pointer; padding-right: 4px; }
         .chat-header h3 { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .view-profile-btn {
-            background: #f1f5f9; border: 1px solid var(--border-color); color: var(--text-color); padding: 7px 16px; border-radius: 20px; font-size: 12.5px; cursor: pointer; font-weight: 600; transition: background 0.2s;
-        }
+        .view-profile-btn { background: #f1f5f9; border: 1px solid var(--border-color); color: var(--text-color); padding: 7px 16px; border-radius: 20px; font-size: 12.5px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
         .view-profile-btn:hover { background: #e2e8f0; }
 
-        .chat-header-actions {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-        }
-
-        .options-trigger {
-            background: none; border: none; color: var(--text-muted); font-size: 18px; padding: 6px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
+        .chat-header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; position: relative; }
+        .options-trigger { background: none; border: none; color: var(--text-muted); font-size: 18px; padding: 6px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .options-trigger:hover { background: rgba(0, 0, 0, 0.05); color: var(--text-color); }
 
-        .context-menu {
-            display: none; position: absolute; right: 0; top: 40px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 20; min-width: 140px; text-align: left; overflow: hidden;
-        }
-        .context-menu button {
-            width: 100%; padding: 11px 16px; background: none; border: none; color: var(--text-color); font-size: 13px; text-align: left; cursor: pointer;
-        }
+        .context-menu { display: none; position: absolute; right: 0; top: 40px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 20; min-width: 140px; text-align: left; overflow: hidden; }
+        .context-menu button { width: 100%; padding: 11px 16px; background: none; border: none; color: var(--text-color); font-size: 13px; text-align: left; cursor: pointer; }
         .context-menu button:hover { background: #f1f5f9; }
 
-        .messages-box { 
-            flex: 1; overflow-y: auto; padding: 20px 24px 110px 24px; display: flex; flex-direction: column; gap: 12px; height: 100%;
-        }
-        
+        .messages-box { flex: 1; overflow-y: auto; padding: 20px 24px 110px 24px; display: flex; flex-direction: column; gap: 12px; height: 100%; }
         .msg { max-width: 70%; padding: 10px 16px; border-radius: 18px; font-size: 14px; line-height: 1.45; word-wrap: break-word; }
-        .msg.sent { 
-            background: var(--accent-glow); 
-            color: white; 
-            align-self: flex-end; 
-            border-bottom-right-radius: 4px; 
-            box-shadow: 0 4px 14px rgba(51, 65, 85, 0.3); 
-        }
+        .msg.sent { background: var(--accent-glow); color: white; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 14px rgba(51, 65, 85, 0.3); }
         .msg.received { background: var(--msg-received-bg); color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
         .msg img { max-width: 100%; border-radius: 12px; margin-top: 8px; display: block; max-height: 200px; object-fit: cover; }
 
         .chat-input-container-floating {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 680px; background: #ffffff; border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 35px; display: flex; gap: 10px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); z-index: 10;
+            position: absolute; bottom: var(--floating-input-bottom); left: 50%; transform: translateX(-50%); width: var(--floating-input-width); max-width: 680px; background: #ffffff; border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 35px; display: flex; gap: 10px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); z-index: 10; transition: all 0.2s ease;
         }
+        .chat-input-container-floating input[type="text"] { flex: 1; padding: 10px 16px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 26px; color: var(--text-color); font-size: 14px; outline: none; min-width: 0; }
 
-        .chat-input-container-floating input[type="text"] {
-            flex: 1; padding: 10px 16px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 26px; color: var(--text-color); font-size: 14px; outline: none; min-width: 0;
-        }
-
-        .attach-btn { 
-            background: #f1f5f9; border: 1px solid var(--border-color); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0;
-        }
+        .attach-btn { background: #f1f5f9; border: 1px solid var(--border-color); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
         .attach-btn:hover { background: #e2e8f0; }
         .attach-btn svg { width: 18px; height: 18px; fill: none; stroke: #475569; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         
-        .send-btn { 
-            width: 40px; height: 40px; background: var(--accent-glow); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
+        .send-btn { width: 40px; height: 40px; background: var(--accent-glow); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .send-btn svg { width: 16px; height: 16px; fill: currentColor; margin-left: 2px; }
 
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(15, 23, 42, 0.4); 
-            backdrop-filter: blur(4px); 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 100; 
-            padding: 16px; 
-        }
-
-        .modal-content { 
-            background: var(--card-bg); 
-            padding: 30px; 
-            border-radius: 24px; 
-            border: 1px solid var(--border-color); 
-            width: 100%; 
-            max-width: 400px; 
-            text-align: center; 
-            position: relative; 
-            color: var(--text-color); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
-            max-height: 90vh; 
-            overflow-y: auto; 
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 100; padding: 16px; }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 24px; border: 1px solid var(--border-color); width: 100%; max-width: 400px; text-align: center; position: relative; color: var(--text-color); box-shadow: 0 20px 40px rgba(0,0,0,0.08); max-height: 90vh; overflow-y: auto; }
         .close-modal { position: absolute; top: 16px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; }
 
         h2 { margin-bottom: 6px; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
         .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
         .input-group { margin-bottom: 16px; text-align: left; }
         .input-group label { display: block; color: var(--text-color); font-size: 13px; margin-bottom: 6px; font-weight: 600; padding-left: 2px; }
-        .input-group input { width: 100%; padding: 11px 14px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; background-color: var(--input-bg); color: var(--text-color); outline: none; }
+        .input-group input, .input-group select { width: 100%; padding: 11px 14px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; background-color: var(--input-bg); color: var(--text-color); outline: none; }
         
         .main-btn { width: 100%; padding: 12px; background: var(--accent-glow); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 6px; }
         .secondary-btn { width: 100%; padding: 12px; background: transparent; color: var(--text-color); border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; }
@@ -303,16 +250,23 @@
         #loading-screen { color: #334155; font-size: 18px; font-weight: 600; }
         .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: var(--text-muted); font-size: 14px; padding: 20px; text-align: center; }
 
-        @media (max-width: 900px) {
-            body { padding: 12px; }
-            .dashboard-layout { height: 92vh; }
-            .sidebar { width: 280px; }
-        }
+        .device-option-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+        .device-card { padding: 20px; border: 2px solid var(--border-color); border-radius: 16px; cursor: pointer; transition: all 0.2s; background: var(--input-bg); }
+        .device-card:hover { border-color: #64748b; }
+        .device-card.selected { border-color: #334155; background: #e2e8f0; font-weight: bold; }
+        .device-card span { display: block; font-size: 28px; margin-bottom: 6px; }
 
+        /* Legacy screen Fallbacks managed via conditional variable sets */
+        @media (max-width: 900px) {
+            body:not([data-device="mobile"]) { padding: 12px; }
+            body:not([data-device="mobile"]) .dashboard-layout { height: 92vh; }
+            body:not([data-device="mobile"]) .sidebar { width: 280px; }
+        }
         @media (max-width: 640px) {
+            /* Standard viewport behavior forces layout engine to act like mobile setup rules */
             body { padding: 0; align-items: stretch; }
-            .dashboard-layout { height: 100vh; border-radius: 0; border: none; }
-            .sidebar { width: 100%; flex: 1; }
+            .dashboard-layout { height: 100vh; border-radius: 0; border: none; max-width: 100%; }
+            .sidebar { width: 100%; }
             .chat-area { display: none; width: 100%; }
             .dashboard-layout.chat-active .sidebar { display: none; }
             .dashboard-layout.chat-active .chat-area { display: flex; }
@@ -325,6 +279,21 @@
 <body>
 
     <div id="loading-screen">Syncing responsive node engine...</div>
+
+    <div id="device-picker-container" class="form-container" style="display: none;">
+        <h2>Select Interface View</h2>
+        <p class="subtitle">Choose your workspace display configuration</p>
+        <div class="device-option-cards">
+            <div class="device-card" onclick="selectInitialDeviceView('desktop')">
+                <span>💻</span>
+                Desktop (Standard)
+            </div>
+            <div class="device-card" onclick="selectInitialDeviceView('mobile')">
+                <span>📱</span>
+                Mobile (Compact)
+            </div>
+        </div>
+    </div>
 
     <div id="login-container" class="form-container" style="display: none;">
         <h2>Welcome Back</h2>
@@ -452,6 +421,15 @@
                 <label>Theme Display Mode</label>
                 <button class="main-btn" id="theme-toggle-btn" onclick="toggleThemeInterface()" style="background:#4b5563;">Switch to Light Mode</button>
             </div>
+            
+            <div class="input-group">
+                <label for="settings-device-select">Interface Display Profile</label>
+                <select id="settings-device-select" onchange="applyDeviceLayoutMode(this.value)">
+                    <option value="desktop">Desktop Layout (Expanded)</option>
+                    <option value="mobile">Mobile Layout (Compact Layout Forced)</option>
+                </select>
+            </div>
+
             <div class="input-group">
                 <label>Full Name</label>
                 <input type="text" id="settings-fullname-input">
@@ -506,6 +484,7 @@
         const loginContainer = document.getElementById('login-container');
         const profileSetupContainer = document.getElementById('profile-setup-container');
         const dashboardContainer = document.getElementById('dashboard-container');
+        const devicePickerContainer = document.getElementById('device-picker-container');
         
         const googleLoginBtn = document.getElementById('google-login-btn');
         const newAccountBtn = document.getElementById('new-account-btn');
@@ -528,15 +507,38 @@
         let activeChatFriendData = null;
         let unsubscribeChatListener = null;
         let currentThemeMode = "dark";
+        let chosenDeviceProfile = "desktop";
 
         let blockedUsersList = [];
         let favoriteUsersList = [];
+
+        // NEW JAVASCRIPT LOGIC: APP DEVICE VIEW CONFIGURATOR
+        window.applyDeviceLayoutMode = function(deviceType) {
+            chosenDeviceProfile = deviceType;
+            localStorage.setItem('hub_selected_device', deviceType);
+            
+            if(deviceType === "mobile") {
+                document.body.setAttribute('data-device', 'mobile');
+            } else {
+                document.body.removeAttribute('data-device');
+            }
+            
+            const settingsSelect = document.getElementById('settings-device-select');
+            if(settingsSelect) settingsSelect.value = deviceType;
+        }
+
+        window.selectInitialDeviceView = function(deviceType) {
+            window.applyDeviceLayoutMode(deviceType);
+            devicePickerContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+        }
 
         window.openSettingsModal = function() {
             document.getElementById('settings-avatar-preview').src = userDataRecord.photoURL;
             document.getElementById('settings-fullname-input').value = userDataRecord.fullName;
             document.getElementById('settings-username-input').value = userDataRecord.username;
             document.getElementById('settings-phone-input').value = userDataRecord.phone || "";
+            document.getElementById('settings-device-select').value = chosenDeviceProfile;
             document.getElementById('settings-modal').style.display = 'flex';
         }
         window.closeSettingsModal = function() { document.getElementById('settings-modal').style.display = 'none'; }
@@ -561,7 +563,6 @@
             menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         }
 
-        // Global Layout Listener to close both contextual windows and suggestion engines safely
         document.addEventListener('click', (e) => {
             const menu = document.getElementById('header-active-context');
             if(menu) menu.style.display = 'none';
@@ -605,7 +606,6 @@
             loadFriendsSidebarList();
         }
 
-        // Live Real-Time Prefix Predictive Query Parser
         friendUsernameInput.addEventListener('input', async () => {
             const val = friendUsernameInput.value.trim().toLowerCase();
             if(val.length < 1) {
@@ -615,7 +615,6 @@
             }
 
             try {
-                // Query users starting with standard input prefix strings up to high-range unicode boundaries
                 const q = query(
                     collection(db, "users"), 
                     orderBy("username"), 
@@ -629,7 +628,6 @@
 
                 snap.forEach((doc) => {
                     const uData = doc.data();
-                    // Don't recommend ourselves or profiles already in friends array lists
                     if(uData.uid !== currentUser.uid && count < 5) {
                         const div = document.createElement('div');
                         div.className = 'suggestion-item';
@@ -714,6 +712,12 @@
         });
 
         onAuthStateChanged(auth, async (user) => {
+            // Check cache storage for any persistent configuration choices
+            const savedDeviceMode = localStorage.getItem('hub_selected_device');
+            if(savedDeviceMode) {
+                window.applyDeviceLayoutMode(savedDeviceMode);
+            }
+
             if (user) {
                 currentUser = user;
                 try {
@@ -726,9 +730,16 @@
                 } catch(e) { loadingScreen.style.display = 'none'; showProfileSetup(user); }
             } else {
                 loadingScreen.style.display = 'none';
-                loginContainer.style.display = 'block';
                 profileSetupContainer.style.display = 'none';
                 dashboardContainer.style.display = 'none';
+                
+                // If a selection hasn't been cached yet, intercept the login window display loop
+                if(!savedDeviceMode) {
+                    devicePickerContainer.style.display = 'block';
+                    loginContainer.style.display = 'none';
+                } else {
+                    loginContainer.style.display = 'block';
+                }
             }
         });
 
@@ -771,6 +782,7 @@
         function launchDashboard(data) {
             profileSetupContainer.style.display = 'none';
             loginContainer.style.display = 'none';
+            devicePickerContainer.style.display = 'none';
             dashboardContainer.style.display = 'flex';
             
             document.getElementById('dash-avatar').src = data.photoURL;
