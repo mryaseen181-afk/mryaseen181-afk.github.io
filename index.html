@@ -43,10 +43,6 @@
             font-family: 'Inter', system-ui, sans-serif;
         }
 
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 20px; }
-
         body {
             background: var(--bg-gradient);
             min-height: 100vh;
@@ -126,7 +122,6 @@
             padding: 6px 10px; border-radius: 14px; font-weight: 600; cursor: pointer;
         }
 
-        /* Dynamic WhatsApp Status Bar (Hidden unless items exist) */
         .whatsapp-status-tray {
             display: none;
             gap: 14px;
@@ -152,57 +147,40 @@
             justify-content: center;
             align-items: center;
         }
-        .status-avatar-wrap img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .status-item span {
-            font-size: 10.5px;
-            color: var(--text-color);
-            margin-top: 4px;
-            max-width: 58px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-align: center;
-        }
+        .status-avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .status-item span { font-size: 10.5px; margin-top: 4px; max-width: 58px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .friend-system { padding: 12px 16px; border-bottom: 1px solid var(--border-color); position: relative; }
-        .friend-input-group {
-            display: flex; gap: 8px; background: var(--input-bg); padding: 4px 6px; border-radius: 24px; border: 1px solid var(--border-color);
-        }
+        .friend-system { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
+        .friend-input-group { display: flex; gap: 8px; background: var(--input-bg); padding: 4px 6px; border-radius: 24px; border: 1px solid var(--border-color); }
         .friend-input-group input { flex: 1; padding: 6px 10px; background: transparent; border: none; color: var(--text-color); font-size: 13.5px; outline: none; }
         .friend-btn { padding: 0 14px; background: var(--accent-glow); color: white; border: none; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 12.5px; }
 
         .friends-list-container { flex: 1; overflow-y: auto; padding: 10px; }
-        .friends-list-heading { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; padding-left: 8px; letter-spacing: 0.08em; }
+        .friends-list-heading { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; padding-left: 8px; }
         
-        .friend-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 14px; cursor: pointer; margin-bottom: 4px; border: 1px solid transparent; transition: all 0.2s; }
+        .friend-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 14px; cursor: pointer; margin-bottom: 4px; transition: all 0.2s; }
         .friend-item:hover { background: rgba(0, 0, 0, 0.02); }
         .friend-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .friend-item .info { flex: 1; min-width: 0; }
         .friend-item .info h4 { font-size: 13.5px; font-weight: 600; }
-        .friend-item .info p { font-size: 11.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .friend-item .info p { font-size: 11.5px; color: var(--text-muted); }
 
         .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); position: relative; min-width: 0; }
-        .chat-header { padding: 16px 20px; background: rgba(0, 0, 0, 0.01); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; }
+        .chat-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; }
         .chat-header-meta { display: flex; flex-direction: column; }
         .typing-indicator-span { font-size: 11px; color: #10b981; font-weight: 600; display: none; }
         
         .back-arrow { display: none; background: none; border: none; font-size: 20px; cursor: pointer; }
-        .view-profile-btn { background: #f1f5f9; border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: 600; }
 
         .messages-box { flex: 1; overflow-y: auto; padding: 20px 24px 110px 24px; display: flex; flex-direction: column; gap: 14px; }
         
-        .msg { max-width: 70%; padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.45; position: relative; }
+        .msg { max-width: 70%; padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.45; }
         .msg.sent { background: var(--accent-glow); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
         .msg.received { background: var(--msg-received-bg); color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
-        
+        .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; display: block; max-height: 200px; object-fit: cover; }
+        .msg audio { display: block; margin-top: 5px; max-width: 100%; }
+        .msg.sent audio { filter: invert(1) hue-rotate(180deg); }
+
         .msg-meta-row { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 4px; font-size: 10px; opacity: 0.75; }
-        .msg.sent .msg-meta-row { color: #e2e8f0; }
-        .msg.received .msg-meta-row { color: var(--text-muted); }
         .whatsapp-status-ticks { font-size: 11px; color: #38bdf8; }
 
         .chat-input-container-floating {
@@ -212,6 +190,10 @@
         
         .attach-btn, .mic-btn { background: #f1f5f9; border: 1px solid var(--border-color); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .attach-btn svg, .mic-btn svg { width: 16px; height: 16px; fill: none; stroke: #475569; stroke-width: 2; }
+        .mic-btn.recording { background: #ef4444; border-color: #ef4444; animation: pulseRecord 1.5s infinite; }
+        .mic-btn.recording svg { stroke: #ffffff; }
+
+        @keyframes pulseRecord { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
         .send-btn { width: 38px; height: 38px; background: var(--accent-glow); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .send-btn svg { width: 14px; height: 14px; fill: currentColor; }
 
@@ -228,20 +210,17 @@
         
         .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: var(--text-muted); font-size: 13.5px; }
 
-        /* Status Viewer High Quality Display */
         #status-viewer-modal .modal-content { max-width: 500px; background: #000; color: #fff; }
         #status-media-container { width: 100%; min-height: 300px; display: flex; justify-content: center; align-items: center; margin-top: 15px; }
         #status-viewer-img, #status-viewer-video { width: 100%; max-height: 500px; object-fit: contain; border-radius: 8px; }
 
         @media (max-width: 640px) {
-            body { padding: 0; }
             .dashboard-layout { height: 100vh; border-radius: 0; border: none; }
             .sidebar { width: 100%; }
             .chat-area { display: none; }
             .dashboard-layout.chat-active .sidebar { display: none; }
             .dashboard-layout.chat-active .chat-area { display: flex; }
             .back-arrow { display: block; }
-            .chat-input-container-floating { width: 94%; bottom: 12px; }
         }
     </style>
 </head>
@@ -252,21 +231,11 @@
     <div id="login-container" class="form-container" style="display: none;">
         <h2>Welcome Back</h2>
         <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;">Enter the UniqueChatHub workspace</p>
-        <div class="input-group">
-            <label>Email Address</label>
-            <input type="email" id="login-email" placeholder="you@example.com">
-        </div>
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" id="login-password" placeholder="••••••••">
-        </div>
-        <button id="email-login-btn" class="main-btn">Sign In</button>
-        <div style="margin:12px 0; color:var(--text-muted); font-size:12px;">or</div>
-        <button id="google-login-btn" class="google-btn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:16px; height:16px;">
+        <button id="google-login-btn" class="google-btn" style="width: 100%; margin-bottom: 10px;">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:16px; height:16px; margin-right: 8px;">
             Sign in with Google
         </button>
-        <button id="new-account-btn" class="secondary-btn">✨ Create a New Account</button>
+        <button id="logout-test-btn" class="secondary-btn">Reset Auth Session</button>
     </div>
 
     <div id="profile-setup-container" class="form-container" style="display: none;">
@@ -287,16 +256,12 @@
     <div id="dashboard-container" class="dashboard-layout" style="display: none;">
         <div class="sidebar">
             <div class="brand-header">
-                <svg class="brand-logo" viewBox="0 0 32 32">
-                    <circle cx="16" cy="16" r="14" fill="#64748b" opacity="0.15"/>
-                    <path d="M16 4C9.37 4 4 9.37 4 16c0 2.61.84 5.03 2.25 7L5 27l4.13-1.16c1.81.75 3.8 1.16 5.87 1.16 6.63 0 12-5.37 12-12S22.63 4 16 4zm-2 15l-4-4 1.41-1.41L14 16.17l5.59-5.59L21 12l-7 7z" fill="#475569"/>
-                </svg>
                 <span class="brand-title">UNIQUECHATHUB</span>
             </div>
 
             <div class="user-bar">
-                <img id="dash-avatar" src="" onclick="openSettingsModal()">
-                <div class="user-details" onclick="openSettingsModal()">
+                <img id="dash-avatar" src="">
+                <div class="user-details">
                     <h3 id="dash-display-name">Loading...</h3>
                     <p id="dash-username"></p>
                 </div>
@@ -308,7 +273,7 @@
 
             <div class="friend-system">
                 <div class="friend-input-group">
-                    <input type="text" id="friend-username-input" placeholder="Add friend by username..." autocomplete="off">
+                    <input type="text" id="friend-username-input" placeholder="Add friend by username...">
                     <button id="add-friend-btn" class="friend-btn">Add</button>
                 </div>
             </div>
@@ -332,6 +297,18 @@
                 <div id="messages-box" class="messages-box"></div>
                 
                 <div class="chat-input-container-floating">
+                    <label for="chat-image-input" class="attach-btn">
+                        <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                    </label>
+                    <input type="file" id="chat-image-input" accept="image/*" style="display: none;">
+                    
+                    <button id="voice-record-btn" class="mic-btn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 1c-1.66 0-3 1.34-3 3v8c0 1.66 1.34 3 3 3s3-1.34 3-3V4c0-1.66-1.34-3-3-3z"/>
+                            <path d="M19 10v1c0 3.53-2.61 6.44-6 6.93V21h-2v-3.07c-3.39-.49-6-3.4-6-6.93v-1h2v1c0 2.76 2.24 5 5 5s5-2.24 5-5v-1h2z"/>
+                        </svg>
+                    </button>
+
                     <input type="text" id="message-input" placeholder="Type a message...">
                     <button id="send-msg-btn" class="send-btn">
                         <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -384,6 +361,8 @@
         const chatTypingIndicator = document.getElementById('chat-typing-indicator');
         const statusTray = document.getElementById('status-tray');
         const statusFileInput = document.getElementById('status-file-input');
+        const chatImageInput = document.getElementById('chat-image-input');
+        const voiceRecordBtn = document.getElementById('voice-record-btn');
 
         let currentUser = null;
         let userDataRecord = null;
@@ -391,6 +370,14 @@
         let unsubscribeChatListener = null;
         let unsubscribeTypingListener = null;
         let activeStatusDatabase = {}; 
+        let mediaRecorder = null;
+        let audioChunks = [];
+
+        // Corrected Google Sign-in Handler
+        document.getElementById('google-login-btn').addEventListener('click', () => { 
+            signInWithPopup(auth, provider).catch(err => alert("Sign-in issue: " + err.message)); 
+        });
+        document.getElementById('logout-test-btn').addEventListener('click', () => { signOut(auth); });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -405,11 +392,9 @@
                 loadingScreen.style.display = 'none';
                 loginContainer.style.display = 'block';
                 dashboardContainer.style.display = 'none';
+                profileSetupContainer.style.display = 'none';
             }
         });
-
-        document.getElementById('google-login-btn').addEventListener('click', () => { signInWithPopup(auth, provider); });
-        document.getElementById('new-account-btn').addEventListener('click', () => { signOut(auth); });
 
         function showProfileSetup(user) {
             loginContainer.style.display = 'none';
@@ -434,26 +419,19 @@
             document.getElementById('dash-display-name').innerText = data.fullName;
             document.getElementById('dash-username').innerText = "@" + data.username;
             
-            // Listen to Global Hub Status Matrix Nodes
             onSnapshot(collection(db, "statuses"), (snapshot) => {
                 activeStatusDatabase = {};
-                snapshot.forEach(doc => {
-                    activeStatusDatabase[doc.id] = doc.data();
-                });
+                snapshot.forEach(doc => { activeStatusDatabase[doc.id] = doc.data(); });
                 loadFriendsSidebarList();
             });
         }
 
-        // WhatsApp Custom Media Pipeline Handler Hook
+        // Status Handler Pipeline
         statusFileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
-            // Generate an isolated, original-quality native browser link reference
             const mediaUrlReference = URL.createObjectURL(file);
             const isVideo = file.type.startsWith('video/');
-
-            // Update real-time Firestore layer pointing to the local blob memory allocation mapping
             setDoc(doc(db, "statuses", currentUser.uid), {
                 uid: currentUser.uid,
                 fullName: userDataRecord.fullName,
@@ -464,14 +442,61 @@
             });
         });
 
+        // Fixed File Sending Pipeline
+        chatImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const fileUrl = URL.createObjectURL(file);
+            sendCustomPayload("image", fileUrl);
+        });
+
+        // Fixed Voice Recording Engine Pipeline
+        voiceRecordBtn.addEventListener('click', async () => {
+            if (!mediaRecorder) {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert("Audio recording layers are not supported on this hardware configuration.");
+                    return;
+                }
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        sendCustomPayload("voice", audioUrl);
+                        stream.getTracks().forEach(track => track.stop());
+                        mediaRecorder = null;
+                        voiceRecordBtn.classList.remove('recording');
+                    };
+                    mediaRecorder.start();
+                    voiceRecordBtn.classList.add('recording');
+                } catch (err) { alert("Mic initialization failed: " + err.message); }
+            } else {
+                mediaRecorder.stop();
+            }
+        });
+
+        async function sendCustomPayload(type, mediaLink) {
+            if (!activeChatFriendData) return;
+            const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
+            await addDoc(collection(db, "messages", roomKey, "records"), {
+                senderId: currentUser.uid,
+                text: type === "text" ? messageInput.value.trim() : "",
+                type: type,
+                mediaUrl: mediaLink || "",
+                timestamp: Date.now()
+            });
+            messageInput.value = "";
+        }
+
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
             statusTray.innerHTML = "";
             let hasAnyVisibleStatus = false;
-
             const uids = userDataRecord.friends || [];
 
-            // Render local user status if active
             if (activeStatusDatabase[currentUser.uid]) {
                 createStatusTrayIcon(activeStatusDatabase[currentUser.uid]);
                 hasAnyVisibleStatus = true;
@@ -481,55 +506,35 @@
                 const fSnap = await getDoc(doc(db, "users", fUid));
                 if(fSnap.exists()) {
                     const fData = fSnap.data();
-
-                    // CONDITIONAL RENDERING: Render in the status tray ONLY if an active status exists
                     if (activeStatusDatabase[fUid]) {
                         createStatusTrayIcon(activeStatusDatabase[fUid]);
                         hasAnyVisibleStatus = true;
                     }
-
                     const item = document.createElement('div');
                     item.className = 'friend-item';
-                    item.innerHTML = `
-                        <img src="${fData.photoURL}">
-                        <div class="info">
-                            <h4>${fData.fullName}</h4>
-                            <p>@${fData.username}</p>
-                        </div>
-                    `;
+                    item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName}</h4><p>@${fData.username}</p></div>`;
                     item.addEventListener('click', () => openChatWindow(fData));
                     friendsListElement.appendChild(item);
                 }
             }
-
-            // Toggle visibility of the tray container based on content presence
             statusTray.style.display = hasAnyVisibleStatus ? 'flex' : 'none';
         }
 
         function createStatusTrayIcon(statusData) {
             const wrap = document.createElement('div');
             wrap.className = 'status-item';
-            wrap.innerHTML = `
-                <div class="status-avatar-wrap"><img src="${statusData.photoURL}"></div>
-                <span>${statusData.uid === currentUser.uid ? 'My Status' : statusData.fullName}</span>
-            `;
+            wrap.innerHTML = `<div class="status-avatar-wrap"><img src="${statusData.photoURL}"></div><span>${statusData.uid === currentUser.uid ? 'My Status' : statusData.fullName}</span>`;
             wrap.addEventListener('click', () => {
                 document.getElementById('status-author-name').innerText = statusData.fullName;
                 const imgEl = document.getElementById('status-viewer-img');
                 const vidEl = document.getElementById('status-viewer-video');
-
-                imgEl.style.display = 'none';
-                vidEl.style.display = 'none';
-                vidEl.pause();
+                imgEl.style.display = 'none'; vidEl.style.display = 'none'; vidEl.pause();
 
                 if (statusData.type === 'video') {
-                    vidEl.src = statusData.mediaUrl;
-                    vidEl.style.display = 'block';
+                    vidEl.src = statusData.mediaUrl; vidEl.style.display = 'block';
                 } else {
-                    imgEl.src = statusData.mediaUrl;
-                    imgEl.style.display = 'block';
+                    imgEl.src = statusData.mediaUrl; imgEl.style.display = 'block';
                 }
-
                 document.getElementById('status-viewer-modal').style.display = 'flex';
             });
             statusTray.appendChild(wrap);
@@ -553,11 +558,8 @@
             if(unsubscribeTypingListener) unsubscribeTypingListener();
 
             unsubscribeTypingListener = onSnapshot(doc(db, "typingStatus", roomKey), (docSnap) => {
-                if(docSnap.exists() && docSnap.data()[friendData.uid]) {
-                    chatTypingIndicator.style.display = 'block';
-                } else {
-                    chatTypingIndicator.style.display = 'none';
-                }
+                if(docSnap.exists() && docSnap.data()[friendData.uid]) { chatTypingIndicator.style.display = 'block'; } 
+                else { chatTypingIndicator.style.display = 'none'; }
             });
 
             unsubscribeChatListener = onSnapshot(query(collection(db, "messages", roomKey, "records"), orderBy("timestamp", "asc")), (snapshot) => {
@@ -568,8 +570,17 @@
                     const isSent = msg.senderId === currentUser.uid;
                     bubble.className = `msg ${isSent ? 'sent' : 'received'}`;
                     
+                    let innerTemplate = "";
+                    if (msg.type === "image") {
+                        innerTemplate = `<img src="${msg.mediaUrl}">`;
+                    } else if (msg.type === "voice") {
+                        innerTemplate = `<audio src="${msg.mediaUrl}" controls></audio>`;
+                    } else {
+                        innerTemplate = `<p>${msg.text}</p>`;
+                    }
+
                     bubble.innerHTML = `
-                        <p>${msg.text}</p>
+                        ${innerTemplate}
                         <div class="msg-meta-row">
                             <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                             ${isSent ? '<span class="whatsapp-status-ticks">✓✓</span>' : ''}
@@ -585,26 +596,13 @@
             if(!activeChatFriendData) return;
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
             setDoc(doc(db, "typingStatus", roomKey), { [currentUser.uid]: true }, { merge: true });
-            
             clearTimeout(window.typingTimeoutEvent);
             window.typingTimeoutEvent = setTimeout(() => {
                 setDoc(doc(db, "typingStatus", roomKey), { [currentUser.uid]: false }, { merge: true });
             }, 2000);
         });
 
-        document.getElementById('send-msg-btn').addEventListener('click', async () => {
-            const text = messageInput.value.trim();
-            if(!text || !activeChatFriendData) return;
-            const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
-            
-            await addDoc(collection(db, "messages", roomKey, "records"), {
-                senderId: currentUser.uid,
-                text: text,
-                timestamp: Date.now()
-            });
-            messageInput.value = "";
-        });
-
+        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload("text", null));
         document.getElementById('add-friend-btn').addEventListener('click', async () => {
             const inputVal = document.getElementById('friend-username-input').value.trim().toLowerCase();
             const snap = await getDocs(query(collection(db, "users"), where("username", "==", inputVal)));
