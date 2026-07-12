@@ -84,7 +84,7 @@
         }
 
         .nav-brand { font-weight: 900; font-size: 24px; cursor: pointer; letter-spacing: -1px; color: var(--text-color); }
-        .nav-links { display: flex; gap: 28px; align-items: center; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
         .nav-item { cursor: pointer; font-weight: 600; font-size: 14px; background: none; border: none; color: var(--text-muted); transition: color 0.2s; }
         .nav-item:hover, .nav-item.active { color: var(--accent-glow); }
 
@@ -140,10 +140,10 @@
         .friend-item .info h4 { font-size: 14px; font-weight: 600; color: var(--text-color); display: flex; align-items: center; gap: 4px; }
         .friend-item .info p { font-size: 12px; color: var(--text-muted); }
 
-        .chat-area, .feed-area, .search-tab-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
-        .feed-area, .search-tab-area { display: none; overflow-y: auto; padding: 28px; }
+        .chat-area, .feed-area, .search-tab-area, .camera-area, .myspace-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
+        .feed-area, .search-tab-area, .camera-area, .myspace-area { display: none; overflow-y: auto; padding: 28px; }
         
-        /* Structured Search Hub Workspace Columns */
+        /* Search Hub Workspace Columns */
         .search-pane-header { max-width: 700px; width: 100%; margin: 0 auto 24px auto; position: relative; }
         .search-input-box { width: 100%; padding: 14px 20px; border-radius: 16px; border: 1px solid var(--border-color); font-size: 15px; outline: none; background: var(--bg-card); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         
@@ -155,6 +155,16 @@
         .suggestion-list-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
 
         .search-section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
+
+        /* Camera Tab Components */
+        .camera-container { max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 16px; background: var(--bg-card); padding: 24px; border-radius: 24px; border: 1px solid var(--border-color); }
+        .camera-view-window { width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 16px; overflow: hidden; transform: scaleX(-1); }
+        .camera-view-window video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* My Space Grid Components */
+        .myspace-container { max-width: 700px; width: 100%; margin: 0 auto; }
+        .myspace-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+        .myspace-img-card { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
 
         .chat-header { height: 68px; padding: 0 28px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; background: var(--bg-card); }
         .chat-header h3 { font-size: 16px; font-weight: 700; color: var(--text-color); }
@@ -210,7 +220,6 @@
         .comment-input-row input { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 13px; outline: none; }
         .friend-btn { background: none; border: none; color: var(--accent-glow); font-weight: 700; cursor: pointer; font-size: 14px; }
 
-        /* Professional Aesthetic Elevation Buttons */
         .aesthetic-follow-btn {
             background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
             border: 1px solid #cbd5e1;
@@ -221,7 +230,6 @@
         .aesthetic-follow-btn.unfollow-btn { border-color: #fca5a5; color: var(--accent-rose); background: #fff5f5; }
         .aesthetic-follow-btn.unfollow-btn:hover { background: #fee2e2; border-color: #f87171; }
 
-        /* Fine-textured High Fidelity Starburst Badge */
         .verified-badge-texture-star {
             width: 15px; height: 15px; fill: var(--verified-color); display: inline-block; vertical-align: middle; flex-shrink: 0;
         }
@@ -236,7 +244,6 @@
         .input-group input, .input-group textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; background: var(--bg-secondary); color: var(--text-color); outline: none; }
         .input-group textarea { height: 60px; resize: none; }
         
-        /* Master Elevation Form Actions */
         .main-btn {
             width: 100%; padding: 14px; background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
             color: #fff; border: 1px solid #0284c7; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 4px rgba(2,132,199,0.2); transition: transform 0.1s, opacity 0.2s;
@@ -312,6 +319,8 @@
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
                 <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
                 <button id="nav-btn-search" class="nav-item" onclick="switchTab('search')">Search Hub</button>
+                <button id="nav-btn-camera" class="nav-item" onclick="switchTab('camera')">Camera</button>
+                <button id="nav-btn-myspace" class="nav-item" onclick="switchTab('myspace')">My Space</button>
                 <button onclick="triggerLogoutSession()" class="nav-item" style="color: var(--accent-rose);">Logout</button>
             </div>
         </div>
@@ -405,6 +414,25 @@
                     </div>
                 </div>
             </div>
+
+            <div class="camera-area" id="app-camera-pane">
+                <div class="camera-container">
+                    <div class="search-section-title" style="width:100%; border:none; margin:0;">Live Lens Frame</div>
+                    <div class="camera-view-window">
+                        <video id="webcam-stream-preview" autoplay playsinline></video>
+                    </div>
+                    <button class="main-btn" id="camera-snapshot-trigger-btn">Capture Snapshot</button>
+                    <canvas id="camera-hidden-canvas" style="display:none;"></canvas>
+                </div>
+            </div>
+
+            <div class="myspace-area" id="app-myspace-pane">
+                <div class="myspace-container">
+                    <div class="search-section-title" style="border:none; margin:0;">My Space Storage Vault</div>
+                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Private photo vault encrypted to your unique profile key record.</p>
+                    <div id="myspace-vault-grid" class="myspace-grid"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -425,13 +453,11 @@
                 <label>Description / Bio</label>
                 <textarea id="settings-description-input" placeholder="Tell us about yourself..."></textarea>
             </div>
-            
             <div class="input-group" style="border-top: 1px solid var(--border-color); padding-top: 14px;">
                 <label style="color: var(--accent-glow);">Verify Identity (Request Badge)</label>
                 <input type="file" id="settings-id-card-input" accept="image/*">
                 <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Upload an image file of your ID card for review.</p>
             </div>
-            
             <button class="main-btn" onclick="saveSettingsChanges()">Save Changes</button>
         </div>
     </div>
@@ -519,6 +545,7 @@
         const hubSearchBar = document.getElementById('hub-main-search-bar');
         const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
         const identityCardInput = document.getElementById('settings-id-card-input');
+        const videoElement = document.getElementById('webcam-stream-preview');
 
         let currentUser = null;
         let userDataRecord = null;
@@ -533,8 +560,8 @@
         let selectedIdentityFileBase64 = "";
         let globalCachedFeedPosts = [];
         let globalCachedAllUsers = [];
+        let cameraActiveStream = null;
 
-        // High Fidelity Geometric Starburst SVGs Texture Seal 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24">
                 <path d="M12 2l2.6 1.8 3-.4.8 3.1 3 1.2-1 3 1.8 2.6-.4 3-3.1.8-1.2 3-3-1 2.6 1.8-3-.4-.8-3.1-3-1.2 1-3-1.8-2.6.4-3 3.1-.8 1.2-3z"/>
@@ -546,37 +573,95 @@
             const chatPane = document.getElementById('app-chat-pane');
             const feedPane = document.getElementById('app-feed-pane');
             const searchPane = document.getElementById('app-search-pane');
+            const cameraPane = document.getElementById('app-camera-pane');
+            const myspacePane = document.getElementById('app-myspace-pane');
             const sidePane = document.getElementById('app-sidebar-pane');
             
             const btnChats = document.getElementById('nav-btn-chats');
             const btnFeed = document.getElementById('nav-btn-feed');
             const btnSearch = document.getElementById('nav-btn-search');
+            const btnCamera = document.getElementById('nav-btn-camera');
+            const btnSpace = document.getElementById('nav-btn-myspace');
 
             btnChats.classList.remove('active');
             btnFeed.classList.remove('active');
             btnSearch.classList.remove('active');
+            btnCamera.classList.remove('active');
+            btnSpace.classList.remove('active');
+
+            // Shutdown live webcam capturing streams when moving out of camera tabs
+            if(cameraActiveStream && tabName !== 'camera') {
+                cameraActiveStream.getTracks().forEach(track => track.stop());
+                cameraActiveStream = null;
+            }
 
             if(tabName === 'feed') {
-                chatPane.style.display = 'none';
-                sidePane.style.display = 'none';
-                searchPane.style.display = 'none';
-                feedPane.style.display = 'flex';
-                btnFeed.classList.add('active');
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; searchPane.style.display = 'none'; cameraPane.style.display = 'none'; myspacePane.style.display = 'none';
+                feedPane.style.display = 'flex'; btnFeed.classList.add('active');
             } else if(tabName === 'search') {
-                chatPane.style.display = 'none';
-                sidePane.style.display = 'none';
-                feedPane.style.display = 'none';
-                searchPane.style.display = 'flex';
-                btnSearch.classList.add('active');
-                triggerHubComprehensiveSearch();
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; cameraPane.style.display = 'none'; myspacePane.style.display = 'none';
+                searchPane.style.display = 'flex'; btnSearch.classList.add('active'); triggerHubComprehensiveSearch();
+            } else if(tabName === 'camera') {
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; myspacePane.style.display = 'none';
+                cameraPane.style.display = 'flex'; btnCamera.classList.add('active'); initWebcamMediaStreamLayer();
+            } else if(tabName === 'myspace') {
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; cameraPane.style.display = 'none';
+                myspacePane.style.display = 'flex'; btnSpace.classList.add('active'); syncMySpaceVaultGalleryView();
             } else {
-                feedPane.style.display = 'none';
-                searchPane.style.display = 'none';
-                sidePane.style.display = 'flex';
-                chatPane.style.display = 'flex';
-                btnChats.classList.add('active');
+                feedPane.style.display = 'none'; searchPane.style.display = 'none'; cameraPane.style.display = 'none'; myspacePane.style.display = 'none';
+                sidePane.style.display = 'flex'; chatPane.style.display = 'flex'; btnChats.classList.add('active');
             }
         };
+
+        // Camera Framework initialization pipeline
+        async function initWebcamMediaStreamLayer() {
+            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    cameraActiveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                    videoElement.srcObject = cameraActiveStream;
+                } catch(err) { alert("Camera system device linkage blocked: " + err.message); }
+            }
+        }
+
+        document.getElementById('camera-snapshot-trigger-btn').addEventListener('click', async () => {
+            const canvas = document.getElementById('camera-hidden-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = videoElement.videoWidth || 640;
+            canvas.height = videoElement.videoHeight || 480;
+            
+            // Mirror flip matching snapshot
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            
+            const frozenBase64 = canvas.toDataURL('image/jpeg');
+            let currentVaultArray = userDataRecord.mySpaceVault || [];
+            currentVaultArray.unshift({
+                id: "snap_" + Date.now(),
+                imgUrl: frozenBase64,
+                timestamp: Date.now()
+            });
+
+            await updateDoc(doc(db, "users", currentUser.uid), { mySpaceVault: currentVaultArray });
+            userDataRecord.mySpaceVault = currentVaultArray;
+            alert("Snapshot securely saved to your private Space folder!");
+        });
+
+        function syncMySpaceVaultGalleryView() {
+            const grid = document.getElementById('myspace-vault-grid');
+            grid.innerHTML = "";
+            const assets = userDataRecord.mySpaceVault || [];
+            if(assets.length === 0) {
+                grid.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size:13px; text-align:center; margin-top:20px;">Your private Space catalog is empty.</p>`;
+                return;
+            }
+            assets.forEach(item => {
+                const img = document.createElement('img');
+                img.src = item.imgUrl;
+                img.className = "myspace-img-card";
+                grid.appendChild(img);
+            });
+        }
 
         window.openSettingsModal = function() {
             document.getElementById('settings-fullname-input').value = userDataRecord.fullName;
@@ -593,12 +678,9 @@
             openSettingsModal();
         };
 
-        // Capture uploaded identity proof document scan
         identityCardInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
-            if(file) {
-                selectedIdentityFileBase64 = await transformFileToBase64(file);
-            }
+            if(file) { selectedIdentityFileBase64 = await transformFileToBase64(file); }
         });
 
         window.saveSettingsChanges = async function() {
@@ -617,7 +699,7 @@
                 userDataRecord = { ...userDataRecord, ...completePayload };
                 launchDashboard(userDataRecord);
                 closeSettingsModal();
-                alert("Settings structural changes saved successfully!");
+                alert("Changes saved!");
             } catch(e) { alert(e.message); }
         };
 
@@ -630,7 +712,6 @@
             
             document.getElementById('profile-action-edit-btn').style.display = isOwnProfile ? 'block' : 'none';
 
-            // Identity Document Verification Inspector interface for Admin panel "yaseen"
             const adminPreviewPanel = document.getElementById('admin-id-preview-panel');
             const adminVerificationBtn = document.getElementById('admin-grant-verification-badge-btn');
             
@@ -641,15 +722,13 @@
                 if(userObj.identityCardUrl) {
                     adminPreviewPanel.style.display = "block";
                     document.getElementById('admin-id-preview-img').src = userObj.identityCardUrl;
-                } else {
-                    adminPreviewPanel.style.display = "none";
-                }
+                } else { adminPreviewPanel.style.display = "none"; }
 
                 adminVerificationBtn.onclick = async () => {
                     const targetState = !userObj.verified;
                     await updateDoc(doc(db, "users", userObj.uid), { verified: targetState });
                     userObj.verified = targetState;
-                    alert("Verification seal badge toggled successfully!");
+                    alert("Verification seal toggled!");
                     renderProfileCard(userObj, isOwnProfile);
                     launchDashboard(userDataRecord);
                 };
@@ -681,9 +760,7 @@
                 if(gridContainer.children.length === 0) {
                     gridContainer.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size: 12px; margin-top:12px;">No uploaded media items.</p>`;
                 }
-            } catch(pErr) {
-                document.getElementById('profile-stat-posts').innerText = "0";
-            }
+            } catch(pErr) { document.getElementById('profile-stat-posts').innerText = "0"; }
 
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
@@ -717,9 +794,7 @@
             let updatedLikes = [...currentLikes];
             if(updatedLikes.includes(currentUser.uid)) {
                 updatedLikes = updatedLikes.filter(id => id !== currentUser.uid);
-            } else {
-                updatedLikes.push(currentUser.uid);
-            }
+            } else { updatedLikes.push(currentUser.uid); }
             await updateDoc(postRef, { likes: updatedLikes });
         };
 
@@ -744,14 +819,10 @@
 
         window.sharePostLink = function(postId) {
             const dummyLink = window.location.href.split('?')[0] + "?post=" + postId;
-            navigator.clipboard.writeText(dummyLink).then(() => {
-                alert("Link copied to clipboard!");
-            });
+            navigator.clipboard.writeText(dummyLink).then(() => { alert("Link copied to clipboard!"); });
         };
 
-        hubSearchBar.addEventListener('input', () => {
-            triggerHubComprehensiveSearch();
-        });
+        hubSearchBar.addEventListener('input', () => { triggerHubComprehensiveSearch(); });
 
         async function triggerHubComprehensiveSearch() {
             const filterText = hubSearchBar.value.trim().toLowerCase();
@@ -956,9 +1027,7 @@
                         userDataRecord = snap.data();
                         launchDashboard(userDataRecord);
                     } else { showProfileSetup(user); }
-                } catch(err) {
-                    showProfileSetup(user);
-                }
+                } catch(err) { showProfileSetup(user); }
             } else {
                 loadingScreen.style.display = 'none';
                 loginContainer.style.display = 'block';
@@ -978,7 +1047,7 @@
             e.preventDefault();
             const username = document.getElementById('setup-username').value.trim().toLowerCase();
             const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, description: "", verified: false, friends: [], identityCardUrl: "" };
+            const profileData = { uid: currentUser.uid, username, fullName, description: "", verified: false, friends: [], identityCardUrl: "", mySpaceVault: [] };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
             
             try {
@@ -1000,7 +1069,12 @@
             
             onSnapshot(collection(db, "users"), (uSnap) => {
                 globalCachedAllUsers = [];
-                uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); });
+                uSnap.forEach(uDoc => { 
+                    globalCachedAllUsers.push(uDoc.data()); 
+                    if(uDoc.id === currentUser.uid) {
+                        userDataRecord = uDoc.data();
+                    }
+                });
                 loadFriendsSidebarList();
             });
 
@@ -1102,9 +1176,7 @@
                     mediaRecorder.start();
                     voiceRecordBtn.classList.add('recording');
                 } catch (err) { alert("Mic layer error: " + err.message); }
-            } else {
-                mediaRecorder.stop();
-            }
+            } else { mediaRecorder.stop(); }
         });
 
         async function sendCustomPayload(type, mediaLink) {
@@ -1202,9 +1274,7 @@
                         innerTemplate = `<video src="${msg.mediaUrl}" controls></video>`;
                     } else if (msg.type === "voice") {
                         innerTemplate = `<audio src="${msg.mediaUrl}" controls></audio>`;
-                    } else {
-                        innerTemplate = `<p>${msg.text}</p>`;
-                    }
+                    } else { innerTemplate = `<p>${msg.text}</p>`; }
 
                     bubble.innerHTML = `
                         ${innerTemplate}
