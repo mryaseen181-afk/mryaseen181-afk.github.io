@@ -81,6 +81,7 @@
             justify-content: space-between;
             padding: 0 28px;
             background: var(--bg-card);
+            z-index: 10;
         }
 
         .nav-brand { font-weight: 900; font-size: 24px; cursor: pointer; letter-spacing: -1px; color: var(--text-color); }
@@ -141,9 +142,9 @@
         .friend-item .info p { font-size: 12px; color: var(--text-muted); }
 
         .chat-area, .feed-area, .search-tab-area, .camera-area, .myspace-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
-        .feed-area, .search-tab-area, .camera-area, .myspace-area { display: none; overflow-y: auto; padding: 28px; }
+        .feed-area, .search-tab-area, .myspace-area { display: none; overflow-y: auto; padding: 28px; }
         
-        /* Search Hub Panels */
+        /* Search Layout */
         .search-pane-header { max-width: 700px; width: 100%; margin: 0 auto 24px auto; position: relative; }
         .search-input-box { width: 100%; padding: 14px 20px; border-radius: 16px; border: 1px solid var(--border-color); font-size: 15px; outline: none; background: var(--bg-card); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .search-split-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; max-width: 700px; width: 100%; margin: 0 auto; }
@@ -154,13 +155,14 @@
         .suggestion-list-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
         .search-section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
 
-        /* Professional Camera UI with Shutter Box Controls */
-        .camera-container { max-width: 460px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; background: #000000; border-radius: 32px; overflow: hidden; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.3); border: 4px solid #1e293b; }
-        .camera-view-window { width: 100%; aspect-ratio: 1; background: #050505; overflow: hidden; transform: scaleX(-1); position: relative; border-bottom: 1px solid #111827; }
+        /* Immersive Full Screen Camera UI Layout */
+        .camera-area { display: none; position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; padding: 0; }
+        .camera-view-window { width: 100%; height: 100%; transform: scaleX(-1); position: absolute; top:0; left:0; }
         .camera-view-window video { width: 100%; height: 100%; object-fit: cover; }
-        .camera-shutter-box { width: 100%; background: #0a0f1d; padding: 24px 20px; display: flex; justify-content: center; align-items: center; position: relative; }
-        .camera-capture-ring { width: 72px; height: 72px; border-radius: 50%; border: 4px solid #ffffff; display: flex; justify-content: center; align-items: center; cursor: pointer; background: transparent; transition: transform 0.1s ease; }
-        .camera-capture-ring:active { transform: scale(0.92); }
+        .camera-controls-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); padding: 30px 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 5; }
+        .camera-shutter-box { display: flex; justify-content: center; align-items: center; width: 100%; }
+        .camera-capture-ring { width: 76px; height: 72px; border-radius: 50%; border: 4px solid #ffffff; display: flex; justify-content: center; align-items: center; cursor: pointer; background: transparent; transition: transform 0.1s; }
+        .camera-capture-ring:active { transform: scale(0.9); }
         .camera-capture-solid-dot { width: 54px; height: 54px; border-radius: 50%; background: #ffffff; }
 
         /* My Space Grid Components */
@@ -170,28 +172,25 @@
         .myspace-img-card { width: 100%; aspect-ratio: 1; object-fit: cover; }
         .space-item-footer { padding: 10px; border-top: 1px solid var(--border-color); background: var(--bg-card); }
 
-        /* Professional Studio Editing Layout */
-        .studio-split-view { display: grid; grid-template-columns: 1.2.fr 1fr; gap: 20px; text-align: left; }
-        .studio-preview-box { position: relative; width: 100%; aspect-ratio: 1; background: #000; border-radius: 16px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border-color); }
+        /* Simplified Filter Swatch Grid Layout */
+        .studio-preview-box { width: 100%; aspect-ratio: 1; background: #000; border-radius: 16px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border-color); margin-bottom: 16px; }
         .studio-target-image { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease; }
-        .studio-overlay-text-node { position: absolute; font-size: 24px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.9); pointer-events: none; text-align: center; width: 90%; padding: 0 10px; }
         
-        /* Modern Studio Matrix Text Orientations */
-        .pos-top { top: 20px; left: 50%; transform: translateX(-50%); }
-        .pos-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .pos-bottom { bottom: 20px; left: 50%; transform: translateX(-50%); }
-
-        .filter-swatch-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
-        .filter-swatch-btn { cursor: pointer; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--bg-secondary); text-align: center; padding: 4px; transition: all 0.2s; }
+        .filter-swatch-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .filter-swatch-btn { cursor: pointer; border: 3px solid transparent; border-radius: 12px; overflow: hidden; background: var(--bg-secondary); text-align: center; padding: 4px; transition: all 0.2s; }
         .filter-swatch-btn.active { border-color: var(--accent-glow); background: rgba(2,132,199,0.05); }
-        .filter-swatch-btn img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; }
-        .filter-swatch-btn span { font-size: 11px; font-weight: 600; display: block; margin-top: 4px; color: var(--text-muted); }
+        .filter-swatch-btn img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
+        .filter-swatch-btn span { font-size: 11px; font-weight: 700; display: block; margin-top: 4px; color: var(--text-muted); }
 
-        /* Filter Textures */
-        .f-noir { filter: grayscale(1) contrast(1.25); }
-        .f-cyan { filter: hue-rotate(180deg) saturate(1.4); }
-        .f-flare { filter: brightness(1.15) saturate(1.5) contrast(1.1); }
+        /* Filter Presets Grid Configuration Matrix */
+        .f-noir { filter: grayscale(1) contrast(1.3); }
+        .f-cyan { filter: hue-rotate(180deg) saturate(1.5); }
+        .f-flare { filter: brightness(1.15) saturate(1.6) contrast(1.1); }
         .f-sepia { filter: sepia(0.85) contrast(0.95); }
+        .f-warm { filter: sepia(0.3) saturate(1.3) contrast(1.05); }
+        .f-cool { filter: hue-rotate(30deg) saturate(1.1) brightness(0.95); }
+        .f-vintage { filter: contrast(0.85) brightness(1.05) sepia(0.25) saturate(1.2); }
+        .f-cosmic { filter: hue-rotate(90deg) saturate(1.7); }
 
         .chat-header { height: 68px; padding: 0 28px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; background: var(--bg-card); }
         .chat-header h3 { font-size: 16px; font-weight: 700; color: var(--text-color); }
@@ -224,7 +223,6 @@
         .feed-composer-actions { display: flex; justify-content: space-between; align-items: center; }
         .feed-posts-container { display: flex; flex-direction: column; gap: 28px; max-width: 580px; width: 100%; margin-left: auto; margin-right: auto; }
         
-        /* Instagram Feed Post Layout */
         .insta-post { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         .post-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border-color); }
         .post-author-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
@@ -232,9 +230,17 @@
         .post-header h4 { font-size: 14px; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 4px; }
         .post-media { width: 100%; max-height: 480px; object-fit: cover; }
         
-        .post-media-wrap { position: relative; width: 100%; display: flex; justify-content: center; }
-        .post-overlay-text { position: absolute; font-size: 22px; font-weight: 800; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.85); pointer-events: none; text-align: center; width: 90%; }
+        /* Rendered filters directly on feed */
+        .post-media.f-noir { filter: grayscale(1) contrast(1.3); }
+        .post-media.f-cyan { filter: hue-rotate(180deg) saturate(1.5); }
+        .post-media.f-flare { filter: brightness(1.15) saturate(1.6) contrast(1.1); }
+        .post-media.f-sepia { filter: sepia(0.85) contrast(0.95); }
+        .post-media.f-warm { filter: sepia(0.3) saturate(1.3) contrast(1.05); }
+        .post-media.f-cool { filter: hue-rotate(30deg) saturate(1.1) brightness(0.95); }
+        .post-media.f-vintage { filter: contrast(0.85) brightness(1.05) sepia(0.25) saturate(1.2); }
+        .post-media.f-cosmic { filter: hue-rotate(90deg) saturate(1.7); }
 
+        .post-media-wrap { position: relative; width: 100%; display: flex; justify-content: center; }
         .post-body { padding: 18px 20px; font-size: 14px; line-height: 1.6; }
         .post-body .author-name { font-weight: 700; margin-right: 8px; color: var(--accent-glow); }
         
@@ -245,7 +251,6 @@
         .post-action-item svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
         .post-action-item.liked svg { fill: currentColor; }
 
-        /* Integrated Instagram Style Delete Utility Row Button */
         .post-delete-icon-trigger { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; font-size: 13px; font-weight: 600; border-radius: 6px; transition: background 0.2s; }
         .post-delete-icon-trigger:hover { color: var(--accent-rose); background: #fff1f2; }
 
@@ -265,7 +270,6 @@
         .aesthetic-follow-btn.unfollow-btn { border-color: #fca5a5; color: var(--accent-rose); background: #fff5f5; }
         .aesthetic-follow-btn.unfollow-btn:hover { background: #fee2e2; border-color: #f87171; }
 
-        /* Modern Vector High-Texture Platform Stamp Verified Seal */
         .verified-badge-texture-star {
             width: 16px; height: 16px; display: inline-block; vertical-align: middle; flex-shrink: 0;
         }
@@ -441,17 +445,17 @@
             </div>
 
             <div class="camera-area" id="app-camera-pane">
-                <div class="camera-container">
-                    <div class="camera-view-window">
-                        <video id="webcam-stream-preview" autoplay playsinline></video>
-                    </div>
+                <div class="camera-view-window">
+                    <video id="webcam-stream-preview" autoplay playsinline></video>
+                </div>
+                <div class="camera-controls-overlay">
                     <div class="camera-shutter-box">
                         <div class="camera-capture-ring" id="camera-snapshot-trigger-btn">
                             <div class="camera-capture-solid-dot"></div>
                         </div>
                     </div>
-                    <canvas id="camera-hidden-canvas" style="display:none;"></canvas>
                 </div>
+                <canvas id="camera-hidden-canvas" style="display:none;"></canvas>
             </div>
 
             <div class="myspace-area" id="app-myspace-pane">
@@ -465,55 +469,49 @@
     </div>
 
     <div id="myspace-sharing-studio-modal" class="modal">
-        <div class="modal-content" style="max-width: 760px; width: 90%;">
+        <div class="modal-content" style="max-width: 480px; width: 90%;">
             <span class="close-modal" onclick="closeSpaceSharingStudio()">&times;</span>
-            <h2 style="margin-bottom: 4px;">Creative Studio</h2>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;">Refine and apply premium layers before broadcasting</p>
+            <h2 style="margin-bottom: 4px;">Studio Preset Panel</h2>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;">Choose an aesthetic Snapchat-style filter layer</p>
             
-            <div class="studio-split-view">
-                <div>
-                    <div class="studio-preview-box">
-                        <img id="studio-image-preview-target" class="studio-target-image" src="">
-                        <div id="studio-text-render-overlay" class="studio-overlay-text-node pos-bottom"></div>
-                    </div>
-                    <div class="filter-swatch-strip">
-                        <div class="filter-swatch-btn active" onclick="applyStudioFilterTexture('')" id="swatch-none">
-                            <img id="swatch-img-none" src=""><span>Raw</span>
-                        </div>
-                        <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-noir')" id="swatch-f-noir">
-                            <img id="swatch-img-f-noir" src="" class="f-noir"><span>Noir</span>
-                        </div>
-                        <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-cyan')" id="swatch-f-cyan">
-                            <img id="swatch-img-f-cyan" src="" class="f-cyan"><span>Cyan</span>
-                        </div>
-                        <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-flare')" id="swatch-f-flare">
-                            <img id="swatch-img-f-flare" src="" class="f-flare"><span>Flare</span>
-                        </div>
-                    </div>
+            <div class="studio-preview-box">
+                <img id="studio-image-preview-target" class="studio-target-image" src="">
+            </div>
+
+            <div class="filter-swatch-strip" style="grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px;">
+                <div class="filter-swatch-btn active" onclick="applyStudioFilterTexture('')" id="swatch-none">
+                    <img id="swatch-img-none" src=""><span>Raw</span>
                 </div>
-                
-                <div style="display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <div class="input-group">
-                            <label>Text Overlay</label>
-                            <input type="text" id="studio-overlay-input" placeholder="Enter bold title heading..." oninput="updateStudioTextOverlay()">
-                        </div>
-                        <div class="input-group">
-                            <label>Text Alignment Position</label>
-                            <select id="studio-text-pos-select" onchange="updateStudioTextOverlay()">
-                                <option value="pos-bottom">Bottom Center</option>
-                                <option value="pos-center">Absolute Center</option>
-                                <option value="pos-top">Top Center</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label>Caption Description</label>
-                            <textarea id="studio-caption-input" placeholder="Write an engaging caption narrative..."></textarea>
-                        </div>
-                    </div>
-                    <button class="main-btn" onclick="publishStudioPostToGlobalFeed()">Broadcast to Explore Feed</button>
+                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-noir')" id="swatch-f-noir">
+                    <img id="swatch-img-f-noir" src="" class="f-noir"><span>Noir</span>
+                </div>
+                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-cyan')" id="swatch-f-cyan">
+                    <img id="swatch-img-f-cyan" src="" class="f-cyan"><span>Cyber</span>
+                </div>
+                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-flare')" id="swatch-f-flare">
+                    <img id="swatch-img-f-flare" src="" class="f-flare"><span>Glow</span>
                 </div>
             </div>
+            <div class="filter-swatch-strip" style="grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 16px;">
+                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-sepia')" id="swatch-f-sepia">
+                    <img id="swatch-img-f-sepia" src="" class="f-sepia"><span>Sepia</span>
+                </div>
+                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-warm')" id="swatch-f-warm">
+                    <img id="swatch-img-f-warm" src="" class="f-warm"><span>Warm</span>
+                </div>
+                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-cool')" id="swatch-f-cool">
+                    <img id="swatch-img-f-cool" src="" class="f-cool"><span>Cool</span>
+                </div>
+                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-cosmic')" id="swatch-f-cosmic">
+                    <img id="swatch-img-f-cosmic" src="" class="f-cosmic"><span>Cosmic</span>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Caption Text</label>
+                <textarea id="studio-caption-input" placeholder="Write an engaging caption..."></textarea>
+            </div>
+            <button class="main-btn" onclick="publishStudioPostToGlobalFeed()">Share to Explore Feed</button>
         </div>
     </div>
 
@@ -570,7 +568,8 @@
                     <img id="admin-id-preview-img" src="" style="width: 100%; max-height: 140px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border-color);">
                 </div>
 
-                <button id="admin-grant-verification-badge-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--verified-color); border-color: var(--verified-color); color:#fff;"></button>
+                <button id="profile-action-follow-toggle-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--accent-glow); border-color: var(--accent-glow); color:#fff;"></button>
+                <button id="admin-grant-verification-badge-btn" class="main-btn" style="display:none; margin-top:10px; background: var(--verified-color); border-color: var(--verified-color); color:#fff;"></button>
                 <button id="profile-action-edit-btn" class="secondary-btn" style="display:none; padding:6px; font-size:12px; margin-top:12px;" onclick="switchFromProfileToSettings()">Edit Description</button>
             </div>
             
@@ -645,18 +644,16 @@
         let studioSelectedImageBase64 = "";
         let studioActiveFilterClass = "";
 
-        // High-Fidelity Textured Geometric Ribbon Verified SVG Seal Vector
         const getVerifiedTextureBadgeMarkup = () => `
-            <svg class="verified-badge-texture-star" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12,2 C12.8,2.8 13.5,3.3 14.4,3.5 C15.3,3.7 16.2,3.4 17.1,3.2 C18,3 18.8,3.2 19.4,3.8 C20,4.4 20.2,5.2 20,6.1 C19.8,7 20.3,7.8 20.9,8.4 C21.5,9 21.8,9.9 21.7,10.8 C21.6,11.7 21,12.4 20.6,13.2 C20.2,14 20.2,14.9 20.6,15.7 C21,16.5 21.1,17.4 20.7,18.2 C20.3,19 19.5,19.5 18.6,19.5 C17.7,19.5 16.9,20 16.4,20.7 C15.9,21.4 15.1,21.8 14.2,21.7 C13.3,21.6 12.6,21 11.8,20.6 C11,20.2 10.1,20.2 9.3,20.6 C8.5,21 7.6,21.1 6.8,20.7 C6,20.3 5.5,19.5 5.5,18.6 C5.5,17.7 5,16.9 4.3,16.4 C3.6,15.9 3.2,15.1 3.3,14.2 C3.4,13.3 4,12.6 4.4,11.8 C4.8,11 4.8,10.1 4.4,9.3 C4,8.5 3.9,7.6 4.3,6.8 C4.7,6 5.5,5.5 6.4,5.5 C7.3,5.5 8.1,5 8.6,4.3 C9.1,3.6 9.9,3.2 10.8,3.3 C11.7,3.4 12.4,4 13.2,4.4 L12,2 Z" fill="url(#verifiedGlowShadeMatrix)"/>
-                <path d="M7.5,12 L10.5,14.5 L16.5,9.5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none">
                 <defs>
-                    <linearGradient id="verifiedGlowShadeMatrix" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#25a3fc" />
-                        <stop offset="50%" stop-color="#0095f6" />
-                        <stop offset="100%" stop-color="#0066cc" />
+                    <linearGradient id="blueBadgeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#38bdf8" />
+                        <stop offset="100%" stop-color="#0095f6" />
                     </linearGradient>
                 </defs>
+                <path d="M12 2l2.4 1.5 2.8-.2.6 2.8 2.7.9-.5 2.8 1.9 2.1-1.4 2.5 1 2.7-2.2 1.7-.1 2.8-2.7.7-1.3 2.5-2.6-1.1-2.4 1.5-2.8-.2-.6-2.8-2.7-.9.5-2.8-1.9-2.1 1.4-2.5-1-2.7 2.2-1.7.1-2.8 2.7-.7 1.3-2.5 2.6 1.1L12 2z" fill="url(#blueBadgeGlow)"/>
+                <path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         `;
 
@@ -708,7 +705,7 @@
                 try {
                     cameraActiveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                     videoElement.srcObject = cameraActiveStream;
-                } catch(err) { alert("Camera device connection error: " + err.message); }
+                } catch(err) { alert("Camera device activation issue: " + err.message); }
             }
         }
 
@@ -732,7 +729,7 @@
 
             await updateDoc(doc(db, "users", currentUser.uid), { mySpaceVault: currentVaultArray });
             userDataRecord.mySpaceVault = currentVaultArray;
-            alert("Captured! Photo saved to My Space.");
+            alert("Snapshot recorded in My Space catalog.");
             switchTab('myspace');
         });
 
@@ -741,7 +738,7 @@
             grid.innerHTML = "";
             const assets = userDataRecord.mySpaceVault || [];
             if(assets.length === 0) {
-                grid.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size:13px; text-align:center; margin-top:20px;">Your private storage vault folder is currently empty.</p>`;
+                grid.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size:13px; text-align:center; margin-top:20px;">Your private Space folder is currently empty.</p>`;
                 return;
             }
             assets.forEach(item => {
@@ -751,7 +748,7 @@
                 wrapper.innerHTML = `
                     <img src="${item.imgUrl}" class="myspace-img-card">
                     <div class="space-item-footer">
-                        <button class="main-btn" style="padding: 8px; font-size: 12px;" id="share-btn-${item.id}">Open in Studio</button>
+                        <button class="main-btn" style="padding: 8px; font-size: 12px;" id="share-btn-${item.id}">Filter Options</button>
                     </div>
                 `;
                 
@@ -763,19 +760,19 @@
             });
         }
 
-        // Live Studio Image Editor Systems
         window.openSpaceSharingStudio = function(imgSrc) {
             studioSelectedImageBase64 = imgSrc;
             
-            // Populating filter thumbnail preview cards dynamically mapping states
             document.getElementById('studio-image-preview-target').src = imgSrc;
             document.getElementById('swatch-img-none').src = imgSrc;
             document.getElementById('swatch-img-f-noir').src = imgSrc;
             document.getElementById('swatch-img-f-cyan').src = imgSrc;
             document.getElementById('swatch-img-f-flare').src = imgSrc;
+            document.getElementById('swatch-img-f-sepia').src = imgSrc;
+            document.getElementById('swatch-img-f-warm').src = imgSrc;
+            document.getElementById('swatch-img-f-cool').src = imgSrc;
+            document.getElementById('swatch-img-f-cosmic').src = imgSrc;
 
-            document.getElementById('studio-overlay-input').value = "";
-            document.getElementById('studio-text-render-overlay').innerText = "";
             document.getElementById('studio-caption-input').value = "";
             applyStudioFilterTexture('');
             
@@ -791,25 +788,13 @@
             const imgTarget = document.getElementById('studio-image-preview-target');
             imgTarget.className = "studio-target-image " + filterClass;
             
-            // Toggle active swatch button borders row highlight sets
             document.querySelectorAll('.filter-swatch-btn').forEach(btn => btn.classList.remove('active'));
             const activeId = filterClass === '' ? 'swatch-none' : 'swatch-' + filterClass;
             document.getElementById(activeId).classList.add('active');
         };
 
-        window.updateStudioTextOverlay = function() {
-            const val = document.getElementById('studio-overlay-input').value;
-            const posClass = document.getElementById('studio-text-pos-select').value;
-            const textOverlay = document.getElementById('studio-text-render-overlay');
-            
-            textOverlay.innerText = val;
-            textOverlay.className = "studio-overlay-text-node " + posClass;
-        };
-
         window.publishStudioPostToGlobalFeed = async function() {
             const caption = document.getElementById('studio-caption-input').value.trim();
-            const overlayText = document.getElementById('studio-overlay-input').value.trim();
-            const textPosClass = document.getElementById('studio-text-pos-select').value;
 
             await addDoc(collection(db, "globalFeed"), {
                 authorUid: currentUser.uid,
@@ -820,25 +805,22 @@
                 mediaUrl: studioSelectedImageBase64,
                 mediaType: 'image',
                 filterClass: studioActiveFilterClass,
-                overlayText: overlayText,
-                textPosClass: textPosClass,
                 likes: [],
                 comments: [],
                 timestamp: Date.now()
             });
 
             closeSpaceSharingStudio();
-            alert("Post published successfully!");
+            alert("Shared to timeline!");
             switchTab('feed');
         };
 
-        // Instagram-Style Post Deletion Hook Database API Pipeline Call
         window.triggerPostRemovalDeletion = async function(postId) {
             if(!confirm("Are you sure you want to permanently delete this post?")) return;
             try {
                 await deleteDoc(doc(db, "globalFeed", postId));
-                alert("Post successfully removed from timeline.");
-            } catch(err) { alert("Deletion issue: " + err.message); }
+                alert("Post successfully removed.");
+            } catch(err) { alert("Deletion error: " + err.message); }
         };
 
         window.openSettingsModal = function() {
@@ -877,7 +859,7 @@
                 userDataRecord = { ...userDataRecord, ...completePayload };
                 launchDashboard(userDataRecord);
                 closeSettingsModal();
-                alert("Profile changes saved.");
+                alert("Changes saved!");
             } catch(e) { alert(e.message); }
         };
 
@@ -889,6 +871,27 @@
             document.getElementById('view-modal-description').innerText = userObj.description || "No bio description configured yet.";
             
             document.getElementById('profile-action-edit-btn').style.display = isOwnProfile ? 'block' : 'none';
+
+            // Follow / Unfollow logic toggle inside Profile view modals
+            const followToggleBtn = document.getElementById('profile-action-follow-toggle-btn');
+            if(!isOwnProfile) {
+                followToggleBtn.style.display = "block";
+                const currentFriendsList = userDataRecord.friends || [];
+                const isFollowing = currentFriendsList.includes(userObj.uid);
+                
+                followToggleBtn.innerText = isFollowing ? "Unfollow User" : "Follow User";
+                followToggleBtn.style.background = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
+                followToggleBtn.style.borderColor = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
+                
+                followToggleBtn.onclick = async () => {
+                    await toggleFollowState(userObj.uid, userObj.username);
+                    // Refresh view card values dynamically following tracking snaps adjustments
+                    const updatedUserSnap = await getDoc(doc(db, "users", userObj.uid));
+                    if(updatedUserSnap.exists()) renderProfileCard(updatedUserSnap.data(), false);
+                };
+            } else {
+                followToggleBtn.style.display = "none";
+            }
 
             const adminPreviewPanel = document.getElementById('admin-id-preview-panel');
             const adminVerificationBtn = document.getElementById('admin-grant-verification-badge-btn');
@@ -1083,11 +1086,9 @@
                     mediaBlock = `<div class="post-media-wrap"><video class="post-media" src="${post.mediaUrl}" controls></video></div>`;
                 } else {
                     const filterClass = post.filterClass || "";
-                    const textOverlayHtml = post.overlayText ? `<div class="post-overlay-text ${post.textPosClass || 'pos-bottom'}">${post.overlayText}</div>` : "";
                     mediaBlock = `
                         <div class="post-media-wrap">
                             <img class="post-media ${filterClass}" src="${post.mediaUrl}">
-                            ${textOverlayHtml}
                         </div>
                     `;
                 }
@@ -1108,7 +1109,6 @@
             const matchingUserObj = globalCachedAllUsers.find(u => u.uid === post.authorUid);
             const verifiedTick = (matchingUserObj && matchingUserObj.verified) ? getVerifiedTextureBadgeMarkup() : "";
 
-            // Visibility filter parameter enabling deletion privileges on owned data documents
             let deleteUtilityButtonHtml = "";
             if(post.authorUid === currentUser.uid) {
                 deleteUtilityButtonHtml = `<button class="post-delete-icon-trigger" onclick="triggerPostRemovalDeletion('${postId}')">Delete Post</button>`;
