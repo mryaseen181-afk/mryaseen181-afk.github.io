@@ -143,28 +143,39 @@
         .chat-area, .feed-area, .search-tab-area, .camera-area, .myspace-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
         .feed-area, .search-tab-area, .camera-area, .myspace-area { display: none; overflow-y: auto; padding: 28px; }
         
-        /* Search Hub Workspace Columns */
+        /* Search Hub Panels */
         .search-pane-header { max-width: 700px; width: 100%; margin: 0 auto 24px auto; position: relative; }
         .search-input-box { width: 100%; padding: 14px 20px; border-radius: 16px; border: 1px solid var(--border-color); font-size: 15px; outline: none; background: var(--bg-card); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-        
         .search-split-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; max-width: 700px; width: 100%; margin: 0 auto; }
         .search-column-panel { background: var(--bg-card); padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); height: fit-content; max-height: 68vh; overflow-y: auto; }
         .suggestions-dropdown-panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; position: absolute; width: 100%; top: 56px; z-index: 40; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: none; }
         .suggestion-list-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; font-size: 14px; border-bottom: 1px solid var(--bg-secondary); }
         .suggestion-list-item:hover { background: var(--bg-secondary); }
         .suggestion-list-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
-
         .search-section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
 
-        /* Camera Tab Components */
+        /* Camera Frame */
         .camera-container { max-width: 500px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 16px; background: var(--bg-card); padding: 24px; border-radius: 24px; border: 1px solid var(--border-color); }
         .camera-view-window { width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 16px; overflow: hidden; transform: scaleX(-1); }
         .camera-view-window video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* My Space Grid Components */
+        /* My Space Vault Dynamic Interactivity Card Elements */
         .myspace-container { max-width: 700px; width: 100%; margin: 0 auto; }
-        .myspace-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
-        .myspace-img-card { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .myspace-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+        .space-item-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .myspace-img-card { width: 100%; aspect-ratio: 1; object-fit: cover; }
+        .space-item-footer { padding: 10px; border-top: 1px solid var(--border-color); background: var(--bg-card); }
+
+        /* Interactive Studio Image Editing Workspace Blocks */
+        .studio-preview-box { position: relative; width: 100%; max-height: 280px; background: #000; border-radius: 12px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .studio-target-image { max-width: 100%; max-height: 280px; object-fit: contain; transition: filter 0.3s; }
+        .studio-overlay-text-node { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 85%; text-align: center; font-size: 18px; font-weight: 800; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.85); pointer-events: none; word-wrap: break-word; }
+        
+        /* Filter Classes Configurations */
+        .f-noir { filter: grayscale(1) contrast(1.2); }
+        .f-cyan { filter: hue-rotate(180deg) saturate(1.4); }
+        .f-flare { filter: brightness(1.1) saturate(1.6) contrast(1.1); }
+        .f-sepia { filter: sepia(0.8) contrast(0.9); }
 
         .chat-header { height: 68px; padding: 0 28px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; background: var(--bg-card); }
         .chat-header h3 { font-size: 16px; font-weight: 700; color: var(--text-color); }
@@ -203,6 +214,16 @@
         .post-header img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
         .post-header h4 { font-size: 14px; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 4px; }
         .post-media { width: 100%; max-height: 480px; object-fit: cover; }
+        
+        /* Rendered filters directly on published objects headers block */
+        .post-media.f-noir { filter: grayscale(1) contrast(1.2); }
+        .post-media.f-cyan { filter: hue-rotate(180deg) saturate(1.4); }
+        .post-media.f-flare { filter: brightness(1.1) saturate(1.6) contrast(1.1); }
+        .post-media.f-sepia { filter: sepia(0.8) contrast(0.9); }
+
+        .post-media-wrap { position: relative; width: 100%; display: flex; justify-content: center; }
+        .post-overlay-text { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 85%; text-align: center; font-size: 18px; font-weight: 800; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.85); pointer-events: none; word-wrap: break-word; }
+
         .post-body { padding: 18px 20px; font-size: 14px; line-height: 1.6; }
         .post-body .author-name { font-weight: 700; margin-right: 8px; color: var(--accent-glow); }
         
@@ -230,8 +251,9 @@
         .aesthetic-follow-btn.unfollow-btn { border-color: #fca5a5; color: var(--accent-rose); background: #fff5f5; }
         .aesthetic-follow-btn.unfollow-btn:hover { background: #fee2e2; border-color: #f87171; }
 
+        /* High Textured High Fidelity Gradient Verified Seal Icon */
         .verified-badge-texture-star {
-            width: 15px; height: 15px; fill: var(--verified-color); display: inline-block; vertical-align: middle; flex-shrink: 0;
+            width: 16px; height: 15px; display: inline-block; vertical-align: middle; flex-shrink: 0; filter: drop-shadow(0 1px 2px rgba(0,149,246,0.3));
         }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.4); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 100; }
@@ -241,7 +263,7 @@
         
         .input-group { margin-bottom: 16px; text-align: left; }
         .input-group label { display: block; font-size: 13px; margin-bottom: 6px; font-weight: 600; color: var(--text-muted); }
-        .input-group input, .input-group textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; background: var(--bg-secondary); color: var(--text-color); outline: none; }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; background: var(--bg-secondary); color: var(--text-color); outline: none; }
         .input-group textarea { height: 60px; resize: none; }
         
         .main-btn {
@@ -250,13 +272,11 @@
         }
         .main-btn:hover { opacity: 0.95; }
         .main-btn:active { transform: scale(0.98); }
-        
         .secondary-btn {
             width: 100%; padding: 14px; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
             color: #334155; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 14px; cursor: pointer; margin-top: 8px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .secondary-btn:hover { background: #f1f5f9; border-color: #94a3b8; }
-        
         .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: var(--text-muted); font-size: 14px; }
         
         #status-viewer-modal .modal-content { max-width: 480px; background: var(--bg-card); border: 1px solid var(--border-color); padding: 30px; border-radius: 24px; }
@@ -436,6 +456,41 @@
         </div>
     </div>
 
+    <div id="myspace-sharing-studio-modal" class="modal">
+        <div class="modal-content" style="max-width: 460px;">
+            <span class="close-modal" onclick="closeSpaceSharingStudio()">&times;</span>
+            <h2>Studio Composer</h2>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">Apply dynamic textures before broadcasting globally</p>
+            
+            <div class="studio-preview-box">
+                <img id="studio-image-preview-target" class="studio-target-image" src="">
+                <div id="studio-text-render-overlay" class="studio-overlay-text-node"></div>
+            </div>
+
+            <br>
+            <div class="input-group">
+                <label>Overlay Title / Text</label>
+                <input type="text" id="studio-overlay-input" placeholder="Type overlay text here..." oninput="updateStudioTextOverlay()">
+            </div>
+            <div class="input-group">
+                <label>Aesthetic Texture Filter</label>
+                <select id="studio-filter-select" onchange="updateStudioImageFilterTexture()">
+                    <option value="">None (Raw Frame)</option>
+                    <option value="f-noir">Vintage Noir (B&W)</option>
+                    <option value="f-cyan">Cyber Cyan</option>
+                    <option value="f-flare">Aura Flare</option>
+                    <option value="f-sepia">Sepia Glow</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Description / Caption</label>
+                <textarea id="studio-caption-input" placeholder="Write a post caption..."></textarea>
+            </div>
+
+            <button class="main-btn" onclick="publishStudioPostToGlobalFeed()">Broadcast to Explore Feed</button>
+        </div>
+    </div>
+
     <div id="settings-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
@@ -561,11 +616,19 @@
         let globalCachedFeedPosts = [];
         let globalCachedAllUsers = [];
         let cameraActiveStream = null;
+        let studioSelectedImageBase64 = "";
 
+        // Refined High Fidelity Multi-layered Gradient Seal Badge Mark Vector Layout
         const getVerifiedTextureBadgeMarkup = () => `
-            <svg class="verified-badge-texture-star" viewBox="0 0 24 24">
-                <path d="M12 2l2.6 1.8 3-.4.8 3.1 3 1.2-1 3 1.8 2.6-.4 3-3.1.8-1.2 3-3-1 2.6 1.8-3-.4-.8-3.1-3-1.2 1-3-1.8-2.6.4-3 3.1-.8 1.2-3z"/>
-                <path d="M9 12l2 2 4-4" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none">
+                <defs>
+                    <linearGradient id="blueBadgeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#38bdf8" />
+                        <stop offset="100%" stop-color="#0095f6" />
+                    </linearGradient>
+                </defs>
+                <path d="M12 2l2.4 1.5 2.8-.2.6 2.8 2.7.9-.5 2.8 1.9 2.1-1.4 2.5 1 2.7-2.2 1.7-.1 2.8-2.7.7-1.3 2.5-2.6-1.1-2.4 1.5-2.8-.2-.6-2.8-2.7-.9.5-2.8-1.9-2.1 1.4-2.5-1-2.7 2.2-1.7.1-2.8 2.7-.7 1.3-2.5 2.6 1.1L12 2z" fill="url(#blueBadgeGlow)"/>
+                <path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         `;
 
@@ -589,7 +652,6 @@
             btnCamera.classList.remove('active');
             btnSpace.classList.remove('active');
 
-            // Shutdown live webcam capturing streams when moving out of camera tabs
             if(cameraActiveStream && tabName !== 'camera') {
                 cameraActiveStream.getTracks().forEach(track => track.stop());
                 cameraActiveStream = null;
@@ -613,13 +675,12 @@
             }
         };
 
-        // Camera Framework initialization pipeline
         async function initWebcamMediaStreamLayer() {
             if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 try {
                     cameraActiveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                     videoElement.srcObject = cameraActiveStream;
-                } catch(err) { alert("Camera system device linkage blocked: " + err.message); }
+                } catch(err) { alert("Camera hardware blocked: " + err.message); }
             }
         }
 
@@ -629,7 +690,6 @@
             canvas.width = videoElement.videoWidth || 640;
             canvas.height = videoElement.videoHeight || 480;
             
-            // Mirror flip matching snapshot
             ctx.translate(canvas.width, 0);
             ctx.scale(-1, 1);
             ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
@@ -644,7 +704,8 @@
 
             await updateDoc(doc(db, "users", currentUser.uid), { mySpaceVault: currentVaultArray });
             userDataRecord.mySpaceVault = currentVaultArray;
-            alert("Snapshot securely saved to your private Space folder!");
+            alert("Snapshot captured into My Space!");
+            syncMySpaceVaultGalleryView();
         });
 
         function syncMySpaceVaultGalleryView() {
@@ -652,16 +713,80 @@
             grid.innerHTML = "";
             const assets = userDataRecord.mySpaceVault || [];
             if(assets.length === 0) {
-                grid.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size:13px; text-align:center; margin-top:20px;">Your private Space catalog is empty.</p>`;
+                grid.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size:13px; text-align:center; margin-top:20px;">Your private vault is empty.</p>`;
                 return;
             }
             assets.forEach(item => {
-                const img = document.createElement('img');
-                img.src = item.imgUrl;
-                img.className = "myspace-img-card";
-                grid.appendChild(img);
+                const wrapper = document.createElement('div');
+                wrapper.className = "space-item-card";
+                
+                wrapper.innerHTML = `
+                    <img src="${item.imgUrl}" class="myspace-img-card">
+                    <div class="space-item-footer">
+                        <button class="main-btn" style="padding: 6px; font-size: 11px;" id="share-btn-${item.id}">Studio Options</button>
+                    </div>
+                `;
+                
+                // Action pipeline hooks link up directly to custom editor layout modals 
+                wrapper.querySelector(`#share-btn-${item.id}`).addEventListener('click', () => {
+                    openSpaceSharingStudio(item.imgUrl);
+                });
+
+                grid.appendChild(wrapper);
             });
         }
+
+        // Custom Studio Editing Framework Triggers
+        window.openSpaceSharingStudio = function(imgSrc) {
+            studioSelectedImageBase64 = imgSrc;
+            document.getElementById('studio-image-preview-target').src = imgSrc;
+            document.getElementById('studio-overlay-input').value = "";
+            document.getElementById('studio-text-render-overlay').innerText = "";
+            document.getElementById('studio-filter-select').value = "";
+            document.getElementById('studio-image-preview-target').className = "studio-target-image";
+            document.getElementById('studio-caption-input').value = "";
+            document.getElementById('myspace-sharing-studio-modal').style.display = 'flex';
+        };
+
+        window.closeSpaceSharingStudio = function() {
+            document.getElementById('myspace-sharing-studio-modal').style.display = 'none';
+        };
+
+        window.updateStudioTextOverlay = function() {
+            const val = document.getElementById('studio-overlay-input').value;
+            document.getElementById('studio-text-render-overlay').innerText = val;
+        };
+
+        window.updateStudioImageFilterTexture = function() {
+            const filterClass = document.getElementById('studio-filter-select').value;
+            const imgTarget = document.getElementById('studio-image-preview-target');
+            imgTarget.className = "studio-target-image " + filterClass;
+        };
+
+        window.publishStudioPostToGlobalFeed = async function() {
+            const caption = document.getElementById('studio-caption-input').value.trim();
+            const overlayText = document.getElementById('studio-overlay-input').value.trim();
+            const chosenFilter = document.getElementById('studio-filter-select').value;
+
+            await addDoc(collection(db, "globalFeed"), {
+                authorUid: currentUser.uid,
+                authorName: userDataRecord.fullName,
+                authorUsername: userDataRecord.username,
+                authorPhoto: userDataRecord.photoURL,
+                text: caption,
+                mediaUrl: studioSelectedImageBase64,
+                mediaType: 'image',
+                filterClass: chosenFilter,
+                overlayText: overlayText,
+                likes: [],
+                comments: [],
+                timestamp: Date.now()
+            });
+
+            closeSpaceSharingStudio();
+            alert("Aesthetic vault image broadcasted to feed successfully!");
+            switchTab('feed');
+        };
 
         window.openSettingsModal = function() {
             document.getElementById('settings-fullname-input').value = userDataRecord.fullName;
@@ -728,7 +853,7 @@
                     const targetState = !userObj.verified;
                     await updateDoc(doc(db, "users", userObj.uid), { verified: targetState });
                     userObj.verified = targetState;
-                    alert("Verification seal toggled!");
+                    alert("Verification badge updated!");
                     renderProfileCard(userObj, isOwnProfile);
                     launchDashboard(userDataRecord);
                 };
@@ -753,7 +878,7 @@
                     if(data.mediaUrl) {
                         let element = document.createElement(data.mediaType === 'video' ? 'video' : 'img');
                         element.src = data.mediaUrl;
-                        element.className = 'profile-grid-item';
+                        element.className = 'profile-grid-item ' + (data.filterClass || '');
                         gridContainer.appendChild(element);
                     }
                 });
@@ -819,7 +944,7 @@
 
         window.sharePostLink = function(postId) {
             const dummyLink = window.location.href.split('?')[0] + "?post=" + postId;
-            navigator.clipboard.writeText(dummyLink).then(() => { alert("Link copied to clipboard!"); });
+            navigator.clipboard.writeText(dummyLink).then(() => { alert("Link copied!"); });
         };
 
         hubSearchBar.addEventListener('input', () => { triggerHubComprehensiveSearch(); });
@@ -901,9 +1026,18 @@
             
             let mediaBlock = "";
             if(post.mediaUrl) {
-                mediaBlock = post.mediaType === 'video' 
-                    ? `<video class="post-media" src="${post.mediaUrl}" controls></video>`
-                    : `<img class="post-media" src="${post.mediaUrl}">`;
+                if(post.mediaType === 'video') {
+                    mediaBlock = `<div class="post-media-wrap"><video class="post-media" src="${post.mediaUrl}" controls></video></div>`;
+                } else {
+                    const filterClass = post.filterClass || "";
+                    const textOverlayHtml = post.overlayText ? `<div class="post-overlay-text">${post.overlayText}</div>` : "";
+                    mediaBlock = `
+                        <div class="post-media-wrap">
+                            <img class="post-media ${filterClass}" src="${post.mediaUrl}">
+                            ${textOverlayHtml}
+                        </div>
+                    `;
+                }
             }
 
             const likesArray = post.likes || [];
