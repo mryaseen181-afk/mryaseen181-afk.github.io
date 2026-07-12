@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraHub</title>
+    <title>AuraHub Pro</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -61,7 +61,7 @@
 
         .dashboard-layout {
             width: 100%;
-            max-width: 1040px;
+            max-width: 1080px;
             height: 90vh;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -143,16 +143,18 @@
         .chat-area, .feed-area, .search-tab-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
         .feed-area, .search-tab-area { display: none; overflow-y: auto; padding: 28px; }
         
-        /* Unified Search Interface Grid Layouts */
-        .search-pane-header { max-width: 600px; width: 100%; margin: 0 auto 24px auto; position: relative; }
-        .search-input-box { width: 100%; padding: 14px 20px; border-radius: 16px; border: 1px solid var(--border-color); font-size: 15px; outline: none; background: var(--bg-card); }
-        .suggestions-dropdown-panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; position: absolute; width: 100%; top: 56px; z-index: 40; max-height: 220px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: none; }
+        /* Structured Search Hub Workspace Columns */
+        .search-pane-header { max-width: 700px; width: 100%; margin: 0 auto 24px auto; position: relative; }
+        .search-input-box { width: 100%; padding: 14px 20px; border-radius: 16px; border: 1px solid var(--border-color); font-size: 15px; outline: none; background: var(--bg-card); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        
+        .search-split-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; max-width: 700px; width: 100%; margin: 0 auto; }
+        .search-column-panel { background: var(--bg-card); padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); height: fit-content; max-height: 68vh; overflow-y: auto; }
+        .suggestions-dropdown-panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; position: absolute; width: 100%; top: 56px; z-index: 40; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: none; }
         .suggestion-list-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; font-size: 14px; border-bottom: 1px solid var(--bg-secondary); }
         .suggestion-list-item:hover { background: var(--bg-secondary); }
         .suggestion-list-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
 
-        .search-results-wrapper { max-width: 600px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
-        .search-section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 8px; }
+        .search-section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
 
         .chat-header { height: 68px; padding: 0 28px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; background: var(--bg-card); }
         .chat-header h3 { font-size: 16px; font-weight: 700; color: var(--text-color); }
@@ -206,14 +208,23 @@
         .comment-user { font-weight: 700; margin-right: 6px; color: var(--accent-purple); }
         .comment-input-row { display: flex; gap: 8px; margin-top: 14px; background: var(--bg-secondary); padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border-color); }
         .comment-input-row input { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 13px; outline: none; }
+        .friend-btn { background: none; border: none; color: var(--accent-glow); font-weight: 700; cursor: pointer; font-size: 14px; }
 
-        .aesthetic-follow-btn { background: rgba(2,132,199,0.08); border: 1px solid var(--accent-glow); color: var(--accent-glow); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-        .aesthetic-follow-btn:hover { background: var(--accent-glow); color: #fff; }
-        .aesthetic-follow-btn.unfollow-btn { border-color: var(--accent-rose); color: var(--accent-rose); background: rgba(225,29,72,0.05); }
-        .aesthetic-follow-btn.unfollow-btn:hover { background: var(--accent-rose); color: #fff; }
+        /* Professional Aesthetic Elevation Buttons */
+        .aesthetic-follow-btn {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            color: #334155; padding: 7px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+        }
+        .aesthetic-follow-btn:hover { background: #f1f5f9; border-color: #94a3b8; color: var(--text-color); }
+        .aesthetic-follow-btn.unfollow-btn { border-color: #fca5a5; color: var(--accent-rose); background: #fff5f5; }
+        .aesthetic-follow-btn.unfollow-btn:hover { background: #fee2e2; border-color: #f87171; }
 
-        /* Verified Verification Blue Tick Badges Styles */
-        .verified-badge-tick { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--verified-color); color: #fff; border-radius: 50%; font-size: 9px; font-weight: bold; flex-shrink: 0; }
+        /* Fine-textured High Fidelity Starburst Badge */
+        .verified-badge-texture-star {
+            width: 15px; height: 15px; fill: var(--verified-color); display: inline-block; vertical-align: middle; flex-shrink: 0;
+        }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.4); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 100; }
         .modal-content { background: var(--bg-card); padding: 32px; border-radius: 28px; border: 1px solid var(--border-color); width: 100%; max-width: 440px; text-align: center; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
@@ -225,9 +236,20 @@
         .input-group input, .input-group textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; background: var(--bg-secondary); color: var(--text-color); outline: none; }
         .input-group textarea { height: 60px; resize: none; }
         
-        .main-btn { width: 100%; padding: 14px; background: var(--accent-glow); color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
-        .main-btn:hover { opacity: 0.9; }
-        .secondary-btn { width: 100%; padding: 14px; background: transparent; color: var(--text-color); border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; cursor: pointer; margin-top: 8px; font-weight: 600; }
+        /* Master Elevation Form Actions */
+        .main-btn {
+            width: 100%; padding: 14px; background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+            color: #fff; border: 1px solid #0284c7; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 4px rgba(2,132,199,0.2); transition: transform 0.1s, opacity 0.2s;
+        }
+        .main-btn:hover { opacity: 0.95; }
+        .main-btn:active { transform: scale(0.98); }
+        
+        .secondary-btn {
+            width: 100%; padding: 14px; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            color: #334155; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 14px; cursor: pointer; margin-top: 8px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .secondary-btn:hover { background: #f1f5f9; border-color: #94a3b8; }
+        
         .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: var(--text-muted); font-size: 14px; }
         
         #status-viewer-modal .modal-content { max-width: 480px; background: var(--bg-card); border: 1px solid var(--border-color); padding: 30px; border-radius: 24px; }
@@ -239,7 +261,7 @@
         .profile-stat-box h5 { font-size: 20px; font-weight: 700; color: var(--text-color); }
         .profile-stat-box p { font-size: 12px; color: var(--text-muted); }
         .profile-description-txt { font-size: 14px; color: var(--text-color); margin-top: 6px; line-height: 1.4; font-style: italic; background: var(--bg-secondary); padding: 10px 14px; border-radius: 12px; width: 100%; border: 1px solid var(--border-color); }
-        .profile-posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 240px; overflow-y: auto; width: 100%; margin-top: 12px; }
+        .profile-posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 200px; overflow-y: auto; width: 100%; margin-top: 12px; }
         .profile-grid-item { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); }
 
         @media (max-width: 768px) {
@@ -324,7 +346,7 @@
                             <h3 id="chat-with-heading">Chat User</h3>
                             <span id="chat-typing-indicator" class="typing-indicator-span">typing...</span>
                         </div>
-                        <button id="view-friend-profile-header-btn" class="friend-btn" style="margin-left: auto;">View Profile</button>
+                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">View Profile</button>
                     </div>
                     
                     <div id="messages-box" class="messages-box"></div>
@@ -368,18 +390,18 @@
 
             <div class="search-tab-area" id="app-search-pane">
                 <div class="search-pane-header">
-                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Type to explore creators or content text tags...">
+                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Search creators or content keywords...">
                     <div class="suggestions-dropdown-panel" id="search-suggestions-overlay"></div>
                 </div>
                 
-                <div class="search-results-wrapper">
-                    <div>
-                        <div class="search-section-title">Matching Creators</div>
-                        <div id="search-creators-results" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;"></div>
+                <div class="search-split-layout">
+                    <div class="search-column-panel">
+                        <div class="search-section-title">Creators</div>
+                        <div id="search-creators-results" style="display: flex; flex-direction: column; gap: 4px;"></div>
                     </div>
-                    <div>
-                        <div class="search-section-title">Discovered Feed Posts</div>
-                        <div id="search-posts-results" class="feed-posts-container"></div>
+                    <div class="search-column-panel" style="max-height: 68vh; overflow-y: auto; background: transparent; border: none; padding: 0;">
+                        <div class="search-section-title" style="background: var(--bg-card); padding: 10px 20px; border-radius: 12px; border: 1px solid var(--border-color);">Discovered Feed</div>
+                        <div id="search-posts-results" class="feed-posts-container" style="gap: 16px; margin-top: 10px;"></div>
                     </div>
                 </div>
             </div>
@@ -403,6 +425,13 @@
                 <label>Description / Bio</label>
                 <textarea id="settings-description-input" placeholder="Tell us about yourself..."></textarea>
             </div>
+            
+            <div class="input-group" style="border-top: 1px solid var(--border-color); padding-top: 14px;">
+                <label style="color: var(--accent-glow);">Verify Identity (Request Badge)</label>
+                <input type="file" id="settings-id-card-input" accept="image/*">
+                <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Upload an image file of your ID card for review.</p>
+            </div>
+            
             <button class="main-btn" onclick="saveSettingsChanges()">Save Changes</button>
         </div>
     </div>
@@ -429,7 +458,12 @@
                 </div>
                 <div id="view-modal-description" class="profile-description-txt">No description added yet.</div>
                 
-                <button id="admin-grant-verification-badge-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--verified-color); color:#fff;"></button>
+                <div id="admin-id-preview-panel" style="display:none; width: 100%; margin-top: 12px; border: 1px dashed var(--accent-rose); padding: 10px; border-radius: 12px; background: #fff5f5;">
+                    <p style="font-size: 11px; font-weight: bold; color: var(--accent-rose); margin-bottom: 6px;">Submitted Verification ID Asset:</p>
+                    <img id="admin-id-preview-img" src="" style="width: 100%; max-height: 140px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border-color);">
+                </div>
+
+                <button id="admin-grant-verification-badge-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--verified-color); border-color: var(--verified-color); color:#fff;"></button>
                 <button id="profile-action-edit-btn" class="secondary-btn" style="display:none; padding:6px; font-size:12px; margin-top:12px;" onclick="switchFromProfileToSettings()">Edit Description</button>
             </div>
             
@@ -484,6 +518,7 @@
         const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
         const hubSearchBar = document.getElementById('hub-main-search-bar');
         const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
+        const identityCardInput = document.getElementById('settings-id-card-input');
 
         let currentUser = null;
         let userDataRecord = null;
@@ -495,8 +530,17 @@
         let audioChunks = [];
         let isSignUpMode = false;
         let selectedFeedFileBase64 = "";
+        let selectedIdentityFileBase64 = "";
         let globalCachedFeedPosts = [];
         let globalCachedAllUsers = [];
+
+        // High Fidelity Geometric Starburst SVGs Texture Seal 
+        const getVerifiedTextureBadgeMarkup = () => `
+            <svg class="verified-badge-texture-star" viewBox="0 0 24 24">
+                <path d="M12 2l2.6 1.8 3-.4.8 3.1 3 1.2-1 3 1.8 2.6-.4 3-3.1.8-1.2 3-3-1 2.6 1.8-3-.4-.8-3.1-3-1.2 1-3-1.8-2.6.4-3 3.1-.8 1.2-3z"/>
+                <path d="M9 12l2 2 4-4" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+        `;
 
         window.switchTab = function(tabName) {
             const chatPane = document.getElementById('app-chat-pane');
@@ -538,6 +582,7 @@
             document.getElementById('settings-fullname-input').value = userDataRecord.fullName;
             document.getElementById('settings-username-input').value = userDataRecord.username;
             document.getElementById('settings-description-input').value = userDataRecord.description || "";
+            selectedIdentityFileBase64 = userDataRecord.identityCardUrl || "";
             document.getElementById('settings-modal').style.display = 'flex';
         };
         window.closeSettingsModal = function() { document.getElementById('settings-modal').style.display = 'none'; };
@@ -548,22 +593,36 @@
             openSettingsModal();
         };
 
+        // Capture uploaded identity proof document scan
+        identityCardInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                selectedIdentityFileBase64 = await transformFileToBase64(file);
+            }
+        });
+
         window.saveSettingsChanges = async function() {
             const updatedName = document.getElementById('settings-fullname-input').value.trim();
             const updatedUsername = document.getElementById('settings-username-input').value.trim().toLowerCase();
             const updatedDesc = document.getElementById('settings-description-input').value.trim();
             if(!updatedName || !updatedUsername) return;
             try {
-                const completePayload = { fullName: updatedName, username: updatedUsername, description: updatedDesc };
+                const completePayload = { 
+                    fullName: updatedName, 
+                    username: updatedUsername, 
+                    description: updatedDesc,
+                    identityCardUrl: selectedIdentityFileBase64 
+                };
                 await updateDoc(doc(db, "users", currentUser.uid), completePayload);
                 userDataRecord = { ...userDataRecord, ...completePayload };
                 launchDashboard(userDataRecord);
                 closeSettingsModal();
+                alert("Settings structural changes saved successfully!");
             } catch(e) { alert(e.message); }
         };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
-            const tickHtml = userObj.verified ? `<span class="verified-badge-tick" title="Verified Creator">✓</span>` : "";
+            const tickHtml = userObj.verified ? getVerifiedTextureBadgeMarkup() : "";
             document.getElementById('view-modal-avatar').src = userObj.photoURL;
             document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
@@ -571,21 +630,32 @@
             
             document.getElementById('profile-action-edit-btn').style.display = isOwnProfile ? 'block' : 'none';
 
-            // Special Administrative Verification Module Hook for username exact validation match
+            // Identity Document Verification Inspector interface for Admin panel "yaseen"
+            const adminPreviewPanel = document.getElementById('admin-id-preview-panel');
             const adminVerificationBtn = document.getElementById('admin-grant-verification-badge-btn');
+            
             if(userDataRecord && userDataRecord.username === "yaseen") {
                 adminVerificationBtn.style.display = "block";
                 adminVerificationBtn.innerText = userObj.verified ? "Remove Verification Badge" : "Grant Verified Blue Badge";
+                
+                if(userObj.identityCardUrl) {
+                    adminPreviewPanel.style.display = "block";
+                    document.getElementById('admin-id-preview-img').src = userObj.identityCardUrl;
+                } else {
+                    adminPreviewPanel.style.display = "none";
+                }
+
                 adminVerificationBtn.onclick = async () => {
                     const targetState = !userObj.verified;
                     await updateDoc(doc(db, "users", userObj.uid), { verified: targetState });
                     userObj.verified = targetState;
-                    alert("Verification state updated successfully!");
+                    alert("Verification seal badge toggled successfully!");
                     renderProfileCard(userObj, isOwnProfile);
                     launchDashboard(userDataRecord);
                 };
             } else {
                 adminVerificationBtn.style.display = "none";
+                adminPreviewPanel.style.display = "none";
             }
 
             try {
@@ -679,7 +749,6 @@
             });
         };
 
-        // Complete Search Tab Controller Logic Operations
         hubSearchBar.addEventListener('input', () => {
             triggerHubComprehensiveSearch();
         });
@@ -694,7 +763,6 @@
             suggestionsOverlay.innerHTML = "";
             suggestionsOverlay.style.display = "none";
 
-            // Process smart auto-suggestions overlay array parsing matching index targets
             if(filterText.length >= 1) {
                 const uniqueSuggestions = globalCachedAllUsers.filter(u => u.username.includes(filterText) || u.fullName.toLowerCase().includes(filterText));
                 if(uniqueSuggestions.length > 0) {
@@ -712,10 +780,9 @@
                 }
             }
 
-            // Render matching verified creators list interface cards row layout block
             globalCachedAllUsers.forEach(u => {
                 if(filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
-                const tickHtml = u.verified ? `<span class="verified-badge-tick">✓</span>` : "";
+                const tickHtml = u.verified ? getVerifiedTextureBadgeMarkup() : "";
                 const isFriend = (userDataRecord.friends || []).includes(u.uid);
                 let btnHtml = "";
                 if (u.uid !== currentUser.uid) {
@@ -727,11 +794,12 @@
                 const row = document.createElement('div');
                 row.className = "friend-item";
                 row.style.margin = "0";
+                row.style.padding = "8px 12px";
                 row.innerHTML = `
-                    <img src="${u.photoURL}">
+                    <img src="${u.photoURL}" style="width:34px; height:34px;">
                     <div class="info" style="flex:1;">
-                        <h4 style="display:flex; align-items:center; gap:4px;">${u.fullName} ${tickHtml}</h4>
-                        <p>@${u.username}</p>
+                        <h4 style="display:flex; align-items:center; gap:4px; font-size:13px;">${u.fullName} ${tickHtml}</h4>
+                        <p style="font-size:11px;">@${u.username}</p>
                     </div>
                     ${btnHtml}
                 `;
@@ -739,7 +807,6 @@
                 creatorsContainer.appendChild(row);
             });
 
-            // Render matching timeline posts targeting descriptive body parameters
             globalCachedFeedPosts.forEach(postItem => {
                 const post = postItem.data;
                 if(filterText && !post.text.toLowerCase().includes(filterText) && !post.authorUsername.includes(filterText)) return;
@@ -780,9 +847,8 @@
                     : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Follow</button>`;
             }
 
-            // Sync verification state locally inside live layout node headers array loop tracking snapshots
             const matchingUserObj = globalCachedAllUsers.find(u => u.uid === post.authorUid);
-            const verifiedTick = (matchingUserObj && matchingUserObj.verified) ? `<span class="verified-badge-tick">✓</span>` : "";
+            const verifiedTick = (matchingUserObj && matchingUserObj.verified) ? getVerifiedTextureBadgeMarkup() : "";
 
             let commentsHtml = commentsArray.map(c => `
                 <div class="comment-row"><span class="comment-user">@${c.username}</span>${c.text}</div>
@@ -912,7 +978,7 @@
             e.preventDefault();
             const username = document.getElementById('setup-username').value.trim().toLowerCase();
             const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, description: "", verified: false, friends: [] };
+            const profileData = { uid: currentUser.uid, username, fullName, description: "", verified: false, friends: [], identityCardUrl: "" };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
             
             try {
@@ -927,13 +993,11 @@
             loginContainer.style.display = 'none';
             dashboardContainer.style.display = 'flex';
             
-            // Render verification tick badge icon adjacent to structural panel text headers
-            const tickHtml = data.verified ? `<span class="verified-badge-tick">✓</span>` : "";
+            const tickHtml = data.verified ? getVerifiedTextureBadgeMarkup() : "";
             document.getElementById('dash-avatar').src = data.photoURL;
             document.getElementById('dash-display-name').innerText = data.fullName;
             document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml}`;
             
-            // Cross-reconcile user tables cache index matching real-time database queries mapping overlays
             onSnapshot(collection(db, "users"), (uSnap) => {
                 globalCachedAllUsers = [];
                 uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); });
@@ -1071,7 +1135,7 @@
                     if (activeStatusDatabase[fUid]) {
                         createStatusTrayIcon(activeStatusDatabase[fUid]);
                     }
-                    const tickHtml = fData.verified ? `<span class="verified-badge-tick">✓</span>` : "";
+                    const tickHtml = fData.verified ? getVerifiedTextureBadgeMarkup() : "";
                     const item = document.createElement('div');
                     item.className = 'friend-item';
                     item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4 style="display:flex; align-items:center; gap:4px;">${fData.fullName} ${tickHtml}</h4><p>@${fData.username}</p></div>`;
