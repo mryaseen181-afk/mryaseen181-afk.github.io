@@ -121,7 +121,6 @@
             width: 56px; height: 56px; border-radius: 50%; padding: 2px;
             background: var(--story-gradient); display: flex; justify-content: center; align-items: center;
         }
-        .story-avatar-wrap.viewed { background: var(--border-color); }
         .story-avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #fff; padding: 2px; }
         .story-item span { font-size: 11px; margin-top: 4px; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
 
@@ -165,7 +164,6 @@
         @keyframes pulseRecord { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         .send-txt-btn { background: none; border: none; color: var(--accent-blue); font-weight: 600; font-size: 14px; cursor: pointer; padding: 0 4px; }
 
-        /* Social Feed Components */
         .feed-composer {
             background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 3px; padding: 16px; margin-bottom: 24px; max-width: 600px; width: 100%; margin-left: auto; margin-right: auto;
         }
@@ -181,7 +179,6 @@
         .post-body .author-name { font-weight: 600; margin-right: 6px; }
         .post-time { font-size: 11px; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; }
 
-        /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 100; }
         .modal-content { background: var(--bg-main); padding: 24px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; position: relative; }
         .close-modal { position: absolute; top: 12px; right: 16px; font-size: 22px; color: var(--text-muted); cursor: pointer; }
@@ -208,7 +205,7 @@
 </head>
 <body>
 
-    <div id="loading-screen">Loading Instagram Engine...</div>
+    <div id="loading-screen">Syncing data structures...</div>
 
     <div id="login-container" class="form-container" style="display: none;">
         <div class="insta-logo-title">Instagram</div>
@@ -309,7 +306,7 @@
                     </div>
                 </div>
                 <div id="no-chat-fallback" class="no-chat-selected">
-                    <p>Select a direct message conversation to begin setup</p>
+                    <p>Select a direct message conversation to begin</p>
                 </div>
             </div>
 
@@ -370,7 +367,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
@@ -398,6 +395,8 @@
         const statusFileInput = document.getElementById('status-file-input');
         const chatImageInput = document.getElementById('chat-image-input');
         const voiceRecordBtn = document.getElementById('voice-record-btn');
+        const primaryAuthBtn = document.getElementById('email-primary-btn');
+        const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
 
         let currentUser = null;
         let userDataRecord = null;
@@ -410,7 +409,6 @@
         let isSignUpMode = false;
         let selectedFeedFileBase64 = "";
 
-        // Application Tab Controller Navigation Mode Switching
         window.switchTab = function(tabName) {
             const chatPane = document.getElementById('app-chat-pane');
             const feedPane = document.getElementById('app-feed-pane');
@@ -474,7 +472,6 @@
             }
         });
 
-        // Helper function for converting file assets safely to baseline architecture
         const transformFileToBase64 = file => new Promise((res, rej) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -559,14 +556,12 @@
             document.getElementById('dash-display-name').innerText = data.fullName;
             document.getElementById('dash-username').innerText = "@" + data.username;
             
-            // Watch Stories Sync Configuration
             onSnapshot(collection(db, "statuses"), (snapshot) => {
                 activeStatusDatabase = {};
                 snapshot.forEach(doc => { activeStatusDatabase[doc.id] = doc.data(); });
                 loadFriendsSidebarList();
             });
 
-            // Sync global social discover feed
             onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => {
                 const feedContainer = document.getElementById('feed-posts-container');
                 feedContainer.innerHTML = "";
@@ -598,7 +593,6 @@
             });
         }
 
-        // Processing Story publishing setup distributed transparently to followers/network parameters
         statusFileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -614,10 +608,9 @@
                     timestamp: Date.now()
                 });
                 alert("Story updated successfully!");
-            } catch(err) { alert("Failed to convert image target payload storage line."); }
+            } catch(err) { alert("Failed to convert image target payload."); }
         });
 
-        // Global Discover Tab Form Submit Operations Logic
         document.getElementById('feed-post-file').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if(file) {
@@ -657,11 +650,10 @@
             sendCustomPayload(file.type.startsWith('video/') ? 'video' : 'image', convertedBase64);
         });
 
-        // Fully operational functional base64 voice message stream storage pipeline structural setup
         voiceRecordBtn.addEventListener('click', async () => {
             if (!mediaRecorder) {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert("Audio processing layer unavailable in this client setup environment context.");
+                    alert("Audio processing layer unavailable.");
                     return;
                 }
                 try {
@@ -679,7 +671,7 @@
                     };
                     mediaRecorder.start();
                     voiceRecordBtn.classList.add('recording');
-                } catch (err) { alert("Mic operation permission layer error: " + err.message); }
+                } catch (err) { alert("Mic operation error: " + err.message); }
             } else {
                 mediaRecorder.stop();
             }
@@ -703,7 +695,6 @@
             statusTray.innerHTML = "";
             const uids = userDataRecord.friends || [];
 
-            // Instagram Stories architecture visible globally across all connections
             if (activeStatusDatabase[currentUser.uid]) {
                 createStatusTrayIcon(activeStatusDatabase[currentUser.uid]);
             }
@@ -823,7 +814,7 @@
                     loadFriendsSidebarList();
                     alert("You followed @" + inputVal);
                 }
-            } else { alert("User profile target entity missing."); }
+            } else { alert("User profile missing."); }
             document.getElementById('friend-username-input').value = "";
         });
 
