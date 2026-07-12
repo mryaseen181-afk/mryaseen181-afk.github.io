@@ -3,212 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniqueChatHub - Workspace Pro</title>
+    <title>Instagram - UniqueChatHub</title>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            --panel-bg: rgba(255, 255, 255, 0.95);
-            --sidebar-bg: rgba(248, 250, 252, 0.9);
-            --chat-bg: #ffffff;
-            --card-bg: #ffffff;
-            --text-color: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #cbd5e1;
-            --input-bg: #f1f5f9;
-            --msg-received-bg: #e2e8f0;
-            --header-bg: #f1f5f9;
-            --accent-glow: linear-gradient(135deg, #64748b 0%, #334155 100%);
-            --whatsapp-green: #25d366;
+            --bg-main: #ffffff;
+            --bg-secondary: #fafafa;
+            --border-color: #dbdbdb;
+            --text-color: #262626;
+            --text-muted: #737373;
+            --accent-blue: #0095f6;
+            --accent-red: #ed4956;
+            --story-gradient: linear-gradient(45deg, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background: var(--bg-gradient);
+            background: var(--bg-secondary);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
             color: var(--text-color);
             overflow: hidden;
         }
 
-        #loading-screen { color: #334155; font-size: 18px; font-weight: 600; }
+        #loading-screen { color: var(--text-muted); font-size: 16px; font-weight: 500; }
 
         .form-container {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-            width: 100%;
-            max-width: 420px;
-            text-align: center;
+            background: var(--bg-main);
+            padding: 40px;
             border: 1px solid var(--border-color);
+            border-radius: 1px;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .insta-logo-title {
+            font-size: 28px;
+            font-weight: bold;
+            font-style: italic;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
         }
 
         .dashboard-layout {
             width: 100%;
-            max-width: 1200px;
-            height: 90vh;
-            background: var(--panel-bg);
-            border-radius: 24px;
-            display: flex;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
+            max-width: 935px;
+            height: 85vh;
+            background: var(--bg-main);
             border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .app-navbar {
+            height: 60px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-main);
+        }
+
+        .nav-brand { font-weight: bold; font-size: 20px; cursor: pointer; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-item { cursor: pointer; font-weight: 600; font-size: 14px; background: none; border: none; color: var(--text-color); }
+        .nav-item.active { color: var(--accent-blue); }
+
+        .main-content-area {
+            flex: 1;
+            display: flex;
             overflow: hidden;
             position: relative;
         }
 
         .sidebar {
-            width: 340px;
-            background: var(--sidebar-bg);
+            width: 350px;
+            background: var(--bg-main);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            z-index: 5;
             flex-shrink: 0;
         }
-
-        .brand-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 18px 20px;
-            background: rgba(0, 0, 0, 0.02);
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .brand-logo { 
-            width: 32px !important; 
-            height: 32px !important; 
-            max-width: 32px !important;
-            max-height: 32px !important;
-            flex-shrink: 0;
-        }
-        
-        .brand-title { font-size: 15px; font-weight: 800; letter-spacing: 0.5px; color: #334155; }
 
         .user-bar {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 16px 20px;
-            background: rgba(0, 0, 0, 0.02);
+            gap: 12px;
+            padding: 16px;
             border-bottom: 1px solid var(--border-color);
         }
-        .user-bar img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color); }
-        .user-details { flex: 1; min-width: 0; }
-        .user-details h3 { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .user-details p { color: var(--text-muted); font-size: 11.5px; font-weight: 500; }
-        
-        .status-upload-action-btn {
-            background: #f1f5f9; border: 1px solid var(--border-color); font-size: 12px;
-            padding: 6px 10px; border-radius: 14px; font-weight: 600; cursor: pointer;
-        }
+        .user-bar img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color); cursor: pointer; }
+        .user-details { flex: 1; min-width: 0; cursor: pointer; }
+        .user-details h3 { font-size: 14px; font-weight: 600; }
+        .user-details p { color: var(--text-muted); font-size: 12px; }
 
-        .whatsapp-status-tray {
-            display: none;
-            gap: 14px;
-            padding: 12px 16px;
+        .story-tray {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
             overflow-x: auto;
             border-bottom: 1px solid var(--border-color);
-            background: rgba(37, 211, 102, 0.06);
+            background: var(--bg-secondary);
         }
-        .status-item { display: flex; flex-direction: column; align-items: center; min-width: 56px; cursor: pointer; }
-        .status-avatar-wrap {
-            width: 52px; height: 52px; border-radius: 50%; padding: 3px;
-            border: 2px dashed var(--whatsapp-green); display: flex; justify-content: center; align-items: center;
+        .story-item { display: flex; flex-direction: column; align-items: center; min-width: 64px; cursor: pointer; }
+        .story-avatar-wrap {
+            width: 56px; height: 56px; border-radius: 50%; padding: 2px;
+            background: var(--story-gradient); display: flex; justify-content: center; align-items: center;
         }
-        .status-avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .status-item span { font-size: 10.5px; margin-top: 4px; max-width: 58px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .story-avatar-wrap.viewed { background: var(--border-color); }
+        .story-avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #fff; padding: 2px; }
+        .story-item span { font-size: 11px; margin-top: 4px; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
 
         .friend-system { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
-        .friend-input-group { display: flex; gap: 8px; background: var(--input-bg); padding: 4px 6px; border-radius: 24px; border: 1px solid var(--border-color); }
-        .friend-input-group input { flex: 1; padding: 6px 10px; background: transparent; border: none; color: var(--text-color); font-size: 13.5px; outline: none; }
-        .friend-btn { padding: 0 14px; background: var(--accent-glow); color: white; border: none; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 12.5px; }
+        .friend-input-group { display: flex; gap: 8px; background: var(--bg-secondary); padding: 4px 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .friend-input-group input { flex: 1; padding: 6px 0; background: transparent; border: none; color: var(--text-color); font-size: 14px; outline: none; }
+        .friend-btn { background: none; border: none; color: var(--accent-blue); font-weight: 600; cursor: pointer; font-size: 14px; }
 
-        .friends-list-container { flex: 1; overflow-y: auto; padding: 10px; }
-        .friends-list-heading { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; padding-left: 8px; }
+        .friends-list-container { flex: 1; overflow-y: auto; }
+        .friends-list-heading { font-size: 12px; font-weight: 600; color: var(--text-muted); padding: 16px 16px 8px 16px; }
+        .friend-item { display: flex; align-items: center; gap: 12px; padding: 8px 16px; cursor: pointer; }
+        .friend-item:hover { background: var(--bg-secondary); }
+        .friend-item img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+        .friend-item .info h4 { font-size: 14px; font-weight: 600; }
+        .friend-item .info p { font-size: 12px; color: var(--text-muted); }
+
+        .chat-area, .feed-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
+        .feed-area { display: none; overflow-y: auto; padding: 20px; }
         
-        .friend-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 14px; cursor: pointer; margin-bottom: 4px; transition: all 0.2s; }
-        .friend-item:hover { background: rgba(0, 0, 0, 0.02); }
-        .friend-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .friend-item .info h4 { font-size: 13.5px; font-weight: 600; }
+        .chat-header { height: 60px; padding: 0 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; }
+        .chat-header h3 { font-size: 16px; font-weight: 600; }
+        .typing-indicator-span { font-size: 12px; color: var(--accent-blue); margin-left: 6px; display: none; }
+        .back-arrow { display: none; background: none; border: none; font-size: 18px; cursor: pointer; }
 
-        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); position: relative; min-width: 0; }
-        .chat-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; }
-        .chat-header-meta { display: flex; flex-direction: column; }
-        .typing-indicator-span { font-size: 11px; color: #10b981; font-weight: 600; display: none; }
-        
-        .back-arrow { display: none; background: none; border: none; font-size: 20px; cursor: pointer; }
-        .messages-box { flex: 1; overflow-y: auto; padding: 20px 24px 110px 24px; display: flex; flex-direction: column; gap: 14px; }
-        
-        .msg { max-width: 70%; padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.45; }
-        .msg.sent { background: var(--accent-glow); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .msg.received { background: var(--msg-received-bg); color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
-        .msg img { max-width: 100%; border-radius: 10px; margin-top: 5px; display: block; max-height: 200px; object-fit: cover; }
-        .msg video { max-width: 100%; border-radius: 10px; margin-top: 5px; display: block; max-height: 200px; }
-        .msg audio { display: block; margin-top: 5px; max-width: 100%; }
-        .msg.sent audio { filter: invert(1) hue-rotate(180deg); }
+        .messages-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .msg { max-width: 60%; padding: 12px 16px; border-radius: 22px; font-size: 14px; line-height: 1.4; }
+        .msg.sent { background: var(--bg-secondary); color: var(--text-color); align-self: flex-end; border: 1px solid var(--border-color); }
+        .msg.received { border: 1px solid var(--border-color); color: var(--text-color); align-self: flex-start; }
+        .msg img, .msg video { max-width: 100%; border-radius: 12px; margin-top: 6px; display: block; max-height: 200px; object-fit: cover; }
+        .msg audio { display: block; margin-top: 6px; max-width: 100%; }
+        .msg-meta-row { display: flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 10px; color: var(--text-muted); }
 
-        .msg-meta-row { display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 4px; font-size: 10px; opacity: 0.75; }
-        .whatsapp-status-ticks { font-size: 11px; color: #38bdf8; }
-
-        .chat-input-container-floating {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 680px; background: #ffffff; border: 1px solid var(--border-color); padding: 8px 10px; border-radius: 35px; display: flex; gap: 8px; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); z-index: 10;
+        .chat-input-wrapper { padding: 16px; background: var(--bg-main); }
+        .chat-input-container {
+            border: 1px solid var(--border-color); border-radius: 22px; padding: 6px 12px; display: flex; gap: 10px; align-items: center; background: var(--bg-main);
         }
-        .chat-input-container-floating input[type="text"] { flex: 1; padding: 10px 16px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 26px; color: var(--text-color); font-size: 13.5px; outline: none; }
-        
-        .attach-btn, .mic-btn { background: #f1f5f9; border: 1px solid var(--border-color); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        
-        .attach-btn svg, .mic-btn svg { 
-            width: 16px !important; 
-            height: 16px !important; 
-            max-width: 16px !important;
-            max-height: 16px !important;
-            fill: none; stroke: #475569; stroke-width: 2; 
-        }
-        
-        .mic-btn.recording { background: #ef4444; border-color: #ef4444; animation: pulseRecord 1.5s infinite; }
-        .mic-btn.recording svg { stroke: #ffffff; }
+        .chat-input-container input[type="text"] { flex: 1; padding: 8px 4px; background: transparent; border: none; color: var(--text-color); font-size: 14px; outline: none; }
+        .action-icon-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-color); }
+        .action-icon-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .action-icon-btn.recording { color: var(--accent-red); animation: pulseRecord 1.5s infinite; }
+        @keyframes pulseRecord { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .send-txt-btn { background: none; border: none; color: var(--accent-blue); font-weight: 600; font-size: 14px; cursor: pointer; padding: 0 4px; }
 
-        @keyframes pulseRecord { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
-        
-        .send-btn { width: 38px; height: 38px; background: var(--accent-glow); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        
-        .send-btn svg { 
-            width: 14px !important; 
-            height: 14px !important; 
-            max-width: 14px !important;
-            max-height: 14px !important;
-            fill: currentColor; 
+        /* Social Feed Components */
+        .feed-composer {
+            background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 3px; padding: 16px; margin-bottom: 24px; max-width: 600px; width: 100%; margin-left: auto; margin-right: auto;
         }
+        .feed-composer textarea { width: 100%; height: 60px; border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; outline: none; resize: none; font-size: 14px; margin-bottom: 10px; }
+        .feed-composer-actions { display: flex; justify-content: space-between; align-items: center; }
+        .feed-posts-container { display: flex; flex-direction: column; gap: 24px; max-width: 600px; width: 100%; margin-left: auto; margin-right: auto; }
+        .insta-post { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 3px; display: flex; flex-direction: column; }
+        .post-header { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid var(--bg-secondary); }
+        .post-header img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .post-header h4 { font-size: 14px; font-weight: 600; }
+        .post-media { width: 100%; max-height: 450px; object-fit: cover; border-bottom: 1px solid var(--bg-secondary); }
+        .post-body { padding: 14px; font-size: 14px; line-height: 1.5; }
+        .post-body .author-name { font-weight: 600; margin-right: 6px; }
+        .post-time { font-size: 11px; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background: var(--card-bg); padding: 26px; border-radius: 20px; border: 1px solid var(--border-color); width: 100%; max-width: 380px; text-align: center; position: relative; }
+        /* Modals */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 100; }
+        .modal-content { background: var(--bg-main); padding: 24px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; position: relative; }
         .close-modal { position: absolute; top: 12px; right: 16px; font-size: 22px; color: var(--text-muted); cursor: pointer; }
-
         .input-group { margin-bottom: 14px; text-align: left; }
-        .input-group label { display: block; font-size: 12.5px; margin-bottom: 4px; font-weight: 600; }
-        .input-group input { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 13.5px; background-color: var(--input-bg); color: var(--text-color); outline: none; }
+        .input-group label { display: block; font-size: 12px; margin-bottom: 4px; font-weight: 600; color: var(--text-muted); }
+        .input-group input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; background: var(--bg-secondary); outline: none; }
+        .main-btn { width: 100%; padding: 10px; background: var(--accent-blue); color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .secondary-btn { width: 100%; padding: 10px; background: transparent; color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; cursor: pointer; margin-top: 6px; }
+        .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: var(--text-muted); font-size: 14px; }
         
-        .main-btn { width: 100%; padding: 11px; background: var(--accent-glow); color: white; border: none; border-radius: 10px; font-size: 13.5px; font-weight: bold; cursor: pointer; }
-        .secondary-btn { width: 100%; padding: 11px; background: transparent; color: var(--text-color); border: 1px solid var(--border-color); border-radius: 10px; font-size: 13.5px; cursor: pointer; margin-top: 6px; }
-        .google-btn { width: 100%; padding: 11px; background: #fff; color: var(--text-color); border: 1px solid var(--border-color); border-radius: 10px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: 600; }
-        
-        .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: var(--text-muted); font-size: 13.5px; }
-        #status-viewer-modal .modal-content { max-width: 500px; background: #000; color: #fff; }
-        #status-media-container { width: 100%; min-height: 300px; display: flex; justify-content: center; align-items: center; margin-top: 15px; }
-        #status-viewer-img, #status-viewer-video { width: 100%; max-height: 500px; object-fit: contain; border-radius: 8px; }
+        #status-viewer-modal .modal-content { max-width: 420px; background: #000; color: #fff; padding: 40px 20px 20px 20px; }
+        #status-media-container { width: 100%; min-height: 400px; display: flex; justify-content: center; align-items: center; }
+        #status-viewer-img, #status-viewer-video { width: 100%; max-height: 60vh; object-fit: contain; }
 
-        @media (max-width: 640px) {
-            .dashboard-layout { height: 100vh; border-radius: 0; border: none; }
+        @media (max-width: 768px) {
+            .dashboard-layout { height: 100vh; border: none; }
             .sidebar { width: 100%; }
             .chat-area { display: none; }
             .dashboard-layout.chat-active .sidebar { display: none; }
@@ -219,124 +208,158 @@
 </head>
 <body>
 
-    <div id="loading-screen">Syncing responsive node engine...</div>
+    <div id="loading-screen">Loading Instagram Engine...</div>
 
     <div id="login-container" class="form-container" style="display: none;">
-        <h2 id="auth-title">Welcome Back</h2>
-        <p style="color:var(--text-muted); font-size:13px; margin-bottom:16px;" id="auth-subtitle">Enter your workspace credentials</p>
-        
+        <div class="insta-logo-title">Instagram</div>
         <div class="input-group">
-            <label>Email Address</label>
-            <input type="email" id="login-email" placeholder="you@example.com">
+            <input type="email" id="login-email" placeholder="Email Address">
         </div>
         <div class="input-group">
-            <label>Password</label>
-            <input type="password" id="login-password" placeholder="••••••••">
+            <input type="password" id="login-password" placeholder="Password">
         </div>
-
         <button id="email-primary-btn" class="main-btn">Sign In</button>
-        <button id="auth-toggle-mode-btn" class="secondary-btn">Create a New Account Instead</button>
-        
-        <div style="margin:12px 0; color:var(--text-muted); font-size:12px;">or</div>
-        
-        <button id="google-login-btn" class="google-btn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:16px; height:16px; margin-right: 8px;">
-            Sign in with Google
-        </button>
+        <button id="auth-toggle-mode-btn" class="secondary-btn">Create New Account</button>
+        <div style="margin:16px 0; color:var(--text-muted); font-size:13px;">OR</div>
+        <button id="google-login-btn" class="secondary-btn" style="color: var(--accent-blue); font-weight:600;">Log in with Google</button>
     </div>
 
     <div id="profile-setup-container" class="form-container" style="display: none;">
-        <h2>Create Profile</h2>
+        <div class="insta-logo-title">Profile Setup</div>
         <form id="profile-form">
             <div class="input-group">
-                <label>Unique Username</label>
-                <input type="text" id="setup-username" placeholder="username123" required>
+                <input type="text" id="setup-username" placeholder="Username" required>
             </div>
             <div class="input-group">
-                <label>Full Name</label>
-                <input type="text" id="setup-name" placeholder="Alex Carter" required>
+                <input type="text" id="setup-name" placeholder="Full Name" required>
             </div>
-            <button type="submit" class="main-btn">Launch Workspace</button>
+            <button type="submit" class="main-btn">Complete Setup</button>
         </form>
     </div>
 
     <div id="dashboard-container" class="dashboard-layout" style="display: none;">
-        <div class="sidebar">
-            <div class="brand-header">
-                <svg class="brand-logo" viewBox="0 0 32 32">
-                    <circle cx="16" cy="16" r="14" fill="#64748b" opacity="0.15"/>
-                    <path d="M16 4C9.37 4 4 9.37 4 16c0 2.61.84 5.03 2.25 7L5 27l4.13-1.16c1.81.75 3.8 1.16 5.87 1.16 6.63 0 12-5.37 12-12S22.63 4 16 4zm-2 15l-4-4 1.41-1.41L14 16.17l5.59-5.59L21 12l-7 7z" fill="#475569"/>
-                </svg>
-                <span class="brand-title">UNIQUECHATHUB</span>
-                <button onclick="triggerLogoutSession()" style="margin-left:auto; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:12px;">Logout</button>
-            </div>
-
-            <div class="user-bar">
-                <img id="dash-avatar" src="">
-                <div class="user-details">
-                    <h3 id="dash-display-name">Loading...</h3>
-                    <p id="dash-username"></p>
-                </div>
-                <label for="status-file-input" class="status-upload-action-btn">Status ➕</label>
-                <input type="file" id="status-file-input" accept="image/*,video/*" style="display:none;">
-            </div>
-
-            <div id="status-tray" class="whatsapp-status-tray"></div>
-
-            <div class="friend-system">
-                <div class="friend-input-group">
-                    <input type="text" id="friend-username-input" placeholder="Add friend by username...">
-                    <button id="add-friend-btn" class="friend-btn">Add</button>
-                </div>
-            </div>
-            
-            <div class="friends-list-container">
-                <div class="friends-list-heading">Direct Messages</div>
-                <div id="friends-list"></div>
+        <div class="app-navbar">
+            <div class="nav-brand" onclick="switchTab('chats')">Instagram</div>
+            <div class="nav-links">
+                <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
+                <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
+                <button onclick="triggerLogoutSession()" class="nav-item" style="color: var(--accent-red);">Logout</button>
             </div>
         </div>
 
-        <div class="chat-area">
-            <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1; height: 100%;">
-                <div class="chat-header">
-                    <button class="back-arrow" onclick="exitChatToSidebar()">⬅</button>
-                    <div class="chat-header-meta">
-                        <h3 id="chat-with-heading">Chat</h3>
-                        <span id="chat-typing-indicator" class="typing-indicator-span">typing...</span>
+        <div class="main-content-area">
+            <div class="sidebar" id="app-sidebar-pane">
+                <div class="user-bar">
+                    <img id="dash-avatar" src="" onclick="openSettingsModal()">
+                    <div class="user-details" onclick="openSettingsModal()">
+                        <h3 id="dash-username">@username</h3>
+                        <p id="dash-display-name">Loading...</p>
+                    </div>
+                    <label for="status-file-input" class="action-icon-btn" title="Add to My Story" style="color: var(--accent-blue);">
+                        <svg viewBox="0 0 24 24" style="width:26px; height:26px;"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    </label>
+                    <input type="file" id="status-file-input" accept="image/*,video/*" style="display:none;">
+                </div>
+
+                <div id="status-tray" class="story-tray"></div>
+
+                <div class="friend-system">
+                    <div class="friend-input-group">
+                        <input type="text" id="friend-username-input" placeholder="Search username...">
+                        <button id="add-friend-btn" class="friend-btn">Follow</button>
                     </div>
                 </div>
                 
-                <div id="messages-box" class="messages-box"></div>
-                
-                <div class="chat-input-container-floating">
-                    <label for="chat-image-input" class="attach-btn">
-                        <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-                    </label>
-                    <input type="file" id="chat-image-input" accept="image/*,video/*,audio/*" style="display: none;">
-                    
-                    <button id="voice-record-btn" class="mic-btn">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M12 1c-1.66 0-3 1.34-3 3v8c0 1.66 1.34 3 3 3s3-1.34 3-3V4c0-1.66-1.34-3-3-3z"/>
-                            <path d="M19 10v1c0 3.53-2.61 6.44-6 6.93V21h-2v-3.07c-3.39-.49-6-3.4-6-6.93v-1h2v1c0 2.76 2.24 5 5 5s5-2.24 5-5v-1h2z"/>
-                        </svg>
-                    </button>
-
-                    <input type="text" id="message-input" placeholder="Type a message...">
-                    <button id="send-msg-btn" class="send-btn">
-                        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                    </button>
+                <div class="friends-list-container">
+                    <div class="friends-list-heading">Direct Messages</div>
+                    <div id="friends-list"></div>
                 </div>
             </div>
-            <div id="no-chat-fallback" class="no-chat-selected">
-                <p>Select a friend to begin workspace messaging</p>
+
+            <div class="chat-area" id="app-chat-pane">
+                <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1; height: 100%;">
+                    <div class="chat-header">
+                        <button class="back-arrow" onclick="exitChatToSidebar()">Back</button>
+                        <div class="chat-header-meta">
+                            <h3 id="chat-with-heading">Chat User</h3>
+                            <span id="chat-typing-indicator" class="typing-indicator-span">typing...</span>
+                        </div>
+                        <button id="view-friend-profile-header-btn" class="friend-btn" style="margin-left: auto;">View Profile</button>
+                    </div>
+                    
+                    <div id="messages-box" class="messages-box"></div>
+                    
+                    <div class="chat-input-wrapper">
+                        <div class="chat-input-container">
+                            <label for="chat-image-input" class="action-icon-btn">
+                                <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                            </label>
+                            <input type="file" id="chat-image-input" accept="image/*,video/*" style="display: none;">
+                            
+                            <button id="voice-record-btn" class="action-icon-btn">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 1c-1.66 0-3 1.34-3 3v8c0 1.66 1.34 3 3 3s3-1.34 3-3V4c0-1.66-1.34-3-3-3z"/>
+                                    <path d="M19 10v1c0 3.53-2.61 6.44-6 6.93V21h-2v-3.07c-3.39-.49-6-3.4-6-6.93v-1h2v1c0 2.76 2.24 5 5 5s5-2.24 5-5v-1h2z"/>
+                                </svg>
+                            </button>
+
+                            <input type="text" id="message-input" placeholder="Message...">
+                            <button id="send-msg-btn" class="send-txt-btn">Send</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="no-chat-fallback" class="no-chat-selected">
+                    <p>Select a direct message conversation to begin setup</p>
+                </div>
             </div>
+
+            <div class="feed-area" id="app-feed-pane">
+                <div class="feed-composer">
+                    <textarea id="feed-post-text" placeholder="What's on your mind? Share it with the world..."></textarea>
+                    <div class="feed-composer-actions">
+                        <input type="file" id="feed-post-file" accept="image/*,video/*" style="display: none;">
+                        <button class="secondary-btn" style="width: auto; margin: 0;" onclick="document.getElementById('feed-post-file').click()">Add Photo/Video</button>
+                        <button class="main-btn" style="width: auto;" id="submit-feed-post-btn">Publish Post</button>
+                    </div>
+                    <div id="feed-file-preview-label" style="font-size: 12px; color: var(--accent-blue); margin-top: 6px; display: none;">Media attachment queued</div>
+                </div>
+                <div id="feed-posts-container" class="feed-posts-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
+            <h2>Profile Settings</h2>
+            <br>
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="settings-fullname-input">
+            </div>
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="settings-username-input">
+            </div>
+            <button class="main-btn" onclick="saveSettingsChanges()">Save Changes</button>
+        </div>
+    </div>
+
+    <div id="view-profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeViewProfileModal()">&times;</span>
+            <div style="margin: 16px auto; width:80px; height:80px; border-radius:50%; overflow:hidden;">
+                <img id="view-modal-avatar" src="" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <h2 id="view-modal-name">Name</h2>
+            <p id="view-modal-username" style="color:var(--accent-blue); font-weight:bold; margin-top:4px;">@username</p>
         </div>
     </div>
 
     <div id="status-viewer-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeStatusViewer()">&times;</span>
-            <h3 id="status-author-name" style="text-align: left;">Status Updates</h3>
+            <h3 id="status-author-name" style="text-align: left; margin-bottom: 12px;">Story</h3>
             <div id="status-media-container">
                 <img id="status-viewer-img" style="display:none;">
                 <video id="status-viewer-video" controls autoplay style="display:none;"></video>
@@ -347,11 +370,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ==========================================
-        // ACTIVE RUNTIME INSTANCE DATABASE KEYS:
-        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
             authDomain: "commoftheworld.firebaseapp.com", 
@@ -388,41 +408,92 @@
         let mediaRecorder = null;
         let audioChunks = [];
         let isSignUpMode = false;
+        let selectedFeedFileBase64 = "";
 
-        const emailInput = document.getElementById('login-email');
-        const passwordInput = document.getElementById('login-password');
-        const primaryAuthBtn = document.getElementById('email-primary-btn');
-        const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
+        // Application Tab Controller Navigation Mode Switching
+        window.switchTab = function(tabName) {
+            const chatPane = document.getElementById('app-chat-pane');
+            const feedPane = document.getElementById('app-feed-pane');
+            const sidePane = document.getElementById('app-sidebar-pane');
+            const btnChats = document.getElementById('nav-btn-chats');
+            const btnFeed = document.getElementById('nav-btn-feed');
+
+            btnChats.classList.remove('active');
+            btnFeed.classList.remove('active');
+
+            if(tabName === 'feed') {
+                chatPane.style.display = 'none';
+                sidePane.style.display = 'none';
+                feedPane.style.display = 'flex';
+                btnFeed.classList.add('active');
+            } else {
+                feedPane.style.display = 'none';
+                sidePane.style.display = 'flex';
+                chatPane.style.display = 'flex';
+                btnChats.classList.add('active');
+            }
+        };
+
+        window.openSettingsModal = function() {
+            document.getElementById('settings-fullname-input').value = userDataRecord.fullName;
+            document.getElementById('settings-username-input').value = userDataRecord.username;
+            document.getElementById('settings-modal').style.display = 'flex';
+        };
+        window.closeSettingsModal = function() { document.getElementById('settings-modal').style.display = 'none'; };
+        window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
+
+        window.saveSettingsChanges = async function() {
+            const updatedName = document.getElementById('settings-fullname-input').value.trim();
+            const updatedUsername = document.getElementById('settings-username-input').value.trim().toLowerCase();
+            if(!updatedName || !updatedUsername) return;
+            try {
+                const completePayload = { fullName: updatedName, username: updatedUsername };
+                await updateDoc(doc(db, "users", currentUser.uid), completePayload);
+                userDataRecord = { ...userDataRecord, ...completePayload };
+                launchDashboard(userDataRecord);
+                closeSettingsModal();
+            } catch(e) { alert(e.message); }
+        };
+
+        document.getElementById('view-friend-profile-header-btn').addEventListener('click', () => {
+            if(!activeChatFriendData) return;
+            document.getElementById('view-modal-avatar').src = activeChatFriendData.photoURL;
+            document.getElementById('view-modal-name').innerText = activeChatFriendData.fullName;
+            document.getElementById('view-modal-username').innerText = "@" + activeChatFriendData.username;
+            document.getElementById('view-profile-modal').style.display = 'flex';
+        });
 
         toggleAuthModeBtn.addEventListener('click', () => {
             isSignUpMode = !isSignUpMode;
             if(isSignUpMode) {
-                document.getElementById('auth-title').innerText = "Create Account";
-                document.getElementById('auth-subtitle').innerText = "Sign up for a workspace profile";
-                primaryAuthBtn.innerText = "Register Now";
+                primaryAuthBtn.innerText = "Register";
                 toggleAuthModeBtn.innerText = "Already have an account? Sign In";
             } else {
-                document.getElementById('auth-title').innerText = "Welcome Back";
-                document.getElementById('auth-subtitle').innerText = "Enter the workspace credentials";
                 primaryAuthBtn.innerText = "Sign In";
-                toggleAuthModeBtn.innerText = "Create a New Account Instead";
+                toggleAuthModeBtn.innerText = "Create New Account";
             }
         });
 
+        // Helper function for converting file assets safely to baseline architecture
+        const transformFileToBase64 = file => new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => res(reader.result);
+            reader.onerror = e => rej(e);
+        });
+
         primaryAuthBtn.addEventListener('click', () => {
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            if(!email || !password) { alert("Please provide both parameters."); return; }
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            if(!email || !password) { alert("Complete all settings parameters."); return; }
 
             loadingScreen.style.display = 'block';
             loginContainer.style.display = 'none';
 
             if(isSignUpMode) {
-                createUserWithEmailAndPassword(auth, email, password)
-                    .catch(err => { alert("Registration issue: " + err.message); resetAuthUI(); });
+                createUserWithEmailAndPassword(auth, email, password).catch(err => { alert(err.message); resetAuthUI(); });
             } else {
-                signInWithEmailAndPassword(auth, email, password)
-                    .catch(err => { alert("Login issue: " + err.message); resetAuthUI(); });
+                signInWithEmailAndPassword(auth, email, password).catch(err => { alert(err.message); resetAuthUI(); });
             }
         });
 
@@ -432,13 +503,7 @@
         }
 
         document.getElementById('google-login-btn').addEventListener('click', () => { 
-            signInWithPopup(auth, provider).catch(err => {
-                if (err.code === "auth/unauthorized-domain" || window.location.protocol === "file:") {
-                    alert("Local Protocol Lockout: You are opening this HTML file directly from a local folder path layer. Please host it online or use a local web server (like VS Code Live Server) to make Google Authentication operations function.");
-                } else {
-                    alert("Sign-In failed: " + err.message);
-                }
-            }); 
+            signInWithPopup(auth, provider).catch(err => { alert(err.message); }); 
         });
 
         window.triggerLogoutSession = function() {
@@ -456,7 +521,6 @@
                         launchDashboard(userDataRecord);
                     } else { showProfileSetup(user); }
                 } catch(err) {
-                    alert("Firestore Node Connection Error: " + err.message + "\nCheck if your Firebase Cloud Firestore Rules are set to public mode configuration rules.");
                     showProfileSetup(user);
                 }
             } else {
@@ -478,15 +542,13 @@
             e.preventDefault();
             const username = document.getElementById('setup-username').value.trim().toLowerCase();
             const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, photoURL: currentUser.photoURL || "https://api.dicebear.com/7.x/bottts/svg?seed=" + username, friends: [] };
+            const profileData = { uid: currentUser.uid, username, fullName, photoURL: "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username, friends: [] };
             
             try {
                 await setDoc(doc(db, "users", currentUser.uid), profileData);
                 userDataRecord = profileData;
                 launchDashboard(profileData);
-            } catch(e) {
-                alert("Writing user record failed. Verify your database security rules enable write permissions: " + e.message);
-            }
+            } catch(e) { alert(e.message); }
         });
 
         function launchDashboard(data) {
@@ -497,39 +559,109 @@
             document.getElementById('dash-display-name').innerText = data.fullName;
             document.getElementById('dash-username').innerText = "@" + data.username;
             
+            // Watch Stories Sync Configuration
             onSnapshot(collection(db, "statuses"), (snapshot) => {
                 activeStatusDatabase = {};
                 snapshot.forEach(doc => { activeStatusDatabase[doc.id] = doc.data(); });
                 loadFriendsSidebarList();
             });
+
+            // Sync global social discover feed
+            onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => {
+                const feedContainer = document.getElementById('feed-posts-container');
+                feedContainer.innerHTML = "";
+                snapshot.forEach(postDoc => {
+                    const post = postDoc.data();
+                    const card = document.createElement('div');
+                    card.className = 'insta-post';
+                    let mediaBlock = "";
+                    if(post.mediaUrl) {
+                        if(post.mediaType === 'video') {
+                            mediaBlock = `<video class="post-media" src="${post.mediaUrl}" controls></video>`;
+                        } else {
+                            mediaBlock = `<img class="post-media" src="${post.mediaUrl}">`;
+                        }
+                    }
+                    card.innerHTML = `
+                        <div class="post-header">
+                            <img src="${post.authorPhoto}">
+                            <h4>${post.authorName} (@${post.authorUsername})</h4>
+                        </div>
+                        ${mediaBlock}
+                        <div class="post-body">
+                            <p><span class="author-name">${post.authorUsername}</span>${post.text}</p>
+                            <div class="post-time">${new Date(post.timestamp).toLocaleDateString()}</div>
+                        </div>
+                    `;
+                    feedContainer.appendChild(card);
+                });
+            });
         }
 
-        statusFileInput.addEventListener('change', (e) => {
+        // Processing Story publishing setup distributed transparently to followers/network parameters
+        statusFileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            const mediaUrlReference = URL.createObjectURL(file);
-            const isVideo = file.type.startsWith('video/');
-            setDoc(doc(db, "statuses", currentUser.uid), {
-                uid: currentUser.uid,
-                fullName: userDataRecord.fullName,
-                photoURL: userDataRecord.photoURL,
-                mediaUrl: mediaUrlReference,
-                type: isVideo ? 'video' : 'image',
+            try {
+                const convertedBase64 = await transformFileToBase64(file);
+                const isVideo = file.type.startsWith('video/');
+                await setDoc(doc(db, "statuses", currentUser.uid), {
+                    uid: currentUser.uid,
+                    fullName: userDataRecord.fullName,
+                    photoURL: userDataRecord.photoURL,
+                    mediaUrl: convertedBase64,
+                    type: isVideo ? 'video' : 'image',
+                    timestamp: Date.now()
+                });
+                alert("Story updated successfully!");
+            } catch(err) { alert("Failed to convert image target payload storage line."); }
+        });
+
+        // Global Discover Tab Form Submit Operations Logic
+        document.getElementById('feed-post-file').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                selectedFeedFileBase64 = await transformFileToBase64(file);
+                document.getElementById('feed-file-preview-label').style.display = 'block';
+            }
+        });
+
+        document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
+            const text = document.getElementById('feed-post-text').value.trim();
+            if(!text && !selectedFeedFileBase64) return;
+            
+            const fileInput = document.getElementById('feed-post-file');
+            const fileType = (fileInput.files[0] && fileInput.files[0].type.startsWith('video/')) ? 'video' : 'image';
+
+            await addDoc(collection(db, "globalFeed"), {
+                authorUid: currentUser.uid,
+                authorName: userDataRecord.fullName,
+                authorUsername: userDataRecord.username,
+                authorPhoto: userDataRecord.photoURL,
+                text: text,
+                mediaUrl: selectedFeedFileBase64,
+                mediaType: fileType,
                 timestamp: Date.now()
             });
+
+            document.getElementById('feed-post-text').value = "";
+            selectedFeedFileBase64 = "";
+            fileInput.value = "";
+            document.getElementById('feed-file-preview-label').style.display = 'none';
         });
 
-        chatImageInput.addEventListener('change', (e) => {
+        chatImageInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            const fileUrl = URL.createObjectURL(file);
-            sendCustomPayload(file.type.startsWith('video/') ? 'video' : 'image', fileUrl);
+            const convertedBase64 = await transformFileToBase64(file);
+            sendCustomPayload(file.type.startsWith('video/') ? 'video' : 'image', convertedBase64);
         });
 
+        // Fully operational functional base64 voice message stream storage pipeline structural setup
         voiceRecordBtn.addEventListener('click', async () => {
             if (!mediaRecorder) {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert("Audio device layer missing or permission denied.");
+                    alert("Audio processing layer unavailable in this client setup environment context.");
                     return;
                 }
                 try {
@@ -537,17 +669,17 @@
                     mediaRecorder = new MediaRecorder(stream);
                     audioChunks = [];
                     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-                    mediaRecorder.onstop = () => {
+                    mediaRecorder.onstop = async () => {
                         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        sendCustomPayload("voice", audioUrl);
+                        const convertedAudioBase64 = await transformFileToBase64(audioBlob);
+                        sendCustomPayload("voice", convertedAudioBase64);
                         stream.getTracks().forEach(track => track.stop());
                         mediaRecorder = null;
                         voiceRecordBtn.classList.remove('recording');
                     };
                     mediaRecorder.start();
                     voiceRecordBtn.classList.add('recording');
-                } catch (err) { alert("Mic layer acquisition issue: " + err.message); }
+                } catch (err) { alert("Mic operation permission layer error: " + err.message); }
             } else {
                 mediaRecorder.stop();
             }
@@ -569,12 +701,11 @@
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
             statusTray.innerHTML = "";
-            let hasAnyVisibleStatus = false;
             const uids = userDataRecord.friends || [];
 
+            // Instagram Stories architecture visible globally across all connections
             if (activeStatusDatabase[currentUser.uid]) {
                 createStatusTrayIcon(activeStatusDatabase[currentUser.uid]);
-                hasAnyVisibleStatus = true;
             }
 
             for(let fUid of uids) {
@@ -583,7 +714,6 @@
                     const fData = fSnap.data();
                     if (activeStatusDatabase[fUid]) {
                         createStatusTrayIcon(activeStatusDatabase[fUid]);
-                        hasAnyVisibleStatus = true;
                     }
                     const item = document.createElement('div');
                     item.className = 'friend-item';
@@ -592,15 +722,14 @@
                     friendsListElement.appendChild(item);
                 }
             }
-            statusTray.style.display = hasAnyVisibleStatus ? 'flex' : 'none';
         }
 
         function createStatusTrayIcon(statusData) {
             const wrap = document.createElement('div');
-            wrap.className = 'status-item';
-            wrap.innerHTML = `<div class="status-avatar-wrap"><img src="${statusData.photoURL}"></div><span>${statusData.uid === currentUser.uid ? 'My Status' : statusData.fullName}</span>`;
+            wrap.className = 'story-item';
+            wrap.innerHTML = `<div class="story-avatar-wrap"><img src="${statusData.photoURL}"></div><span>${statusData.uid === currentUser.uid ? 'Your Story' : statusData.fullName}</span>`;
             wrap.addEventListener('click', () => {
-                document.getElementById('status-author-name').innerText = statusData.fullName;
+                document.getElementById('status-author-name').innerText = statusData.fullName + "'s Story";
                 const imgEl = document.getElementById('status-viewer-img');
                 const vidEl = document.getElementById('status-viewer-video');
                 imgEl.style.display = 'none'; vidEl.style.display = 'none'; vidEl.pause();
@@ -618,7 +747,7 @@
         window.closeStatusViewer = function() {
             document.getElementById('status-viewer-video').pause();
             document.getElementById('status-viewer-modal').style.display = 'none';
-        }
+        };
 
         function openChatWindow(friendData) {
             activeChatFriendData = friendData;
@@ -633,7 +762,7 @@
             if(unsubscribeTypingListener) unsubscribeTypingListener();
 
             unsubscribeTypingListener = onSnapshot(doc(db, "typingStatus", roomKey), (docSnap) => {
-                if(docSnap.exists() && docSnap.data()[friendData.uid]) { chatTypingIndicator.style.display = 'block'; } 
+                if(docSnap.exists() && docSnap.data()[friendData.uid]) { chatTypingIndicator.style.display = 'inline'; } 
                 else { chatTypingIndicator.style.display = 'none'; }
             });
 
@@ -660,7 +789,6 @@
                         ${innerTemplate}
                         <div class="msg-meta-row">
                             <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            ${isSent ? '<span class="whatsapp-status-ticks">✓✓</span>' : ''}
                         </div>
                     `;
                     messagesBox.appendChild(bubble);
@@ -693,12 +821,13 @@
                     await updateDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList });
                     userDataRecord.friends = currentFriendsList;
                     loadFriendsSidebarList();
+                    alert("You followed @" + inputVal);
                 }
-            }
+            } else { alert("User profile target entity missing."); }
             document.getElementById('friend-username-input').value = "";
         });
 
-        window.exitChatToSidebar = function() { dashboardContainer.classList.remove('chat-active'); }
+        window.exitChatToSidebar = function() { dashboardContainer.classList.remove('chat-active'); };
     </script>
 </body>
 </html>
