@@ -16,6 +16,7 @@
             --accent-purple: #6366f1;
             --accent-rose: #e11d48;
             --story-gradient: linear-gradient(135deg, #c084fc 0%, #6366f1 50%, #38bdf8 100%);
+            --verified-color: #0095f6;
         }
 
         * {
@@ -112,7 +113,7 @@
         }
         .user-bar img { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color); cursor: pointer; }
         .user-details { flex: 1; min-width: 0; cursor: pointer; }
-        .user-details h3 { font-size: 14px; font-weight: 700; color: var(--text-color); }
+        .user-details h3 { font-size: 14px; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 4px; }
         .user-details p { color: var(--text-muted); font-size: 12px; }
 
         .story-tray {
@@ -131,22 +132,28 @@
         .story-avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: var(--bg-card); padding: 2px; }
         .story-item span { font-size: 11px; margin-top: 6px; max-width: 66px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; color: var(--text-muted); }
 
-        .friend-system { padding: 16px 20px; border-bottom: 1px solid var(--border-color); }
-        .friend-input-group { display: flex; gap: 8px; background: var(--bg-secondary); padding: 8px 16px; border-radius: 14px; border: 1px solid var(--border-color); }
-        .friend-input-group input { flex: 1; padding: 2px 0; background: transparent; border: none; color: var(--text-color); font-size: 14px; outline: none; }
-        .friend-input-group input::placeholder { color: var(--text-muted); }
-
         .friends-list-container { flex: 1; overflow-y: auto; }
         .friends-list-heading { font-size: 11px; font-weight: 800; color: var(--text-muted); padding: 20px 20px 8px 20px; letter-spacing: 1px; text-transform: uppercase; }
         .friend-item { display: flex; align-items: center; gap: 14px; padding: 12px 20px; cursor: pointer; border-radius: 14px; margin: 0 8px 4px 8px; transition: background 0.2s; }
         .friend-item:hover { background: var(--bg-secondary); }
         .friend-item img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
-        .friend-item .info h4 { font-size: 14px; font-weight: 600; color: var(--text-color); }
+        .friend-item .info h4 { font-size: 14px; font-weight: 600; color: var(--text-color); display: flex; align-items: center; gap: 4px; }
         .friend-item .info p { font-size: 12px; color: var(--text-muted); }
 
-        .chat-area, .feed-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
-        .feed-area { display: none; overflow-y: auto; padding: 28px; }
+        .chat-area, .feed-area, .search-tab-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
+        .feed-area, .search-tab-area { display: none; overflow-y: auto; padding: 28px; }
         
+        /* Unified Search Interface Grid Layouts */
+        .search-pane-header { max-width: 600px; width: 100%; margin: 0 auto 24px auto; position: relative; }
+        .search-input-box { width: 100%; padding: 14px 20px; border-radius: 16px; border: 1px solid var(--border-color); font-size: 15px; outline: none; background: var(--bg-card); }
+        .suggestions-dropdown-panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; position: absolute; width: 100%; top: 56px; z-index: 40; max-height: 220px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: none; }
+        .suggestion-list-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; font-size: 14px; border-bottom: 1px solid var(--bg-secondary); }
+        .suggestion-list-item:hover { background: var(--bg-secondary); }
+        .suggestion-list-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+
+        .search-results-wrapper { max-width: 600px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+        .search-section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 8px; }
+
         .chat-header { height: 68px; padding: 0 28px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; background: var(--bg-card); }
         .chat-header h3 { font-size: 16px; font-weight: 700; color: var(--text-color); }
         .typing-indicator-span { font-size: 12px; color: var(--accent-glow); margin-left: 6px; display: none; }
@@ -182,7 +189,7 @@
         .post-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border-color); }
         .post-author-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
         .post-header img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
-        .post-header h4 { font-size: 14px; font-weight: 700; color: var(--text-color); }
+        .post-header h4 { font-size: 14px; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 4px; }
         .post-media { width: 100%; max-height: 480px; object-fit: cover; }
         .post-body { padding: 18px 20px; font-size: 14px; line-height: 1.6; }
         .post-body .author-name { font-weight: 700; margin-right: 8px; color: var(--accent-glow); }
@@ -199,12 +206,14 @@
         .comment-user { font-weight: 700; margin-right: 6px; color: var(--accent-purple); }
         .comment-input-row { display: flex; gap: 8px; margin-top: 14px; background: var(--bg-secondary); padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border-color); }
         .comment-input-row input { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 13px; outline: none; }
-        .friend-btn { background: none; border: none; color: var(--accent-glow); font-weight: 700; cursor: pointer; font-size: 14px; }
 
         .aesthetic-follow-btn { background: rgba(2,132,199,0.08); border: 1px solid var(--accent-glow); color: var(--accent-glow); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .aesthetic-follow-btn:hover { background: var(--accent-glow); color: #fff; }
         .aesthetic-follow-btn.unfollow-btn { border-color: var(--accent-rose); color: var(--accent-rose); background: rgba(225,29,72,0.05); }
         .aesthetic-follow-btn.unfollow-btn:hover { background: var(--accent-rose); color: #fff; }
+
+        /* Verified Verification Blue Tick Badges Styles */
+        .verified-badge-tick { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: var(--verified-color); color: #fff; border-radius: 50%; font-size: 9px; font-weight: bold; flex-shrink: 0; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.4); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 100; }
         .modal-content { background: var(--bg-card); padding: 32px; border-radius: 28px; border: 1px solid var(--border-color); width: 100%; max-width: 440px; text-align: center; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
@@ -280,6 +289,7 @@
             <div class="nav-links">
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
                 <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
+                <button id="nav-btn-search" class="nav-item" onclick="switchTab('search')">Search Hub</button>
                 <button onclick="triggerLogoutSession()" class="nav-item" style="color: var(--accent-rose);">Logout</button>
             </div>
         </div>
@@ -299,12 +309,6 @@
                 </div>
 
                 <div id="status-tray" class="story-tray"></div>
-
-                <div class="friend-system">
-                    <div class="friend-input-group">
-                        <input type="text" id="global-search-input" placeholder="Search creators or post text...">
-                    </div>
-                </div>
                 
                 <div class="friends-list-container">
                     <div class="friends-list-heading">Direct Messages</div>
@@ -361,6 +365,24 @@
                 </div>
                 <div id="feed-posts-container" class="feed-posts-container"></div>
             </div>
+
+            <div class="search-tab-area" id="app-search-pane">
+                <div class="search-pane-header">
+                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Type to explore creators or content text tags...">
+                    <div class="suggestions-dropdown-panel" id="search-suggestions-overlay"></div>
+                </div>
+                
+                <div class="search-results-wrapper">
+                    <div>
+                        <div class="search-section-title">Matching Creators</div>
+                        <div id="search-creators-results" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;"></div>
+                    </div>
+                    <div>
+                        <div class="search-section-title">Discovered Feed Posts</div>
+                        <div id="search-posts-results" class="feed-posts-container"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -392,7 +414,7 @@
                 <div style="width:80px; height:80px; border-radius:50%; overflow:hidden; margin-bottom: 10px; border: 2px solid var(--accent-glow);">
                     <img id="view-modal-avatar" src="" style="width:100%; height:100%; object-fit:cover;">
                 </div>
-                <h2 id="view-modal-name">Name</h2>
+                <h2 id="view-modal-name" style="display:flex; align-items:center; gap:6px;">Name</h2>
                 <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700;">@username</p>
                 
                 <div class="profile-stat-row">
@@ -406,6 +428,8 @@
                     </div>
                 </div>
                 <div id="view-modal-description" class="profile-description-txt">No description added yet.</div>
+                
+                <button id="admin-grant-verification-badge-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--verified-color); color:#fff;"></button>
                 <button id="profile-action-edit-btn" class="secondary-btn" style="display:none; padding:6px; font-size:12px; margin-top:12px;" onclick="switchFromProfileToSettings()">Edit Description</button>
             </div>
             
@@ -458,7 +482,8 @@
         const voiceRecordBtn = document.getElementById('voice-record-btn');
         const primaryAuthBtn = document.getElementById('email-primary-btn');
         const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
-        const searchInput = document.getElementById('global-search-input');
+        const hubSearchBar = document.getElementById('hub-main-search-bar');
+        const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
 
         let currentUser = null;
         let userDataRecord = null;
@@ -471,24 +496,38 @@
         let isSignUpMode = false;
         let selectedFeedFileBase64 = "";
         let globalCachedFeedPosts = [];
+        let globalCachedAllUsers = [];
 
         window.switchTab = function(tabName) {
             const chatPane = document.getElementById('app-chat-pane');
             const feedPane = document.getElementById('app-feed-pane');
+            const searchPane = document.getElementById('app-search-pane');
             const sidePane = document.getElementById('app-sidebar-pane');
+            
             const btnChats = document.getElementById('nav-btn-chats');
             const btnFeed = document.getElementById('nav-btn-feed');
+            const btnSearch = document.getElementById('nav-btn-search');
 
             btnChats.classList.remove('active');
             btnFeed.classList.remove('active');
+            btnSearch.classList.remove('active');
 
             if(tabName === 'feed') {
                 chatPane.style.display = 'none';
                 sidePane.style.display = 'none';
+                searchPane.style.display = 'none';
                 feedPane.style.display = 'flex';
                 btnFeed.classList.add('active');
+            } else if(tabName === 'search') {
+                chatPane.style.display = 'none';
+                sidePane.style.display = 'none';
+                feedPane.style.display = 'none';
+                searchPane.style.display = 'flex';
+                btnSearch.classList.add('active');
+                triggerHubComprehensiveSearch();
             } else {
                 feedPane.style.display = 'none';
+                searchPane.style.display = 'none';
                 sidePane.style.display = 'flex';
                 chatPane.style.display = 'flex';
                 btnChats.classList.add('active');
@@ -524,12 +563,30 @@
         };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
+            const tickHtml = userObj.verified ? `<span class="verified-badge-tick" title="Verified Creator">✓</span>` : "";
             document.getElementById('view-modal-avatar').src = userObj.photoURL;
-            document.getElementById('view-modal-name').innerText = userObj.fullName;
+            document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
             document.getElementById('view-modal-description').innerText = userObj.description || "No bio description configured yet.";
             
             document.getElementById('profile-action-edit-btn').style.display = isOwnProfile ? 'block' : 'none';
+
+            // Special Administrative Verification Module Hook for username exact validation match
+            const adminVerificationBtn = document.getElementById('admin-grant-verification-badge-btn');
+            if(userDataRecord && userDataRecord.username === "yaseen") {
+                adminVerificationBtn.style.display = "block";
+                adminVerificationBtn.innerText = userObj.verified ? "Remove Verification Badge" : "Grant Verified Blue Badge";
+                adminVerificationBtn.onclick = async () => {
+                    const targetState = !userObj.verified;
+                    await updateDoc(doc(db, "users", userObj.uid), { verified: targetState });
+                    userObj.verified = targetState;
+                    alert("Verification state updated successfully!");
+                    renderProfileCard(userObj, isOwnProfile);
+                    launchDashboard(userDataRecord);
+                };
+            } else {
+                adminVerificationBtn.style.display = "none";
+            }
 
             try {
                 const followerQuery = await getDocs(query(collection(db, "users"), where("friends", "array-contains", userObj.uid)));
@@ -569,7 +626,6 @@
             if(activeChatFriendData) renderProfileCard(activeChatFriendData, false);
         });
 
-        // Toggle connection architecture logic supporting Follow/Unfollow paradigms
         window.toggleFollowState = async function(targetUid, targetUsername) {
             let currentFriendsList = userDataRecord.friends || [];
             if (currentFriendsList.includes(targetUid)) {
@@ -582,7 +638,8 @@
             await updateDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList });
             userDataRecord.friends = currentFriendsList;
             loadFriendsSidebarList();
-            processFilterSearchRender();
+            renderExploreTimelineFeed();
+            triggerHubComprehensiveSearch();
         };
 
         window.togglePostLike = async function(postId, currentLikes = []) {
@@ -622,97 +679,159 @@
             });
         };
 
-        // Real-Time Search Logic Filter
-        searchInput.addEventListener('input', () => {
-            loadFriendsSidebarList();
-            processFilterSearchRender();
+        // Complete Search Tab Controller Logic Operations
+        hubSearchBar.addEventListener('input', () => {
+            triggerHubComprehensiveSearch();
         });
 
-        function processFilterSearchRender() {
-            const filterText = searchInput.value.trim().toLowerCase();
-            const feedContainer = document.getElementById('feed-posts-container');
-            feedContainer.innerHTML = "";
+        async function triggerHubComprehensiveSearch() {
+            const filterText = hubSearchBar.value.trim().toLowerCase();
+            const creatorsContainer = document.getElementById('search-creators-results');
+            const postsContainer = document.getElementById('search-posts-results');
+            
+            creatorsContainer.innerHTML = "";
+            postsContainer.innerHTML = "";
+            suggestionsOverlay.innerHTML = "";
+            suggestionsOverlay.style.display = "none";
 
+            // Process smart auto-suggestions overlay array parsing matching index targets
+            if(filterText.length >= 1) {
+                const uniqueSuggestions = globalCachedAllUsers.filter(u => u.username.includes(filterText) || u.fullName.toLowerCase().includes(filterText));
+                if(uniqueSuggestions.length > 0) {
+                    suggestionsOverlay.style.display = "block";
+                    uniqueSuggestions.forEach(sUser => {
+                        const sugItem = document.createElement('div');
+                        sugItem.className = "suggestion-list-item";
+                        sugItem.innerHTML = `<img src="${sUser.photoURL}"><span>@${sUser.username} (${sUser.fullName})</span>`;
+                        sugItem.onclick = () => {
+                            renderProfileCard(sUser, sUser.uid === currentUser.uid);
+                            suggestionsOverlay.style.display = "none";
+                        };
+                        suggestionsOverlay.appendChild(sugItem);
+                    });
+                }
+            }
+
+            // Render matching verified creators list interface cards row layout block
+            globalCachedAllUsers.forEach(u => {
+                if(filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
+                const tickHtml = u.verified ? `<span class="verified-badge-tick">✓</span>` : "";
+                const isFriend = (userDataRecord.friends || []).includes(u.uid);
+                let btnHtml = "";
+                if (u.uid !== currentUser.uid) {
+                    btnHtml = isFriend 
+                        ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Unfollow</button>`
+                        : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Follow</button>`;
+                }
+
+                const row = document.createElement('div');
+                row.className = "friend-item";
+                row.style.margin = "0";
+                row.innerHTML = `
+                    <img src="${u.photoURL}">
+                    <div class="info" style="flex:1;">
+                        <h4 style="display:flex; align-items:center; gap:4px;">${u.fullName} ${tickHtml}</h4>
+                        <p>@${u.username}</p>
+                    </div>
+                    ${btnHtml}
+                `;
+                row.querySelector('img').onclick = () => renderProfileCard(u, u.uid === currentUser.uid);
+                creatorsContainer.appendChild(row);
+            });
+
+            // Render matching timeline posts targeting descriptive body parameters
             globalCachedFeedPosts.forEach(postItem => {
                 const post = postItem.data;
-                const postId = postItem.id;
-
-                // Match both creator username context and content text values
-                const matchUser = post.authorUsername.toLowerCase().includes(filterText);
-                const matchText = post.text.toLowerCase().includes(filterText);
-                if(filterText && !matchUser && !matchText) return;
-
-                const card = document.createElement('div');
-                card.className = 'insta-post';
-                
-                let mediaBlock = "";
-                if(post.mediaUrl) {
-                    mediaBlock = post.mediaType === 'video' 
-                        ? `<video class="post-media" src="${post.mediaUrl}" controls></video>`
-                        : `<img class="post-media" src="${post.mediaUrl}">`;
-                }
-
-                const likesArray = post.likes || [];
-                const commentsArray = post.comments || [];
-                const isLiked = likesArray.includes(currentUser.uid);
-                const isFriend = (userDataRecord.friends || []).includes(post.authorUid);
-                
-                let followActionHtml = "";
-                if (post.authorUid !== currentUser.uid) {
-                    followActionHtml = isFriend 
-                        ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">✕ Disconnect</button>` 
-                        : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">⚡ Connect</button>`;
-                }
-
-                let commentsHtml = commentsArray.map(c => `
-                    <div class="comment-row"><span class="comment-user">@${c.username}</span>${c.text}</div>
-                `).join('');
-
-                card.innerHTML = `
-                    <div class="post-header">
-                        <div class="post-author-info" id="post-author-hdr-${postId}">
-                            <img src="${post.authorPhoto}">
-                            <h4>${post.authorName} (@${post.authorUsername})</h4>
-                        </div>
-                        ${followActionHtml}
-                    </div>
-                    ${mediaBlock}
-                    <div class="post-body">
-                        <p><span class="author-name">${post.authorUsername}</span>${post.text}</p>
-                        
-                        <div class="post-actions-toolbar" style="margin-top:14px;">
-                            <button class="post-action-item ${isLiked ? 'liked' : ''}" id="like-btn-${postId}">
-                                <svg viewBox="0 0 24 24"><path fill="none" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                <span>${likesArray.length}</span>
-                            </button>
-                            <button class="post-action-item">
-                                <svg viewBox="0 0 24 24"><path fill="none" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                <span>${commentsArray.length}</span>
-                            </button>
-                            <button class="post-action-item" onclick="sharePostLink('${postId}')">
-                                <svg viewBox="0 0 24 24"><path fill="none" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
-                            </button>
-                        </div>
-
-                        <div class="post-comments-section">${commentsHtml}</div>
-                        
-                        <div class="comment-input-row">
-                            <input type="text" id="comment-input-${postId}" placeholder="Add a comment...">
-                            <button class="friend-btn" onclick="submitPostComment('${postId}', 'comment-input-${postId}')">Post</button>
-                        </div>
-
-                        <div class="post-time">${new Date(post.timestamp).toLocaleDateString()}</div>
-                    </div>
-                `;
-
-                card.querySelector(`#like-btn-${postId}`).addEventListener('click', () => togglePostLike(postId, likesArray));
-                card.querySelector(`#post-author-hdr-${postId}`).addEventListener('click', async () => {
-                    const userSnap = await getDoc(doc(db, "users", post.authorUid));
-                    if(userSnap.exists()) renderProfileCard(userSnap.data(), post.authorUid === currentUser.uid);
-                });
-
-                feedContainer.appendChild(card);
+                if(filterText && !post.text.toLowerCase().includes(filterText) && !post.authorUsername.includes(filterText)) return;
+                appendPostMarkupCardToTargetContainer(postItem, postsContainer);
             });
+        }
+
+        function renderExploreTimelineFeed() {
+            const feedContainer = document.getElementById('feed-posts-container');
+            feedContainer.innerHTML = "";
+            globalCachedFeedPosts.forEach(postItem => {
+                appendPostMarkupCardToTargetContainer(postItem, feedContainer);
+            });
+        }
+
+        function appendPostMarkupCardToTargetContainer(postItem, containerElement) {
+            const post = postItem.data;
+            const postId = postItem.id;
+            const card = document.createElement('div');
+            card.className = 'insta-post';
+            
+            let mediaBlock = "";
+            if(post.mediaUrl) {
+                mediaBlock = post.mediaType === 'video' 
+                    ? `<video class="post-media" src="${post.mediaUrl}" controls></video>`
+                    : `<img class="post-media" src="${post.mediaUrl}">`;
+            }
+
+            const likesArray = post.likes || [];
+            const commentsArray = post.comments || [];
+            const isLiked = likesArray.includes(currentUser.uid);
+            const isFriend = (userDataRecord.friends || []).includes(post.authorUid);
+            
+            let followActionHtml = "";
+            if (post.authorUid !== currentUser.uid) {
+                followActionHtml = isFriend 
+                    ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Unfollow</button>` 
+                    : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Follow</button>`;
+            }
+
+            // Sync verification state locally inside live layout node headers array loop tracking snapshots
+            const matchingUserObj = globalCachedAllUsers.find(u => u.uid === post.authorUid);
+            const verifiedTick = (matchingUserObj && matchingUserObj.verified) ? `<span class="verified-badge-tick">✓</span>` : "";
+
+            let commentsHtml = commentsArray.map(c => `
+                <div class="comment-row"><span class="comment-user">@${c.username}</span>${c.text}</div>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="post-header">
+                    <div class="post-author-info" id="post-author-hdr-${postId}">
+                        <img src="${post.authorPhoto}">
+                        <h4 style="display:flex; align-items:center; gap:4px;">${post.authorName} (@${post.authorUsername}) ${verifiedTick}</h4>
+                    </div>
+                    ${followActionHtml}
+                </div>
+                ${mediaBlock}
+                <div class="post-body">
+                    <p><span class="author-name">${post.authorUsername}</span>${post.text}</p>
+                    
+                    <div class="post-actions-toolbar" style="margin-top:14px;">
+                        <button class="post-action-item ${isLiked ? 'liked' : ''}" id="like-btn-${postId}">
+                            <svg viewBox="0 0 24 24"><path fill="none" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            <span>${likesArray.length}</span>
+                        </button>
+                        <button class="post-action-item">
+                            <svg viewBox="0 0 24 24"><path fill="none" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <span>${commentsArray.length}</span>
+                        </button>
+                        <button class="post-action-item" onclick="sharePostLink('${postId}')">
+                            <svg viewBox="0 0 24 24"><path fill="none" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="post-comments-section">${commentsHtml}</div>
+                    
+                    <div class="comment-input-row">
+                        <input type="text" id="comment-input-${postId}" placeholder="Add a comment...">
+                        <button class="friend-btn" onclick="submitPostComment('${postId}', 'comment-input-${postId}')">Post</button>
+                    </div>
+
+                    <div class="post-time">${new Date(post.timestamp).toLocaleDateString()}</div>
+                </div>
+            `;
+
+            card.querySelector(`#like-btn-${postId}`).addEventListener('click', () => togglePostLike(postId, likesArray));
+            card.querySelector(`#post-author-hdr-${postId}`).addEventListener('click', async () => {
+                const userSnap = await getDoc(doc(db, "users", post.authorUid));
+                if(userSnap.exists()) renderProfileCard(userSnap.data(), post.authorUid === currentUser.uid);
+            });
+
+            containerElement.appendChild(card);
         }
 
         toggleAuthModeBtn.addEventListener('click', () => {
@@ -793,7 +912,7 @@
             e.preventDefault();
             const username = document.getElementById('setup-username').value.trim().toLowerCase();
             const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, description: "", friends: [] };
+            const profileData = { uid: currentUser.uid, username, fullName, description: "", verified: false, friends: [] };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
             
             try {
@@ -807,10 +926,20 @@
             profileSetupContainer.style.display = 'none';
             loginContainer.style.display = 'none';
             dashboardContainer.style.display = 'flex';
+            
+            // Render verification tick badge icon adjacent to structural panel text headers
+            const tickHtml = data.verified ? `<span class="verified-badge-tick">✓</span>` : "";
             document.getElementById('dash-avatar').src = data.photoURL;
             document.getElementById('dash-display-name').innerText = data.fullName;
-            document.getElementById('dash-username').innerText = "@" + data.username;
+            document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml}`;
             
+            // Cross-reconcile user tables cache index matching real-time database queries mapping overlays
+            onSnapshot(collection(db, "users"), (uSnap) => {
+                globalCachedAllUsers = [];
+                uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); });
+                loadFriendsSidebarList();
+            });
+
             onSnapshot(collection(db, "statuses"), (snapshot) => {
                 activeStatusDatabase = {};
                 snapshot.forEach(doc => { activeStatusDatabase[doc.id] = doc.data(); });
@@ -825,7 +954,7 @@
                         data: postDoc.data()
                     });
                 });
-                processFilterSearchRender();
+                renderExploreTimelineFeed();
             });
         }
 
@@ -843,7 +972,7 @@
                     timestamp: Date.now()
                 });
                 alert("Story updated successfully!");
-            } catch(err) { alert("Failed to convert media assets."); }
+            } catch(err) { alert("Failed to convert assets."); }
         });
 
         document.getElementById('feed-post-file').addEventListener('change', async (e) => {
@@ -890,7 +1019,7 @@
         voiceRecordBtn.addEventListener('click', async () => {
             if (!mediaRecorder) {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert("Audio processing setup error.");
+                    alert("Audio input device configuration missing.");
                     return;
                 }
                 try {
@@ -908,7 +1037,7 @@
                     };
                     mediaRecorder.start();
                     voiceRecordBtn.classList.add('recording');
-                } catch (err) { alert("Mic operation error: " + err.message); }
+                } catch (err) { alert("Mic layer error: " + err.message); }
             } else {
                 mediaRecorder.stop();
             }
@@ -931,25 +1060,21 @@
             friendsListElement.innerHTML = "";
             statusTray.innerHTML = "";
             const uids = userDataRecord.friends || [];
-            const filterText = searchInput.value.trim().toLowerCase();
 
             if (activeStatusDatabase[currentUser.uid]) {
                 createStatusTrayIcon(activeStatusDatabase[currentUser.uid]);
             }
 
             for(let fUid of uids) {
-                const fSnap = await getDoc(doc(db, "users", fUid));
-                if(fSnap.exists()) {
-                    const fData = fSnap.data();
-                    
-                    if(filterText && !fData.username.toLowerCase().includes(filterText)) continue;
-
+                const fData = globalCachedAllUsers.find(u => u.uid === fUid);
+                if(fData) {
                     if (activeStatusDatabase[fUid]) {
                         createStatusTrayIcon(activeStatusDatabase[fUid]);
                     }
+                    const tickHtml = fData.verified ? `<span class="verified-badge-tick">✓</span>` : "";
                     const item = document.createElement('div');
                     item.className = 'friend-item';
-                    item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName}</h4><p>@${fData.username}</p></div>`;
+                    item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4 style="display:flex; align-items:center; gap:4px;">${fData.fullName} ${tickHtml}</h4><p>@${fData.username}</p></div>`;
                     item.addEventListener('click', () => openChatWindow(fData));
                     friendsListElement.appendChild(item);
                 }
