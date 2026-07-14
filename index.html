@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraHub Pro</title>
+    <title>AuraHub Pro - Extended Edition</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -23,7 +23,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
@@ -36,7 +36,12 @@
             overflow: hidden;
         }
 
-        #loading-screen { color: var(--text-muted); font-size: 16px; font-weight: 500; letter-spacing: 1px; }
+        #loading-screen { 
+            color: var(--text-muted); 
+            font-size: 16px; 
+            font-weight: 500; 
+            letter-spacing: 1px; 
+        }
 
         .form-container {
             background: var(--bg-card);
@@ -84,10 +89,33 @@
             z-index: 10;
         }
 
-        .nav-brand { font-weight: 900; font-size: 24px; cursor: pointer; letter-spacing: -1px; color: var(--text-color); }
-        .nav-links { display: flex; gap: 20px; align-items: center; }
-        .nav-item { cursor: pointer; font-weight: 600; font-size: 14px; background: none; border: none; color: var(--text-muted); transition: color 0.2s; }
-        .nav-item:hover, .nav-item.active { color: var(--accent-glow); }
+        .nav-brand { 
+            font-weight: 900; 
+            font-size: 24px; 
+            cursor: pointer; 
+            letter-spacing: -1px; 
+            color: var(--text-color); 
+        }
+        
+        .nav-links { 
+            display: flex; 
+            gap: 20px; 
+            align-items: center; 
+        }
+        
+        .nav-item { 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 14px; 
+            background: none; 
+            border: none; 
+            color: var(--text-muted); 
+            transition: color 0.2s; 
+        }
+        
+        .nav-item:hover, .nav-item.active { 
+            color: var(--accent-glow); 
+        }
 
         .main-content-area {
             flex: 1;
@@ -112,10 +140,35 @@
             padding: 20px;
             border-bottom: 1px solid var(--border-color);
         }
-        .user-bar img { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color); cursor: pointer; }
-        .user-details { flex: 1; min-width: 0; cursor: pointer; }
-        .user-details h3 { font-size: 14px; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 4px; }
-        .user-details p { color: var(--text-muted); font-size: 12px; }
+        
+        .user-bar img { 
+            width: 54px; 
+            height: 54px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 2px solid var(--border-color); 
+            cursor: pointer; 
+        }
+        
+        .user-details { 
+            flex: 1; 
+            min-width: 0; 
+            cursor: pointer; 
+        }
+        
+        .user-details h3 { 
+            font-size: 14px; 
+            font-weight: 700; 
+            color: var(--text-color); 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+        }
+        
+        .user-details p { 
+            color: var(--text-muted); 
+            font-size: 12px; 
+        }
 
         .story-tray {
             display: flex;
@@ -125,65 +178,394 @@
             border-bottom: 1px solid var(--border-color);
             background: var(--bg-main);
         }
-        .story-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; cursor: pointer; }
-        .story-avatar-wrap {
-            width: 60px; height: 60px; border-radius: 50%; padding: 2.5px;
-            background: var(--story-gradient); display: flex; justify-content: center; align-items: center;
+        
+        .story-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-width: 70px; 
+            cursor: pointer; 
+            position: relative;
         }
-        .story-avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: var(--bg-card); padding: 2px; }
-        .story-item span { font-size: 11px; margin-top: 6px; max-width: 66px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; color: var(--text-muted); }
-
-        .friends-list-container { flex: 1; overflow-y: auto; }
-        .friends-list-heading { font-size: 11px; font-weight: 800; color: var(--text-muted); padding: 20px 20px 8px 20px; letter-spacing: 1px; text-transform: uppercase; }
-        .friend-item { display: flex; align-items: center; gap: 14px; padding: 12px 20px; cursor: pointer; border-radius: 14px; margin: 0 8px 4px 8px; transition: background 0.2s; }
-        .friend-item:hover { background: var(--bg-secondary); }
-        .friend-item img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
-        .friend-item .info h4 { font-size: 14px; font-weight: 600; color: var(--text-color); display: flex; align-items: center; gap: 4px; }
-        .friend-item .info p { font-size: 12px; color: var(--text-muted); }
-
-        .chat-area, .feed-area, .search-tab-area, .camera-area, .myspace-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); min-width: 0; }
-        .feed-area, .search-tab-area, .myspace-area { display: none; overflow-y: auto; padding: 28px; }
         
-        /* Organized Search Hub Layout */
-        .search-pane-header { max-width: 800px; width: 100%; margin: 0 auto 24px auto; position: relative; }
-        .search-input-box { width: 100%; padding: 16px 24px; border-radius: 20px; border: 1px solid var(--border-color); font-size: 15px; outline: none; background: var(--bg-card); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .search-split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; max-width: 800px; width: 100%; margin: 0 auto; }
-        .search-column-panel { background: var(--bg-card); padding: 24px; border-radius: 24px; border: 1px solid var(--border-color); height: fit-content; max-height: 68vh; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.01); }
-        .suggestions-dropdown-panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; position: absolute; width: 100%; top: 60px; z-index: 40; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: none; }
-        .suggestion-list-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; font-size: 14px; border-bottom: 1px solid var(--bg-secondary); }
-        .suggestion-list-item:hover { background: var(--bg-secondary); }
-        .suggestion-list-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
-        .search-section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
-
-        /* Full Screen Camera UI */
-        .camera-area { display: none; position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; padding: 0; }
-        .camera-view-window { width: 100%; height: 100%; transform: scaleX(-1); position: absolute; top:0; left:0; }
-        .camera-view-window video { width: 100%; height: 100%; object-fit: cover; }
-        .camera-controls-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); padding: 30px 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 5; }
-        .camera-shutter-box { display: flex; justify-content: center; align-items: center; width: 100%; }
-        .camera-capture-ring { width: 76px; height: 72px; border-radius: 50%; border: 4px solid #ffffff; display: flex; justify-content: center; align-items: center; cursor: pointer; background: transparent; transition: transform 0.1s; }
-        .camera-capture-ring:active { transform: scale(0.9); }
-        .camera-capture-solid-dot { width: 54px; height: 54px; border-radius: 50%; background: #ffffff; }
-
-        /* Sleek My Space Layout */
-        .myspace-container { max-width: 800px; width: 100%; margin: 0 auto; }
-        .myspace-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 16px; }
-        .space-item-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.2s; }
-        .space-item-card:hover { transform: translateY(-2px); }
-        .myspace-img-card { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: pointer; }
-        .space-item-footer { padding: 12px; border-top: 1px solid var(--border-color); background: var(--bg-card); display: flex; gap: 8px; }
-
-        /* Advanced Studio Image Editing Panel */
-        .studio-preview-box { width: 100%; aspect-ratio: 1; background: #000; border-radius: 16px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border-color); margin-bottom: 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
-        .studio-target-image { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease; }
+        .story-avatar-wrap {
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            padding: 2.5px;
+            background: var(--story-gradient); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+        }
         
-        .filter-swatch-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .filter-swatch-btn { cursor: pointer; border: 3px solid transparent; border-radius: 12px; overflow: hidden; background: var(--bg-secondary); text-align: center; padding: 4px; transition: all 0.2s; }
-        .filter-swatch-btn.active { border-color: var(--accent-glow); background: rgba(2,132,199,0.05); }
-        .filter-swatch-btn img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
-        .filter-swatch-btn span { font-size: 11px; font-weight: 700; display: block; margin-top: 4px; color: var(--text-muted); }
+        .story-avatar-wrap img { 
+            width: 100%; 
+            height: 100%; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            background: var(--bg-card); 
+            padding: 2px; 
+        }
+        
+        .story-item span { 
+            font-size: 11px; 
+            margin-top: 6px; 
+            max-width: 66px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+            text-align: center; 
+            color: var(--text-muted); 
+        }
 
-        /* Snapchat / Instagram Style Filter Matrix */
+        .friends-list-container { 
+            flex: 1; 
+            overflow-y: auto; 
+        }
+        
+        .friends-list-heading { 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: var(--text-muted); 
+            padding: 20px 20px 8px 20px; 
+            letter-spacing: 1px; 
+            text-transform: uppercase; 
+        }
+        
+        .friend-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            padding: 12px 20px; 
+            cursor: pointer; 
+            border-radius: 14px; 
+            margin: 0 8px 4px 8px; 
+            transition: background 0.2s; 
+        }
+        
+        .friend-item:hover { 
+            background: var(--bg-secondary); 
+        }
+        
+        .friend-item img { 
+            width: 44px; 
+            height: 44px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        }
+        
+        .friend-item .info h4 { 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: var(--text-color); 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+        }
+        
+        .friend-item .info p { 
+            font-size: 12px; 
+            color: var(--text-muted); 
+        }
+
+        .chat-area, .feed-area, .search-tab-area, .camera-area, .myspace-area { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            background: var(--bg-main); 
+            min-width: 0; 
+        }
+        
+        .feed-area, .search-tab-area, .myspace-area { 
+            display: none; 
+            overflow-y: auto; 
+            padding: 28px; 
+        }
+        
+        .search-pane-header { 
+            max-width: 800px; 
+            width: 100%; 
+            margin: 0 auto 24px auto; 
+            position: relative; 
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .search-input-box { 
+            width: 100%; 
+            padding: 16px 24px; 
+            border-radius: 20px; 
+            border: 1px solid var(--border-color); 
+            font-size: 15px; 
+            outline: none; 
+            background: var(--bg-card); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02); 
+        }
+
+        .search-filter-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-toggle-btn.active {
+            background: var(--accent-glow);
+            color: #ffffff;
+            border-color: var(--accent-glow);
+        }
+        
+        .search-split-layout { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 28px; 
+            max-width: 800px; 
+            width: 100%; 
+            margin: 0 auto; 
+        }
+        
+        .search-column-panel { 
+            background: var(--bg-card); 
+            padding: 24px; 
+            border-radius: 24px; 
+            border: 1px solid var(--border-color); 
+            height: fit-content; 
+            max-height: 68vh; 
+            overflow-y: auto; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.01); 
+        }
+        
+        .suggestions-dropdown-panel { 
+            background: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            border-radius: 14px; 
+            position: absolute; 
+            width: 100%; 
+            top: 60px; 
+            z-index: 40; 
+            max-height: 200px; 
+            overflow-y: auto; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            display: none; 
+        }
+        
+        .suggestion-list-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            padding: 10px 16px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            border-bottom: 1px solid var(--bg-secondary); 
+        }
+        
+        .suggestion-list-item:hover { 
+            background: var(--bg-secondary); 
+        }
+        
+        .suggestion-list-item img { 
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        }
+        
+        .search-section-title { 
+            font-size: 12px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            color: var(--text-muted); 
+            letter-spacing: 0.5px; 
+            margin-bottom: 16px; 
+            padding-bottom: 8px; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+
+        .camera-area { 
+            display: none; 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            background: #000; 
+            padding: 0; 
+        }
+        
+        .camera-view-window { 
+            width: 100%; 
+            height: 100%; 
+            transform: scaleX(-1); 
+            position: absolute; 
+            top:0; 
+            left:0; 
+        }
+        
+        .camera-view-window video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+        
+        .camera-controls-overlay { 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); 
+            padding: 30px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 20px; 
+            z-index: 5; 
+        }
+        
+        .camera-shutter-box { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            width: 100%; 
+        }
+        
+        .camera-capture-ring { 
+            width: 76px; 
+            height: 72px; 
+            border-radius: 50%; 
+            border: 4px solid #ffffff; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            background: transparent; 
+            transition: transform 0.1s; 
+        }
+        
+        .camera-capture-ring:active { 
+            transform: scale(0.9); 
+        }
+        
+        .camera-capture-solid-dot { 
+            width: 54px; 
+            height: 54px; 
+            border-radius: 50%; 
+            background: #ffffff; 
+        }
+
+        .myspace-container { 
+            max-width: 800px; 
+            width: 100%; 
+            margin: 0 auto; 
+        }
+        
+        .myspace-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            margin-top: 16px; 
+        }
+        
+        .space-item-card { 
+            background: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            border-radius: 20px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+            transition: transform 0.2s; 
+        }
+        
+        .space-item-card:hover { 
+            transform: translateY(-2px); 
+        }
+        
+        .myspace-img-card { 
+            width: 100%; 
+            aspect-ratio: 1; 
+            object-fit: cover; 
+            cursor: pointer; 
+        }
+        
+        .space-item-footer { 
+            padding: 12px; 
+            border-top: 1px solid var(--border-color); 
+            background: var(--bg-card); 
+            display: flex; 
+            gap: 8px; 
+        }
+
+        .studio-preview-box { 
+            width: 100%; 
+            aspect-ratio: 1; 
+            background: #000; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            border: 1px solid var(--border-color); 
+            margin-bottom: 20px; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5); 
+        }
+        
+        .studio-target-image { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: filter 0.3s ease; 
+        }
+        
+        .filter-swatch-strip { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px; 
+            margin-bottom: 20px; 
+        }
+        
+        .filter-swatch-btn { 
+            cursor: pointer; 
+            border: 3px solid transparent; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            background: var(--bg-secondary); 
+            text-align: center; 
+            padding: 4px; 
+            transition: all 0.2s; 
+        }
+        
+        .filter-swatch-btn.active { 
+            border-color: var(--accent-glow); 
+            background: rgba(2,132,199,0.05); 
+        }
+        
+        .filter-swatch-btn img { 
+            width: 100%; 
+            aspect-ratio: 1; 
+            object-fit: cover; 
+            border-radius: 8px; 
+        }
+        
+        .filter-swatch-btn span { 
+            font-size: 11px; 
+            font-weight: 700; 
+            display: block; 
+            margin-top: 4px; 
+            color: var(--text-muted); 
+        }
+
         .f-noir { filter: grayscale(1) contrast(1.35) brightness(0.95); }
         .f-cyan { filter: hue-rotate(180deg) saturate(1.6) contrast(1.1); }
         .f-flare { filter: brightness(1.2) saturate(1.5) contrast(1.1); }
@@ -193,121 +575,622 @@
         .f-vintage { filter: contrast(0.8) brightness(1.1) sepia(0.3) saturate(1.3); }
         .f-cosmic { filter: hue-rotate(110deg) saturate(1.8) contrast(1.15); }
 
-        .chat-header { height: 68px; padding: 0 28px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 14px; background: var(--bg-card); }
-        .chat-header h3 { font-size: 16px; font-weight: 700; color: var(--text-color); }
-        .typing-indicator-span { font-size: 12px; color: var(--accent-glow); margin-left: 6px; display: none; }
-        .back-arrow { display: none; background: none; border: none; font-size: 18px; color: var(--text-color); cursor: pointer; }
-
-        .messages-box { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 65%; padding: 12px 18px; border-radius: 20px; font-size: 14px; line-height: 1.5; }
-        .msg.sent { background: var(--accent-purple); color: #fff; align-self: flex-end; box-shadow: 0 4px 12px rgba(99,102,241,0.2); }
-        .msg.received { background: var(--bg-card); color: var(--text-color); align-self: flex-start; border: 1px solid var(--border-color); }
-        .msg img, .msg video { max-width: 100%; border-radius: 12px; margin-top: 6px; display: block; max-height: 220px; object-fit: cover; }
-        .msg audio { display: block; margin-top: 6px; max-width: 100%; }
-        .msg-meta-row { display: flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 10px; opacity: 0.6; }
-
-        .chat-input-wrapper { padding: 20px; background: var(--bg-card); border-top: 1px solid var(--border-color); }
-        .chat-input-container {
-            background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 18px; padding: 10px 18px; display: flex; gap: 14px; align-items: center;
+        .chat-header { 
+            height: 68px; 
+            padding: 0 28px; 
+            border-bottom: 1px solid var(--border-color); 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            background: var(--bg-card); 
         }
-        .chat-input-container input[type="text"] { flex: 1; padding: 4px 0; background: transparent; border: none; color: var(--text-color); font-size: 14px; outline: none; }
-        .action-icon-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: color 0.2s; }
-        .action-icon-btn:hover { color: var(--text-color); }
-        .action-icon-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; }
-        .action-icon-btn.recording { color: var(--accent-rose); animation: pulseRecord 1.5s infinite; }
-        .send-txt-btn { background: none; border: none; color: var(--accent-glow); font-weight: 700; font-size: 14px; cursor: pointer; }
+        
+        .chat-header h3 { 
+            font-size: 16px; 
+            font-weight: 700; 
+            color: var(--text-color); 
+        }
+        
+        .typing-indicator-span { 
+            font-size: 12px; 
+            color: var(--accent-glow); 
+            margin-left: 6px; 
+            display: none; 
+        }
+        
+        .back-arrow { 
+            display: none; 
+            background: none; 
+            border: none; 
+            font-size: 18px; 
+            color: var(--text-color); 
+            cursor: pointer; 
+        }
+
+        .messages-box { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 24px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+        }
+        
+        .msg { 
+            max-width: 65%; 
+            padding: 12px 18px; 
+            border-radius: 20px; 
+            font-size: 14px; 
+            line-height: 1.5; 
+        }
+        
+        .msg.sent { 
+            background: var(--accent-purple); 
+            color: #fff; 
+            align-self: flex-end; 
+            box-shadow: 0 4px 12px rgba(99,102,241,0.2); 
+        }
+        
+        .msg.received { 
+            background: var(--bg-card); 
+            color: var(--text-color); 
+            align-self: flex-start; 
+            border: 1px solid var(--border-color); 
+        }
+        
+        .msg img, .msg video { 
+            max-width: 100%; 
+            border-radius: 12px; 
+            margin-top: 6px; 
+            display: block; 
+            max-height: 220px; 
+            object-fit: cover; 
+        }
+        
+        .msg audio { 
+            display: block; 
+            margin-top: 6px; 
+            max-width: 100%; 
+        }
+        
+        .msg-meta-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+            margin-top: 6px; 
+            font-size: 10px; 
+            opacity: 0.6; 
+        }
+
+        .chat-input-wrapper { 
+            padding: 20px; 
+            background: var(--bg-card); 
+            border-top: 1px solid var(--border-color); 
+        }
+        
+        .chat-input-container {
+            background: var(--bg-secondary); 
+            border: 1px solid var(--border-color); 
+            border-radius: 18px; 
+            padding: 10px 18px; 
+            display: flex; 
+            gap: 14px; 
+            align-items: center;
+        }
+        
+        .chat-input-container input[type="text"] { 
+            flex: 1; 
+            padding: 4px 0; 
+            background: transparent; 
+            border: none; 
+            color: var(--text-color); 
+            font-size: 14px; 
+            outline: none; 
+        }
+        
+        .action-icon-btn { 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--text-muted); 
+            transition: color 0.2s; 
+        }
+        
+        .action-icon-btn:hover { 
+            color: var(--text-color); 
+        }
+        
+        .action-icon-btn svg { 
+            width: 22px; 
+            height: 22px; 
+            fill: none; 
+            stroke: currentColor; 
+            stroke-width: 2; 
+        }
+        
+        .send-txt-btn { 
+            background: none; 
+            border: none; 
+            color: var(--accent-glow); 
+            font-weight: 700; 
+            font-size: 14px; 
+            cursor: pointer; 
+        }
 
         .feed-composer {
-            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; margin-bottom: 28px; max-width: 580px; width: 100%; margin-left: auto; margin-right: auto;
+            background: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            border-radius: 20px; 
+            padding: 24px; 
+            margin-bottom: 28px; 
+            max-width: 580px; 
+            width: 100%; 
+            margin-left: auto; 
+            margin-right: auto;
         }
-        .feed-composer textarea { width: 100%; height: 75px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; color: var(--text-color); outline: none; resize: none; font-size: 14px; margin-bottom: 14px; }
-        .feed-composer-actions { display: flex; justify-content: space-between; align-items: center; }
-        .feed-posts-container { display: flex; flex-direction: column; gap: 28px; max-width: 580px; width: 100%; margin-left: auto; margin-right: auto; }
         
-        .insta-post { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .post-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border-color); }
-        .post-author-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .post-header img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
-        .post-header h4 { font-size: 14px; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 4px; }
-        .post-media { width: 100%; max-height: 480px; object-fit: cover; }
+        .feed-composer textarea { 
+            width: 100%; 
+            height: 75px; 
+            background: var(--bg-secondary); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            padding: 14px; 
+            color: var(--text-color); 
+            outline: none; 
+            resize: none; 
+            font-size: 14px; 
+            margin-bottom: 14px; 
+        }
         
-        .post-media-wrap { position: relative; width: 100%; display: flex; justify-content: center; }
-        .post-body { padding: 18px 20px; font-size: 14px; line-height: 1.6; }
-        .post-body .author-name { font-weight: 700; margin-right: 8px; color: var(--accent-glow); }
+        .feed-composer-actions { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
         
-        .post-actions-toolbar { display: flex; gap: 20px; padding: 0 4px 12px 4px; border-bottom: 1px solid var(--border-color); }
-        .post-action-item { display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--text-color); font-size: 13px; font-weight: 600; cursor: pointer; transition: color 0.2s; }
-        .post-action-item:hover { color: var(--accent-glow); }
-        .post-action-item.liked { color: var(--accent-rose); }
-        .post-action-item svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
-        .post-action-item.liked svg { fill: currentColor; }
+        .feed-posts-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 28px; 
+            max-width: 580px; 
+            width: 100%; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+        
+        .insta-post { 
+            background: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            position: relative; 
+        }
+        
+        .post-header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 16px; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        
+        .post-author-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            cursor: pointer; 
+        }
+        
+        .post-header img { 
+            width: 38px; 
+            height: 38px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        }
+        
+        .post-header h4 { 
+            font-size: 14px; 
+            font-weight: 700; 
+            color: var(--text-color); 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+        }
+        
+        .post-media { 
+            width: 100%; 
+            max-height: 480px; 
+            object-fit: cover; 
+        }
+        
+        .post-media-wrap { 
+            position: relative; 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+        }
+        
+        .post-body { 
+            padding: 18px 20px; 
+            font-size: 14px; 
+            line-height: 1.6; 
+        }
+        
+        .post-body .author-name { 
+            font-weight: 700; 
+            margin-right: 8px; 
+            color: var(--accent-glow); 
+        }
+        
+        .post-actions-toolbar { 
+            display: flex; 
+            gap: 20px; 
+            padding: 0 4px 12px 4px; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        
+        .post-action-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            background: none; 
+            border: none; 
+            color: var(--text-color); 
+            font-size: 13px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: color 0.2s; 
+        }
+        
+        .post-action-item:hover { 
+            color: var(--accent-glow); 
+        }
+        
+        .post-action-item.liked { 
+            color: var(--accent-rose); 
+        }
+        
+        .post-action-item svg { 
+            width: 20px; 
+            height: 20px; 
+            fill: none; 
+            stroke: currentColor; 
+            stroke-width: 2; 
+        }
+        
+        .post-action-item.liked svg { 
+            fill: currentColor; 
+        }
 
-        .post-delete-icon-trigger { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; font-size: 13px; font-weight: 600; border-radius: 6px; transition: background 0.2s; }
-        .post-delete-icon-trigger:hover { color: var(--accent-rose); background: #fff1f2; }
+        .post-delete-icon-trigger { 
+            background: none; 
+            border: none; 
+            color: var(--text-muted); 
+            cursor: pointer; 
+            padding: 4px 8px; 
+            font-size: 13px; 
+            font-weight: 600; 
+            border-radius: 6px; 
+            transition: background 0.2s; 
+        }
+        
+        .post-delete-icon-trigger:hover { 
+            color: var(--accent-rose); 
+            background: #fff1f2; 
+        }
 
-        .post-comments-section { padding-top: 14px; display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto; }
-        .comment-row { font-size: 13px; line-height: 1.4; color: var(--text-color); }
-        .comment-user { font-weight: 700; margin-right: 6px; color: var(--accent-purple); }
-        .comment-input-row { display: flex; gap: 8px; margin-top: 14px; background: var(--bg-secondary); padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border-color); }
-        .comment-input-row input { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 13px; outline: none; }
+        .post-comments-section { 
+            padding-top: 14px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            max-height: 160px; 
+            overflow-y: auto; 
+        }
+        
+        .comment-row { 
+            font-size: 13px; 
+            line-height: 1.4; 
+            color: var(--text-color); 
+        }
+        
+        .comment-user { 
+            font-weight: 700; 
+            margin-right: 6px; 
+            color: var(--accent-purple); 
+        }
+        
+        .comment-input-row { 
+            display: flex; 
+            gap: 8px; 
+            margin-top: 14px; 
+            background: var(--bg-secondary); 
+            padding: 8px 14px; 
+            border-radius: 10px; 
+            border: 1px solid var(--border-color); 
+        }
+        
+        .comment-input-row input { 
+            flex: 1; 
+            background: transparent; 
+            border: none; 
+            color: var(--text-color); 
+            font-size: 13px; 
+            outline: none; 
+        }
 
         .aesthetic-follow-btn {
             background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
             border: 1px solid #cbd5e1;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            color: #334155; padding: 7px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+            color: #334155; 
+            padding: 7px 14px; 
+            border-radius: 10px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
         }
-        .aesthetic-follow-btn:hover { background: #f1f5f9; border-color: #94a3b8; color: var(--text-color); }
-        .aesthetic-follow-btn.unfollow-btn { border-color: #fca5a5; color: var(--accent-rose); background: #fff5f5; }
-        .aesthetic-follow-btn.unfollow-btn:hover { background: #fee2e2; border-color: #f87171; }
-
-        /* Standardized High-Fidelity Verified Badge */
-        .verified-badge-texture-star {
-            width: 16px; height: 16px; display: inline-block; vertical-align: middle; flex-shrink: 0;
-        }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.4); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background: var(--bg-card); padding: 32px; border-radius: 28px; border: 1px solid var(--border-color); width: 100%; max-width: 440px; text-align: center; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
-        .close-modal { position: absolute; top: 16px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
-        .close-modal:hover { color: var(--text-color); }
         
-        .input-group { margin-bottom: 16px; text-align: left; }
-        .input-group label { display: block; font-size: 13px; margin-bottom: 6px; font-weight: 600; color: var(--text-muted); }
-        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; background: var(--bg-secondary); color: var(--text-color); outline: none; }
-        .input-group textarea { height: 60px; resize: none; }
+        .aesthetic-follow-btn:hover { 
+            background: #f1f5f9; 
+            border-color: #94a3b8; 
+            color: var(--text-color); 
+        }
+        
+        .aesthetic-follow-btn.unfollow-btn { 
+            border-color: #fca5a5; 
+            color: var(--accent-rose); 
+            background: #fff5f5; 
+        }
+        
+        .aesthetic-follow-btn.unfollow-btn:hover { 
+            background: #fee2e2; 
+            border-color: #f87171; 
+        }
+
+        /* Enhanced High-Fidelity Verified Badge Graphics Setup */
+        .verified-badge-texture-star {
+            width: 18px; 
+            height: 18px; 
+            display: inline-block; 
+            vertical-align: middle; 
+            flex-shrink: 0;
+            filter: drop-shadow(0px 2px 4px rgba(0, 149, 246, 0.3));
+        }
+
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(15,23,42,0.4); 
+            backdrop-filter: blur(8px); 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 100; 
+        }
+        
+        .modal-content { 
+            background: var(--bg-card); 
+            padding: 32px; 
+            border-radius: 28px; 
+            border: 1px solid var(--border-color); 
+            width: 100%; 
+            max-width: 440px; 
+            text-align: center; 
+            position: relative; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+        }
+        
+        .close-modal { 
+            position: absolute; 
+            top: 16px; 
+            right: 20px; 
+            font-size: 24px; 
+            color: var(--text-muted); 
+            cursor: pointer; 
+            transition: color 0.2s; 
+        }
+        
+        .close-modal:hover { 
+            color: var(--text-color); 
+        }
+        
+        .input-group { 
+            margin-bottom: 16px; 
+            text-align: left; 
+        }
+        
+        .input-group label { 
+            display: block; 
+            font-size: 13px; 
+            margin-bottom: 6px; 
+            font-weight: 600; 
+            color: var(--text-muted); 
+        }
+        
+        .input-group input, .input-group textarea, .input-group select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            font-size: 14px; 
+            background: var(--bg-secondary); 
+            color: var(--text-color); 
+            outline: none; 
+        }
+        
+        .input-group textarea { 
+            height: 60px; 
+            resize: none; 
+        }
         
         .main-btn {
-            width: 100%; padding: 14px; background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
-            color: #fff; border: 1px solid #0284c7; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 4px rgba(2,132,199,0.2); transition: transform 0.1s, opacity 0.2s;
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+            color: #fff; 
+            border: 1px solid #0284c7; 
+            border-radius: 12px; 
+            font-size: 14px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            box-shadow: 0 2px 4px rgba(2,132,199,0.2); 
+            transition: transform 0.1s, opacity 0.2s;
         }
+        
         .main-btn:hover { opacity: 0.95; }
         .main-btn:active { transform: scale(0.98); }
-        .secondary-btn {
-            width: 100%; padding: 14px; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-            color: #334155; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 14px; cursor: pointer; margin-top: 8px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .secondary-btn:hover { background: #f1f5f9; border-color: #94a3b8; }
-        .no-chat-selected { flex: 1; display: flex; justify-content: center; align-items: center; color: var(--text-muted); font-size: 14px; }
         
-        #status-viewer-modal .modal-content { max-width: 480px; background: var(--bg-card); border: 1px solid var(--border-color); padding: 30px; border-radius: 24px; }
-        #status-media-container { width: 100%; min-height: 480px; display: flex; justify-content: center; align-items: center; border-radius: 16px; overflow: hidden; background: #f1f5f9; }
-        #status-viewer-img, #status-viewer-video { width: 100%; max-height: 70vh; object-fit: contain; }
+        .secondary-btn {
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            color: #334155; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 12px; 
+            font-size: 14px; 
+            cursor: pointer; 
+            margin-top: 8px; 
+            font-weight: 600; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .secondary-btn:hover { 
+            background: #f1f5f9; 
+            border-color: #94a3b8; 
+        }
+        
+        .no-chat-selected { 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            color: var(--text-muted); 
+            font-size: 14px; 
+        }
+        
+        #status-viewer-modal .modal-content { 
+            max-width: 480px; 
+            background: var(--bg-card); 
+            border: 1px solid var(--border-color); 
+            padding: 30px; 
+            border-radius: 24px; 
+        }
+        
+        #status-media-container { 
+            width: 100%; 
+            min-height: 480px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            background: #f1f5f9; 
+            position: relative;
+        }
+        
+        #status-viewer-img, #status-viewer-video { 
+            width: 100%; 
+            max-height: 70vh; 
+            object-fit: contain; 
+        }
 
-        .profile-modal-hdr { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
-        .profile-stat-row { display: flex; gap: 28px; margin: 12px 0; }
-        .profile-stat-box h5 { font-size: 20px; font-weight: 700; color: var(--text-color); }
-        .profile-stat-box p { font-size: 12px; color: var(--text-muted); }
-        .profile-description-txt { font-size: 14px; color: var(--text-color); margin-top: 6px; line-height: 1.4; font-style: italic; background: var(--bg-secondary); padding: 10px 14px; border-radius: 12px; width: 100%; border: 1px solid var(--border-color); }
-        .profile-posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 200px; overflow-y: auto; width: 100%; margin-top: 12px; }
-        .profile-grid-item { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); }
+        .status-delete-overlay-btn {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(225, 29, 72, 0.9);
+            color: #ffffff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            transition: background 0.2s;
+        }
+
+        .status-delete-overlay-btn:hover {
+            background: rgba(225, 29, 72, 1);
+        }
+
+        .profile-modal-hdr { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 20px; 
+        }
+        
+        .profile-stat-row { 
+            display: flex; 
+            gap: 28px; 
+            margin: 12px 0; 
+        }
+        
+        .profile-stat-box h5 { 
+            font-size: 20px; 
+            font-weight: 700; 
+            color: var(--text-color); 
+        }
+        
+        .profile-stat-box p { 
+            font-size: 12px; 
+            color: var(--text-muted); 
+        }
+        
+        .profile-description-txt { 
+            font-size: 14px; 
+            color: var(--text-color); 
+            margin-top: 6px; 
+            line-height: 1.4; 
+            font-style: italic; 
+            background: var(--bg-secondary); 
+            padding: 10px 14px; 
+            border-radius: 12px; 
+            width: 100%; 
+            border: 1px solid var(--border-color); 
+        }
+        
+        .profile-posts-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 8px; 
+            max-height: 200px; 
+            overflow-y: auto; 
+            width: 100%; 
+            margin-top: 12px; 
+        }
+        
+        .profile-grid-item { 
+            width: 100%; 
+            aspect-ratio: 1; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color); 
+        }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">Syncing data structures...</div>
+    <div id="loading-screen">Syncing spatial core databases...</div>
 
     <div id="login-container" class="form-container" style="display: none;">
-        <div class="app-logo-title">AuraHub</div>
+        <div class="app-logo-title">AuraHub Pro</div>
         <div class="input-group">
             <input type="email" id="login-email" placeholder="Email Address">
         </div>
@@ -321,7 +1204,7 @@
     </div>
 
     <div id="profile-setup-container" class="form-container" style="display: none;">
-        <div class="app-logo-title">Profile Setup</div>
+        <div class="app-logo-title">Profile Matrix</div>
         <form id="profile-form">
             <div class="input-group">
                 <input type="text" id="setup-username" placeholder="Username" required>
@@ -329,13 +1212,13 @@
             <div class="input-group">
                 <input type="text" id="setup-name" placeholder="Full Name" required>
             </div>
-            <button type="submit" class="main-btn">Complete Setup</button>
+            <button type="submit" class="main-btn">Complete Matrix Setup</button>
         </form>
     </div>
 
     <div id="dashboard-container" class="dashboard-layout" style="display: none;">
         <div class="app-navbar">
-            <div class="nav-brand" onclick="switchTab('chats')">AuraHub</div>
+            <div class="nav-brand" onclick="switchTab('chats')">AuraHub Pro</div>
             <div class="nav-links">
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
                 <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
@@ -349,10 +1232,10 @@
         <div class="main-content-area">
             <div class="sidebar" id="app-sidebar-pane">
                 <div class="user-bar">
-                    <img id="dash-avatar" src="" onclick="openMyOwnProfile()">
+                    <img id="dash-avatar" src="" onclick="openMyOwnProfile()" alt="Profile Avatar">
                     <div class="user-details" onclick="openMyOwnProfile()">
                         <h3 id="dash-username">@username</h3>
-                        <p id="dash-display-name">Loading...</p>
+                        <p id="dash-display-name">Loading matrix parameters...</p>
                     </div>
                     <label for="status-file-input" class="action-icon-btn" title="Add to My Story" style="color: var(--accent-glow);">
                         <svg viewBox="0 0 24 24" style="width:26px; height:26px;"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
@@ -363,7 +1246,7 @@
                 <div id="status-tray" class="story-tray"></div>
                 
                 <div class="friends-list-container">
-                    <div class="friends-list-heading">Direct Messages</div>
+                    <div class="friends-list-heading">Direct Channels</div>
                     <div id="friends-list"></div>
                 </div>
             </div>
@@ -373,10 +1256,10 @@
                     <div class="chat-header">
                         <button class="back-arrow" onclick="exitChatToSidebar()">Back</button>
                         <div class="chat-header-meta">
-                            <h3 id="chat-with-heading">Chat User</h3>
-                            <span id="chat-typing-indicator" class="typing-indicator-span">typing...</span>
+                            <h3 id="chat-with-heading">Chat Terminal</h3>
+                            <span id="chat-typing-indicator" class="typing-indicator-span">typing core transmission...</span>
                         </div>
-                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">View Profile</button>
+                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect Profile</button>
                     </div>
                     
                     <div id="messages-box" class="messages-box"></div>
@@ -388,49 +1271,46 @@
                             </label>
                             <input type="file" id="chat-image-input" accept="image/*,video/*" style="display: none;">
                             
-                            <button id="voice-record-btn" class="action-icon-btn">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12 1c-1.66 0-3 1.34-3 3v8c0 1.66 1.34 3 3 3s3-1.34 3-3V4c0-1.66-1.34-3-3-3z"/>
-                                    <path d="M19 10v1c0 3.53-2.61 6.44-6 6.93V21h-2v-3.07c-3.39-.49-6-3.4-6-6.93v-1h2v1c0 2.76 2.24 5 5 5s5-2.24 5-5v-1h2z"/>
-                                </svg>
-                            </button>
-
-                            <input type="text" id="message-input" placeholder="Message...">
+                            <input type="text" id="message-input" placeholder="Transmit packet data...">
                             <button id="send-msg-btn" class="send-txt-btn">Send</button>
                         </div>
                     </div>
                 </div>
                 <div id="no-chat-fallback" class="no-chat-selected">
-                    <p>Select a user conversation to begin</p>
+                    <p>Select a verified user matrix node to begin transmission</p>
                 </div>
             </div>
 
             <div class="feed-area" id="app-feed-pane">
                 <div class="feed-composer">
-                    <textarea id="feed-post-text" placeholder="Share something cool with the world..."></textarea>
+                    <textarea id="feed-post-text" placeholder="Publish updates to the worldwide network matrix..."></textarea>
                     <div class="feed-composer-actions">
                         <input type="file" id="feed-post-file" accept="image/*,video/*" style="display: none;">
-                        <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 14px;" onclick="document.getElementById('feed-post-file').click()">Add Media</button>
+                        <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 14px;" onclick="document.getElementById('feed-post-file').click()">Add Asset</button>
                         <button class="main-btn" style="width: auto; padding: 8px 16px;" id="submit-feed-post-btn">Publish</button>
                     </div>
-                    <div id="feed-file-preview-label" style="font-size: 12px; color: var(--accent-glow); margin-top: 6px; display: none;">Media attachment queued</div>
+                    <div id="feed-file-preview-label" style="font-size: 12px; color: var(--accent-glow); margin-top: 6px; display: none;">Asset array payload staged.</div>
                 </div>
                 <div id="feed-posts-container" class="feed-posts-container"></div>
             </div>
 
             <div class="search-tab-area" id="app-search-pane">
                 <div class="search-pane-header">
-                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Search creators or content keywords...">
+                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Query creator index or dynamic keywords...">
+                    <div class="search-filter-row">
+                        <button id="filter-sort-default" class="filter-toggle-btn active" onclick="toggleSearchSortFilter('default')">All Creators</button>
+                        <button id="filter-sort-followed" class="filter-toggle-btn" onclick="toggleSearchSortFilter('most-followed')">🔥 Most Followed</button>
+                    </div>
                     <div class="suggestions-dropdown-panel" id="search-suggestions-overlay"></div>
                 </div>
                 
                 <div class="search-split-layout">
                     <div class="search-column-panel">
-                        <div class="search-section-title">Creators</div>
+                        <div class="search-section-title">Creator Index Nodes</div>
                         <div id="search-creators-results" style="display: flex; flex-direction: column; gap: 8px;"></div>
                     </div>
                     <div class="search-column-panel">
-                        <div class="search-section-title">Discovered Content</div>
+                        <div class="search-section-title">Discovered Feed Content</div>
                         <div id="search-posts-results" style="display: flex; flex-direction: column; gap: 16px;"></div>
                     </div>
                 </div>
@@ -452,8 +1332,8 @@
 
             <div class="myspace-area" id="app-myspace-pane">
                 <div class="myspace-container">
-                    <div class="search-section-title" style="border:none; margin:0;">My Space Storage Vault</div>
-                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Private photo vault encrypted to your unique profile key record.</p>
+                    <div class="search-section-title" style="border:none; margin:0;">Secure Local Space Storage</div>
+                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Encrypted asset storage vault linked directly to your active node.</p>
                     <div id="myspace-vault-grid" class="myspace-grid"></div>
                 </div>
             </div>
@@ -463,84 +1343,36 @@
     <div id="myspace-sharing-studio-modal" class="modal">
         <div class="modal-content" style="max-width: 480px; width: 90%;">
             <span class="close-modal" onclick="closeSpaceSharingStudio()">&times;</span>
-            <h2 style="margin-bottom: 4px;">Studio Options</h2>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;">Apply real-time filters, post, or direct forward</p>
+            <h2 style="margin-bottom: 4px;">Dynamic Studio Options</h2>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;">Render real-time spatial texture maps or dispatch globally</p>
             
             <div class="studio-preview-box">
-                <img id="studio-image-preview-target" class="studio-target-image" src="">
+                <img id="studio-image-preview-target" class="studio-target-image" src="" alt="Studio Preview">
             </div>
 
             <div class="filter-swatch-strip">
                 <div class="filter-swatch-btn active" onclick="applyStudioFilterTexture('')" id="swatch-none">
-                    <img id="swatch-img-none" src=""><span>Raw</span>
+                    <img id="swatch-img-none" src="" alt="raw"><span>Raw Node</span>
                 </div>
                 <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-noir')" id="swatch-f-noir">
-                    <img id="swatch-img-f-noir" src="" class="f-noir"><span>Noir</span>
+                    <img id="swatch-img-f-noir" src="" class="f-noir" alt="noir"><span>Noir Map</span>
                 </div>
                 <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-cyan')" id="swatch-f-cyan">
-                    <img id="swatch-img-f-cyan" src="" class="f-cyan"><span>Cyber</span>
+                    <img id="swatch-img-f-cyan" src="" class="f-cyan" alt="cyber"><span>Cyber Cyan</span>
                 </div>
                 <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-flare')" id="swatch-f-flare">
-                    <img id="swatch-img-f-flare" src="" class="f-flare"><span>Glow</span>
-                </div>
-            </div>
-            <div class="filter-swatch-strip" style="margin-bottom: 20px;">
-                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-sepia')" id="swatch-f-sepia">
-                    <img id="swatch-img-f-sepia" src="" class="f-sepia"><span>Sepia</span>
-                </div>
-                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-warm')" id="swatch-f-warm">
-                    <img id="swatch-img-f-warm" src="" class="f-warm"><span>Warm</span>
-                </div>
-                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-cool')" id="swatch-f-cool">
-                    <img id="swatch-img-f-cool" src="" class="f-cool"><span>Cool</span>
-                </div>
-                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-cosmic')" id="swatch-f-cosmic">
-                    <img id="swatch-img-f-cosmic" src="" class="f-cosmic"><span>Cosmic</span>
+                    <img id="swatch-img-f-flare" src="" class="f-flare" alt="glow"><span>Glow Burst</span>
                 </div>
             </div>
             
             <div class="input-group">
-                <label>Caption Text</label>
-                <textarea id="studio-caption-input" placeholder="Write an engaging caption..."></textarea>
+                <label>Staged Text Descriptor</label>
+                <textarea id="studio-caption-input" placeholder="Configure localized context..."></textarea>
             </div>
 
-            <div class="input-group" style="border-top: 1px solid var(--border-color); padding-top: 12px;">
-                <label style="color: var(--accent-purple);">Direct Message Forwarding</label>
-                <select id="studio-direct-contact-select">
-                    <option value="">-- Choose Contact to Send Privately --</option>
-                </select>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;">
+                <button class="main-btn" onclick="publishStudioPostToGlobalFeed()">Post Globally to Network Timeline</button>
             </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                <button class="secondary-btn" style="margin:0;" onclick="dispatchStudioImageAsPrivateMessage()">Send Direct</button>
-                <button class="main-btn" onclick="publishStudioPostToGlobalFeed()">Post Globally</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="settings-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
-            <h2>Profile Settings</h2>
-            <br>
-            <div class="input-group">
-                <label>Full Name</label>
-                <input type="text" id="settings-fullname-input">
-            </div>
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" id="settings-username-input">
-            </div>
-            <div class="input-group">
-                <label>Description / Bio</label>
-                <textarea id="settings-description-input" placeholder="Tell us about yourself..."></textarea>
-            </div>
-            <div class="input-group" style="border-top: 1px solid var(--border-color); padding-top: 14px;">
-                <label style="color: var(--accent-glow);">Verify Identity (Request Badge)</label>
-                <input type="file" id="settings-id-card-input" accept="image/*">
-                <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Upload an image file of your ID card for review.</p>
-            </div>
-            <button class="main-btn" onclick="saveSettingsChanges()">Save Changes</button>
         </div>
     </div>
 
@@ -549,34 +1381,27 @@
             <span class="close-modal" onclick="closeViewProfileModal()">&times;</span>
             <div class="profile-modal-hdr">
                 <div style="width:80px; height:80px; border-radius:50%; overflow:hidden; margin-bottom: 10px; border: 2px solid var(--accent-glow);">
-                    <img id="view-modal-avatar" src="" style="width:100%; height:100%; object-fit:cover;">
+                    <img id="view-modal-avatar" src="" style="width:100%; height:100%; object-fit:cover;" alt="Avatar">
                 </div>
-                <h2 id="view-modal-name" style="display:flex; align-items:center; gap:6px;">Name</h2>
+                <h2 id="view-modal-name" style="display:flex; align-items:center; gap:6px;">Node Profile</h2>
                 <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700;">@username</p>
                 
                 <div class="profile-stat-row">
                     <div class="profile-stat-box">
                         <h5 id="profile-stat-followers">0</h5>
-                        <p>Followers</p>
+                        <p>Linked Inbounds</p>
                     </div>
                     <div class="profile-stat-box">
                         <h5 id="profile-stat-posts">0</h5>
-                        <p>Posts</p>
+                        <p>Matrix Posts</p>
                     </div>
                 </div>
-                <div id="view-modal-description" class="profile-description-txt">No description added yet.</div>
-                
-                <div id="admin-id-preview-panel" style="display:none; width: 100%; margin-top: 12px; border: 1px dashed var(--accent-rose); padding: 10px; border-radius: 12px; background: #fff5f5;">
-                    <p style="font-size: 11px; font-weight: bold; color: var(--accent-rose); margin-bottom: 6px;">Submitted Verification ID Asset:</p>
-                    <img id="admin-id-preview-img" src="" style="width: 100%; max-height: 140px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border-color);">
-                </div>
+                <div id="view-modal-description" class="profile-description-txt">No descriptive bio assigned yet.</div>
 
                 <button id="profile-action-follow-toggle-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--accent-glow); border-color: var(--accent-glow); color:#fff;"></button>
-                <button id="admin-grant-verification-badge-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--verified-color); border-color: var(--verified-color); color:#fff;"></button>
-                <button id="profile-action-edit-btn" class="secondary-btn" style="display:none; padding:6px; font-size:12px; margin-top:12px;" onclick="switchFromProfileToSettings()">Edit Description</button>
             </div>
             
-            <h4 style="text-align: left; font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Recent Posts</h4>
+            <h4 style="text-align: left; font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Recent Node Dispatches</h4>
             <div id="profile-posts-grid" class="profile-posts-grid"></div>
         </div>
     </div>
@@ -584,10 +1409,11 @@
     <div id="status-viewer-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeStatusViewer()">&times;</span>
-            <h3 id="status-author-name" style="text-align: left; margin-bottom: 12px;">Story</h3>
+            <h3 id="status-author-name" style="text-align: left; margin-bottom: 12px;">Active Story Stream</h3>
             <div id="status-media-container">
-                <img id="status-viewer-img" style="display:none;">
+                <img id="status-viewer-img" alt="Story Stream Content" style="display:none;">
                 <video id="status-viewer-video" controls autoplay style="display:none;"></video>
+                <button id="status-delete-action-btn" class="status-delete-overlay-btn" onclick="triggerActiveStatusDeletion()">Delete Story</button>
             </div>
         </div>
     </div>
@@ -622,12 +1448,10 @@
         const statusTray = document.getElementById('status-tray');
         const statusFileInput = document.getElementById('status-file-input');
         const chatImageInput = document.getElementById('chat-image-input');
-        const voiceRecordBtn = document.getElementById('voice-record-btn');
         const primaryAuthBtn = document.getElementById('email-primary-btn');
         const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
         const hubSearchBar = document.getElementById('hub-main-search-bar');
         const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
-        const identityCardInput = document.getElementById('settings-id-card-input');
         const videoElement = document.getElementById('webcam-stream-preview');
 
         let currentUser = null;
@@ -636,28 +1460,31 @@
         let unsubscribeChatListener = null;
         let unsubscribeTypingListener = null;
         let activeStatusDatabase = {}; 
-        let mediaRecorder = null;
-        let audioChunks = [];
         let isSignUpMode = false;
         let selectedFeedFileBase64 = "";
-        let selectedIdentityFileBase64 = "";
         let globalCachedFeedPosts = [];
         let globalCachedAllUsers = [];
         let cameraActiveStream = null;
         let studioSelectedImageBase64 = "";
         let studioActiveFilterClass = "";
+        let currentSearchSortMode = "default";
+        let viewingStatusNodeData = null;
 
-        // Premium multi-layered geometric ribbon shape badge vector generator layout
+        // Better Outer-Ribbon Verified Texture Graphic Generator Layout 
         const getVerifiedTextureBadgeMarkup = () => `
-            <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none">
+            <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                    <linearGradient id="blueGlowMatrix" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#38bdf8" />
-                        <stop offset="100%" stop-color="#0095f6" />
+                    <linearGradient id="premiumBlueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2563eb" />
+                        <stop offset="30%" stop-color="#0095f6" />
+                        <stop offset="100%" stop-color="#38bdf8" />
                     </linearGradient>
+                    <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
+                        <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.2"/>
+                    </filter>
                 </defs>
-                <path d="M12 2l2.4 1.5 2.8-.2.6 2.8 2.7.9-.5 2.8 1.9 2.1-1.4 2.5 1 2.7-2.2 1.7-.1 2.8-2.7.7-1.3 2.5-2.6-1.1-2.4 1.5-2.8-.2-.6-2.8-2.7-.9.5-2.8-1.9-2.1 1.4-2.5-1-2.7 2.2-1.7.1-2.8 2.7-.7 1.3-2.5 2.6 1.1L12 2z" fill="url(#blueGlowMatrix)"/>
-                <path d="M8.5 12.5l2.5 2.5 5-5" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 2.25l1.826 1.135a1.5 1.5 0 001.385.16l2.072-.674a1.5 1.5 0 011.83 1.222l.374 2.148a1.5 1.5 0 00.75 1.127l1.91 1.025a1.5 1.5 0 01.698 2.094l-1.025 1.91a1.5 1.5 0 000 1.353l1.025 1.91a1.5 1.5 0 01-.699 2.094l-1.91 1.025a1.5 1.5 0 00-.749 1.127l-.374 2.148a1.5 1.5 0 01-1.83 1.222l-2.072-.674a1.5 1.5 0 00-1.385.16L12 21.75l-1.826-1.135a1.5 1.5 0 00-1.385-.16l-2.072.674a1.5 1.5 0 01-1.83-1.222l-.374-2.148a1.5 1.5 0 00-.75-1.127l-1.91-1.025a1.5 1.5 0 01-.698-2.094l1.025-1.91a1.5 1.5 0 000-1.353l-1.025-1.91a1.5 1.5 0 01.699-2.094l1.91-1.025a1.5 1.5 0 00.749-1.127l.374-2.148a1.5 1.5 0 011.83-1.222l2.072.674a1.5 1.5 0 001.385-.16L12 2.25z" fill="url(#premiumBlueGradient)" filter="url(#badgeShadow)"/>
+                <path d="M8.5 12.25l2.25 2.25 5.25-5.5" stroke="#ffffff" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         `;
 
@@ -681,21 +1508,23 @@
             btnCamera.classList.remove('active');
             btnSpace.classList.remove('active');
 
-            if(cameraActiveStream && tabName !== 'camera') {
-                cameraActiveStream.getTracks().forEach(track => track.stop());
+            if (cameraActiveStream && tabName !== 'camera') {
+                cameraActiveStream.getTracks().forEach(function(track) {
+                    track.stop();
+                });
                 cameraActiveStream = null;
             }
 
-            if(tabName === 'feed') {
+            if (tabName === 'feed') {
                 chatPane.style.display = 'none'; sidePane.style.display = 'none'; searchPane.style.display = 'none'; cameraPane.style.display = 'none'; myspacePane.style.display = 'none';
                 feedPane.style.display = 'flex'; btnFeed.classList.add('active');
-            } else if(tabName === 'search') {
+            } else if (tabName === 'search') {
                 chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; cameraPane.style.display = 'none'; myspacePane.style.display = 'none';
                 searchPane.style.display = 'flex'; btnSearch.classList.add('active'); triggerHubComprehensiveSearch();
-            } else if(tabName === 'camera') {
+            } else if (tabName === 'camera') {
                 chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; myspacePane.style.display = 'none';
                 cameraPane.style.display = 'flex'; btnCamera.classList.add('active'); initWebcamMediaStreamLayer();
-            } else if(tabName === 'myspace') {
+            } else if (tabName === 'myspace') {
                 chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; cameraPane.style.display = 'none';
                 myspacePane.style.display = 'flex'; btnSpace.classList.add('active'); syncMySpaceVaultGalleryView();
             } else {
@@ -704,12 +1533,59 @@
             }
         };
 
+        window.toggleSearchSortFilter = function(filterMode) {
+            currentSearchSortMode = filterMode;
+            document.getElementById('filter-sort-default').classList.remove('active');
+            document.getElementById('filter-sort-followed').classList.remove('active');
+            
+            if (filterMode === 'most-followed') {
+                document.getElementById('filter-sort-followed').classList.add('active');
+            } else {
+                document.getElementById('filter-sort-default').classList.add('active');
+            }
+            triggerHubComprehensiveSearch();
+        };
+
+        async function enforceUniversalYaseenFollowNode(userProfileRecord, fallbackUid) {
+            const targetUid = userProfileRecord ? userProfileRecord.uid : fallbackUid;
+            if (!targetUid) return;
+
+            try {
+                const creatorsCollectionQuery = await getDocs(collection(db, "users"));
+                let yaseenTargetUid = null;
+                
+                creatorsCollectionQuery.forEach(function(docRef) {
+                    const parsedData = docRef.data();
+                    if (parsedData.username === "yaseen") {
+                        yaseenTargetUid = parsedData.uid;
+                    }
+                });
+
+                if (yaseenTargetUid && targetUid !== yaseenTargetUid) {
+                    let currentSocialArray = userProfileRecord?.friends ? [...userProfileRecord.friends] : [];
+                    if (!currentSocialArray.includes(yaseenTargetUid)) {
+                        currentSocialArray.push(yaseenTargetUid);
+                        await updateDoc(doc(db, "users", targetUid), { 
+                            friends: currentSocialArray 
+                        });
+                        if (userDataRecord && userDataRecord.uid === targetUid) {
+                            userDataRecord.friends = currentSocialArray;
+                        }
+                    }
+                }
+            } catch (errorException) {
+                console.error("Auto-follow check error: ", errorException);
+            }
+        }
+
         async function initWebcamMediaStreamLayer() {
-            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 try {
                     cameraActiveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                     videoElement.srcObject = cameraActiveStream;
-                } catch(err) { alert("Camera hardware blocked: " + err.message); }
+                } catch (err) { 
+                    alert("Camera integration blocked: " + err.message); 
+                }
             }
         }
 
@@ -726,20 +1602,19 @@
             const frozenBase64 = canvas.toDataURL('image/jpeg');
             let currentVaultArray = userDataRecord.mySpaceVault || [];
             currentVaultArray.unshift({
-                id: "snap_" + Date.now(),
+                id: "snapshot_" + Date.now(),
                 imgUrl: frozenBase64,
                 timestamp: Date.now()
             });
 
             await updateDoc(doc(db, "users", currentUser.uid), { mySpaceVault: currentVaultArray });
             userDataRecord.mySpaceVault = currentVaultArray;
-            alert("Snapshot recorded in My Space catalog.");
+            alert("Snapshot securely recorded into local vault matrix.");
             switchTab('myspace');
         });
 
-        // Delete asset element directly from inside personal storage vault array map sets
         window.removeAssetFromMySpaceVault = async function(itemId) {
-            if(!confirm("Delete this snapshot from your private space?")) return;
+            if (!confirm("Permanently delete this item from your private vault space?")) return;
             let filteredArray = (userDataRecord.mySpaceVault || []).filter(item => item.id !== itemId);
             await updateDoc(doc(db, "users", currentUser.uid), { mySpaceVault: filteredArray });
             userDataRecord.mySpaceVault = filteredArray;
@@ -750,14 +1625,13 @@
             const grid = document.getElementById('myspace-vault-grid');
             grid.innerHTML = "";
             const assets = userDataRecord.mySpaceVault || [];
-            if(assets.length === 0) {
-                grid.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size:13px; text-align:center; margin-top:20px;">Your private Space folder is currently empty.</p>`;
+            if (assets.length === 0) {
+                grid.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size:13px; text-align:center; margin-top:20px;">Private storage catalog is currently unpopulated.</p>`;
                 return;
             }
-            assets.forEach(item => {
+            assets.forEach(function(item) {
                 const wrapper = document.createElement('div');
                 wrapper.className = "space-item-card";
-                
                 wrapper.innerHTML = `
                     <img src="${item.imgUrl}" class="myspace-img-card" id="preview-img-${item.id}">
                     <div class="space-item-footer">
@@ -766,43 +1640,25 @@
                     </div>
                 `;
                 
-                wrapper.querySelector(`#share-btn-${item.id}`).addEventListener('click', () => openSpaceSharingStudio(item.imgUrl));
-                wrapper.querySelector(`#delete-btn-${item.id}`).addEventListener('click', () => removeAssetFromMySpaceVault(item.id));
+                wrapper.querySelector(`#share-btn-${item.id}`).addEventListener('click', function() {
+                    openSpaceSharingStudio(item.imgUrl);
+                });
+                wrapper.querySelector(`#delete-btn-${item.id}`).addEventListener('click', function() {
+                    removeAssetFromMySpaceVault(item.id);
+                });
                 grid.appendChild(wrapper);
             });
         }
 
         window.openSpaceSharingStudio = function(imgSrc) {
             studioSelectedImageBase64 = imgSrc;
-            
             document.getElementById('studio-image-preview-target').src = imgSrc;
             document.getElementById('swatch-img-none').src = imgSrc;
             document.getElementById('swatch-img-f-noir').src = imgSrc;
             document.getElementById('swatch-img-f-cyan').src = imgSrc;
             document.getElementById('swatch-img-f-flare').src = imgSrc;
-            document.getElementById('swatch-img-f-sepia').src = imgSrc;
-            document.getElementById('swatch-img-f-warm').src = imgSrc;
-            document.getElementById('swatch-img-f-cool').src = imgSrc;
-            document.getElementById('swatch-img-f-cosmic').src = imgSrc;
-
             document.getElementById('studio-caption-input').value = "";
             applyStudioFilterTexture('');
-            
-            // Build direct forwarding contacts element listing row selector options dynamically
-            const dmSelect = document.getElementById('studio-direct-contact-select');
-            dmSelect.innerHTML = `<option value="">-- Choose Contact to Send Privately --</option>`;
-            
-            const followedUids = userDataRecord.friends || [];
-            followedUids.forEach(fUid => {
-                const fUserObj = globalCachedAllUsers.find(u => u.uid === fUid);
-                if(fUserObj) {
-                    const option = document.createElement('option');
-                    option.value = fUserObj.uid;
-                    option.innerText = `@${fUserObj.username} (${fUserObj.fullName})`;
-                    dmSelect.appendChild(option);
-                }
-            });
-
             document.getElementById('myspace-sharing-studio-modal').style.display = 'flex';
         };
 
@@ -815,58 +1671,15 @@
             const imgTarget = document.getElementById('studio-image-preview-target');
             imgTarget.className = "studio-target-image " + filterClass;
             
-            document.querySelectorAll('.filter-swatch-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.filter-swatch-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
             const activeId = filterClass === '' ? 'swatch-none' : 'swatch-' + filterClass;
             document.getElementById(activeId).classList.add('active');
         };
 
-        // Forward image payload canvas composite as direct messaging document entry block
-        window.dispatchStudioImageAsPrivateMessage = async function() {
-            const targetFriendUid = document.getElementById('studio-direct-contact-select').value;
-            if(!targetFriendUid) { alert("Please select a direct conversation contact element."); return; }
-            
-            // Create hidden rendering execution processing engine wrapper
-            const hiddenCanvas = document.createElement('canvas');
-            const ctx = hiddenCanvas.getContext('2d');
-            const tempImg = new Image();
-            tempImg.src = studioSelectedImageBase64;
-            
-            tempImg.onload = async () => {
-                hiddenCanvas.width = tempImg.naturalWidth;
-                hiddenCanvas.height = tempImg.naturalHeight;
-                
-                // Parse filter style logic matching selection operations payload matrix
-                if(studioActiveFilterClass === 'f-noir') ctx.filter = 'grayscale(1) contrast(1.35)';
-                else if(studioActiveFilterClass === 'f-cyan') ctx.filter = 'hue-rotate(180deg) saturate(1.6)';
-                else if(studioActiveFilterClass === 'f-flare') ctx.filter = 'brightness(1.2) saturate(1.5)';
-                else if(studioActiveFilterClass === 'f-sepia') ctx.filter = 'sepia(0.9)';
-                else if(studioActiveFilterClass === 'f-warm') ctx.filter = 'sepia(0.35) saturate(1.4)';
-                else if(studioActiveFilterClass === 'f-cool') ctx.filter = 'hue-rotate(35deg) saturate(1.2)';
-                else if(studioActiveFilterClass === 'f-cosmic') ctx.filter = 'hue-rotate(110deg) saturate(1.8)';
-                
-                ctx.drawImage(tempImg, 0, 0);
-                const flattenedFilteredDataUrl = hiddenCanvas.toDataURL('image/jpeg');
-                
-                const roomKey = currentUser.uid < targetFriendUid ? `${currentUser.uid}_${targetFriendUid}` : `${targetFriendUid}_${currentUser.uid}`;
-                await addDoc(collection(db, "messages", roomKey, "records"), {
-                    senderId: currentUser.uid,
-                    text: "[Shared Image From Private Space Vault]",
-                    type: "image",
-                    mediaUrl: flattenedFilteredDataUrl,
-                    timestamp: Date.now()
-                });
-                
-                closeSpaceSharingStudio();
-                alert("Image sent successfully as direct message!");
-                const targetFriendData = globalCachedAllUsers.find(u => u.uid === targetFriendUid);
-                if(targetFriendData) openChatWindow(targetFriendData);
-                switchTab('chats');
-            };
-        };
-
         window.publishStudioPostToGlobalFeed = async function() {
             const caption = document.getElementById('studio-caption-input').value.trim();
-
             await addDoc(collection(db, "globalFeed"), {
                 authorUid: currentUser.uid,
                 authorName: userDataRecord.fullName,
@@ -882,56 +1695,22 @@
             });
 
             closeSpaceSharingStudio();
-            alert("Shared to timeline!");
+            alert("Dispatched to system-wide network timeline!");
             switchTab('feed');
         };
 
         window.triggerPostRemovalDeletion = async function(postId) {
-            if(!confirm("Are you sure you want to permanently delete this post?")) return;
+            if (!confirm("Permanently drop this network post document?")) return;
             try {
                 await deleteDoc(doc(db, "globalFeed", postId));
-                alert("Post successfully removed.");
-            } catch(err) { alert("Deletion error: " + err.message); }
+                alert("Post dropped successfully.");
+            } catch (err) { 
+                alert("Matrix execution error: " + err.message); 
+            }
         };
 
-        window.openSettingsModal = function() {
-            document.getElementById('settings-fullname-input').value = userDataRecord.fullName;
-            document.getElementById('settings-username-input').value = userDataRecord.username;
-            document.getElementById('settings-description-input').value = userDataRecord.description || "";
-            selectedIdentityFileBase64 = userDataRecord.identityCardUrl || "";
-            document.getElementById('settings-modal').style.display = 'flex';
-        };
-        window.closeSettingsModal = function() { document.getElementById('settings-modal').style.display = 'none'; };
-        window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
-
-        window.switchFromProfileToSettings = function() {
-            closeViewProfileModal();
-            openSettingsModal();
-        };
-
-        identityCardInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if(file) { selectedIdentityFileBase64 = await transformFileToBase64(file); }
-        });
-
-        window.saveSettingsChanges = async function() {
-            const updatedName = document.getElementById('settings-fullname-input').value.trim();
-            const updatedUsername = document.getElementById('settings-username-input').value.trim().toLowerCase();
-            const updatedDesc = document.getElementById('settings-description-input').value.trim();
-            if(!updatedName || !updatedUsername) return;
-            try {
-                const completePayload = { 
-                    fullName: updatedName, 
-                    username: updatedUsername, 
-                    description: updatedDesc,
-                    identityCardUrl: selectedIdentityFileBase64 
-                };
-                await updateDoc(doc(db, "users", currentUser.uid), completePayload);
-                userDataRecord = { ...userDataRecord, ...completePayload };
-                launchDashboard(userDataRecord);
-                closeSettingsModal();
-                alert("Changes saved!");
-            } catch(e) { alert(e.message); }
+        window.closeViewProfileModal = function() { 
+            document.getElementById('view-profile-modal').style.display = 'none'; 
         };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
@@ -939,58 +1718,33 @@
             document.getElementById('view-modal-avatar').src = userObj.photoURL;
             document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
-            document.getElementById('view-modal-description').innerText = userObj.description || "No bio description configured yet.";
+            document.getElementById('view-modal-description').innerText = userObj.description || "No bio parameters configured.";
             
-            document.getElementById('profile-action-edit-btn').style.display = isOwnProfile ? 'block' : 'none';
-
             const followToggleBtn = document.getElementById('profile-action-follow-toggle-btn');
-            if(!isOwnProfile) {
+            if (!isOwnProfile) {
                 followToggleBtn.style.display = "block";
                 const currentFriendsList = userDataRecord.friends || [];
                 const isFollowing = currentFriendsList.includes(userObj.uid);
                 
-                followToggleBtn.innerText = isFollowing ? "Unfollow" : "Follow";
+                followToggleBtn.innerText = isFollowing ? "Sever Link (Unfollow)" : "Establish Link (Follow)";
                 followToggleBtn.style.background = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
                 followToggleBtn.style.borderColor = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
                 
                 followToggleBtn.onclick = async () => {
                     await toggleFollowState(userObj.uid, userObj.username);
                     const updatedUserSnap = await getDoc(doc(db, "users", userObj.uid));
-                    if(updatedUserSnap.exists()) renderProfileCard(updatedUserSnap.data(), false);
+                    if (updatedUserSnap.exists()) renderProfileCard(updatedUserSnap.data(), false);
                 };
             } else {
                 followToggleBtn.style.display = "none";
             }
 
-            const adminPreviewPanel = document.getElementById('admin-id-preview-panel');
-            const adminVerificationBtn = document.getElementById('admin-grant-verification-badge-btn');
-            
-            if(userDataRecord && userDataRecord.username === "yaseen") {
-                adminVerificationBtn.style.display = "block";
-                adminVerificationBtn.innerText = userObj.verified ? "Remove Verification Badge" : "Grant Verified Blue Badge";
-                
-                if(userObj.identityCardUrl) {
-                    adminPreviewPanel.style.display = "block";
-                    document.getElementById('admin-id-preview-img').src = userObj.identityCardUrl;
-                } else { adminPreviewPanel.style.display = "none"; }
-
-                adminVerificationBtn.onclick = async () => {
-                    const targetState = !userObj.verified;
-                    await updateDoc(doc(db, "users", userObj.uid), { verified: targetState });
-                    userObj.verified = targetState;
-                    alert("Verification state updated!");
-                    renderProfileCard(userObj, isOwnProfile);
-                    launchDashboard(userDataRecord);
-                };
-            } else {
-                adminVerificationBtn.style.display = "none";
-                adminPreviewPanel.style.display = "none";
-            }
-
             try {
                 const followerQuery = await getDocs(query(collection(db, "users"), where("friends", "array-contains", userObj.uid)));
                 document.getElementById('profile-stat-followers').innerText = followerQuery.size;
-            } catch(fErr) { document.getElementById('profile-stat-followers').innerText = "0"; }
+            } catch (fErr) { 
+                document.getElementById('profile-stat-followers').innerText = "0"; 
+            }
 
             const gridContainer = document.getElementById('profile-posts-grid');
             gridContainer.innerHTML = "";
@@ -998,39 +1752,45 @@
                 const postsQuery = await getDocs(query(collection(db, "globalFeed"), where("authorUid", "==", userObj.uid)));
                 document.getElementById('profile-stat-posts').innerText = postsQuery.size;
                 
-                postsQuery.forEach(pDoc => {
+                postsQuery.forEach(function(pDoc) {
                     const data = pDoc.data();
-                    if(data.mediaUrl) {
+                    if (data.mediaUrl) {
                         let element = document.createElement(data.mediaType === 'video' ? 'video' : 'img');
                         element.src = data.mediaUrl;
                         element.className = 'profile-grid-item ' + (data.filterClass || '');
                         gridContainer.appendChild(element);
                     }
                 });
-                if(gridContainer.children.length === 0) {
-                    gridContainer.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size: 12px; margin-top:12px;">No uploaded media items.</p>`;
+                if (gridContainer.children.length === 0) {
+                    gridContainer.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size: 12px; margin-top:12px;">No uploaded spatial assets.</p>`;
                 }
-            } catch(pErr) { document.getElementById('profile-stat-posts').innerText = "0"; }
+            } catch (pErr) { 
+                document.getElementById('profile-stat-posts').innerText = "0"; 
+            }
 
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
 
         window.openMyOwnProfile = function() {
-            if(userDataRecord) renderProfileCard(userDataRecord, true);
+            if (userDataRecord) renderProfileCard(userDataRecord, true);
         };
 
-        document.getElementById('view-friend-profile-header-btn').addEventListener('click', () => {
-            if(activeChatFriendData) renderProfileCard(activeChatFriendData, false);
+        document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() {
+            if (activeChatFriendData) renderProfileCard(activeChatFriendData, false);
         });
 
         window.toggleFollowState = async function(targetUid, targetUsername) {
             let currentFriendsList = userDataRecord.friends || [];
             if (currentFriendsList.includes(targetUid)) {
+                if (targetUsername === "yaseen") {
+                    alert("System Override: Connection loop permanently bound. You cannot unfollow @yaseen.");
+                    return;
+                }
                 currentFriendsList = currentFriendsList.filter(uid => uid !== targetUid);
-                alert("You unfollowed @" + targetUsername);
+                alert("Connection severed with @" + targetUsername);
             } else {
                 currentFriendsList.push(targetUid);
-                alert("You followed @" + targetUsername);
+                alert("Connection linked to @" + targetUsername);
             }
             await updateDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList });
             userDataRecord.friends = currentFriendsList;
@@ -1042,16 +1802,18 @@
         window.togglePostLike = async function(postId, currentLikes = []) {
             const postRef = doc(db, "globalFeed", postId);
             let updatedLikes = [...currentLikes];
-            if(updatedLikes.includes(currentUser.uid)) {
+            if (updatedLikes.includes(currentUser.uid)) {
                 updatedLikes = updatedLikes.filter(id => id !== currentUser.uid);
-            } else { updatedLikes.push(currentUser.uid); }
+            } else { 
+                updatedLikes.push(currentUser.uid); 
+            }
             await updateDoc(postRef, { likes: updatedLikes });
         };
 
         window.submitPostComment = async function(postId, commentInputId) {
             const inputEl = document.getElementById(commentInputId);
             const text = inputEl.value.trim();
-            if(!text) return;
+            if (!text) return;
 
             const postRef = doc(db, "globalFeed", postId);
             const postSnap = await getDoc(postRef);
@@ -1067,12 +1829,9 @@
             inputEl.value = "";
         };
 
-        window.sharePostLink = function(postId) {
-            const dummyLink = window.location.href.split('?')[0] + "?post=" + postId;
-            navigator.clipboard.writeText(dummyLink).then(() => { alert("Link copied!"); });
-        };
-
-        hubSearchBar.addEventListener('input', () => { triggerHubComprehensiveSearch(); });
+        hubSearchBar.addEventListener('input', function() { 
+            triggerHubComprehensiveSearch(); 
+        });
 
         async function triggerHubComprehensiveSearch() {
             const filterText = hubSearchBar.value.trim().toLowerCase();
@@ -1084,15 +1843,15 @@
             suggestionsOverlay.innerHTML = "";
             suggestionsOverlay.style.display = "none";
 
-            if(filterText.length >= 1) {
+            if (filterText.length >= 1) {
                 const uniqueSuggestions = globalCachedAllUsers.filter(u => u.username.includes(filterText) || u.fullName.toLowerCase().includes(filterText));
-                if(uniqueSuggestions.length > 0) {
+                if (uniqueSuggestions.length > 0) {
                     suggestionsOverlay.style.display = "block";
-                    uniqueSuggestions.forEach(sUser => {
+                    uniqueSuggestions.forEach(function(sUser) {
                         const sugItem = document.createElement('div');
                         sugItem.className = "suggestion-list-item";
                         sugItem.innerHTML = `<img src="${sUser.photoURL}"><span>@${sUser.username} (${sUser.fullName})</span>`;
-                        sugItem.onclick = () => {
+                        sugItem.onclick = function() {
                             renderProfileCard(sUser, sUser.uid === currentUser.uid);
                             suggestionsOverlay.style.display = "none";
                         };
@@ -1101,15 +1860,39 @@
                 }
             }
 
-            globalCachedAllUsers.forEach(u => {
-                if(filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
+            let renderedUsersList = [...globalCachedAllUsers];
+
+            if (currentSearchSortMode === "most-followed") {
+                let popularityMapping = {};
+                globalCachedAllUsers.forEach(function(uObj) {
+                    popularityMapping[uObj.uid] = 0;
+                });
+
+                globalCachedAllUsers.forEach(function(uObj) {
+                    const socialArray = uObj.friends || [];
+                    socialArray.forEach(function(targetId) {
+                        if (popularityMapping[targetId] !== undefined) {
+                            popularityMapping[targetId] = popularityMapping[targetId] + 1;
+                        }
+                    });
+                });
+
+                renderedUsersList.sort(function(firstItem, secondItem) {
+                    const scoreA = popularityMapping[firstItem.uid] || 0;
+                    const scoreB = popularityMapping[secondItem.uid] || 0;
+                    return scoreB - scoreA;
+                });
+            }
+
+            renderedUsersList.forEach(function(u) {
+                if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
                 const tickHtml = u.verified ? getVerifiedTextureBadgeMarkup() : "";
                 const isFriend = (userDataRecord.friends || []).includes(u.uid);
                 let btnHtml = "";
                 if (u.uid !== currentUser.uid) {
                     btnHtml = isFriend 
-                        ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Unfollow</button>`
-                        : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Follow</button>`;
+                        ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Unlink</button>`
+                        : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Link Node</button>`;
                 }
 
                 const row = document.createElement('div');
@@ -1117,20 +1900,22 @@
                 row.style.margin = "0";
                 row.style.padding = "8px 12px";
                 row.innerHTML = `
-                    <img src="${u.photoURL}" style="width:34px; height:34px;">
+                    <img src="${u.photoURL}" style="width:34px; height:34px;" alt="avatar">
                     <div class="info" style="flex:1;">
                         <h4 style="display:flex; align-items:center; gap:4px; font-size:13px;">${u.fullName} ${tickHtml}</h4>
                         <p style="font-size:11px;">@${u.username}</p>
                     </div>
                     ${btnHtml}
                 `;
-                row.querySelector('img').onclick = () => renderProfileCard(u, u.uid === currentUser.uid);
+                row.querySelector('img').onclick = function() {
+                    renderProfileCard(u, u.uid === currentUser.uid);
+                };
                 creatorsContainer.appendChild(row);
             });
 
-            globalCachedFeedPosts.forEach(postItem => {
+            globalCachedFeedPosts.forEach(function(postItem) {
                 const post = postItem.data;
-                if(filterText && !post.text.toLowerCase().includes(filterText) && !post.authorUsername.includes(filterText)) return;
+                if (filterText && !post.text.toLowerCase().includes(filterText) && !post.authorUsername.includes(filterText)) return;
                 appendPostMarkupCardToTargetContainer(postItem, postsContainer);
             });
         }
@@ -1138,7 +1923,7 @@
         function renderExploreTimelineFeed() {
             const feedContainer = document.getElementById('feed-posts-container');
             feedContainer.innerHTML = "";
-            globalCachedFeedPosts.forEach(postItem => {
+            globalCachedFeedPosts.forEach(function(postItem) {
                 appendPostMarkupCardToTargetContainer(postItem, feedContainer);
             });
         }
@@ -1150,14 +1935,14 @@
             card.className = 'insta-post';
             
             let mediaBlock = "";
-            if(post.mediaUrl) {
-                if(post.mediaType === 'video') {
+            if (post.mediaUrl) {
+                if (post.mediaType === 'video') {
                     mediaBlock = `<div class="post-media-wrap"><video class="post-media" src="${post.mediaUrl}" controls></video></div>`;
                 } else {
                     const filterClass = post.filterClass || "";
                     mediaBlock = `
                         <div class="post-media-wrap">
-                            <img class="post-media ${filterClass}" src="${post.mediaUrl}">
+                            <img class="post-media ${filterClass}" src="${post.mediaUrl}" alt="media">
                         </div>
                     `;
                 }
@@ -1171,16 +1956,16 @@
             let followActionHtml = "";
             if (post.authorUid !== currentUser.uid) {
                 followActionHtml = isFriend 
-                    ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Unfollow</button>` 
-                    : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Follow</button>`;
+                    ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Unlink</button>` 
+                    : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Link Node</button>`;
             }
 
             const matchingUserObj = globalCachedAllUsers.find(u => u.uid === post.authorUid);
             const verifiedTick = (matchingUserObj && matchingUserObj.verified) ? getVerifiedTextureBadgeMarkup() : "";
 
             let deleteUtilityButtonHtml = "";
-            if(post.authorUid === currentUser.uid) {
-                deleteUtilityButtonHtml = `<button class="post-delete-icon-trigger" onclick="triggerPostRemovalDeletion('${postId}')">Delete Post</button>`;
+            if (post.authorUid === currentUser.uid) {
+                deleteUtilityButtonHtml = `<button class="post-delete-icon-trigger" onclick="triggerPostRemovalDeletion('${postId}')">Drop Dispatch</button>`;
             }
 
             let commentsHtml = commentsArray.map(c => `
@@ -1190,7 +1975,7 @@
             card.innerHTML = `
                 <div class="post-header">
                     <div class="post-author-info" id="post-author-hdr-${postId}">
-                        <img src="${post.authorPhoto}">
+                        <img src="${post.authorPhoto}" alt="author">
                         <h4 style="display:flex; align-items:center; gap:4px;">${post.authorName} (@${post.authorUsername}) ${verifiedTick}</h4>
                     </div>
                     <div style="display:flex; align-items:center; gap:10px;">
@@ -1207,65 +1992,82 @@
                             <svg viewBox="0 0 24 24"><path fill="none" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                             <span>${likesArray.length}</span>
                         </button>
-                        <button class="post-action-item">
-                            <svg viewBox="0 0 24 24"><path fill="none" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                            <span>${commentsArray.length}</span>
-                        </button>
-                        <button class="post-action-item" onclick="sharePostLink('${postId}')">
-                            <svg viewBox="0 0 24 24"><path fill="none" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
-                        </button>
                     </div>
 
                     <div class="post-comments-section">${commentsHtml}</div>
                     
                     <div class="comment-input-row">
-                        <input type="text" id="comment-input-${postId}" placeholder="Add a comment...">
-                        <button class="friend-btn" onclick="submitPostComment('${postId}', 'comment-input-${postId}')">Post</button>
+                        <input type="text" id="comment-input-${postId}" placeholder="Write terminal comment...">
+                        <button class="send-txt-btn" id="comment-submit-${postId}">Post</button>
                     </div>
-
-                    <div class="post-time">${new Date(post.timestamp).toLocaleDateString()}</div>
                 </div>
             `;
 
-            card.querySelector(`#like-btn-${postId}`).addEventListener('click', () => togglePostLike(postId, likesArray));
+            card.querySelector(`#like-btn-${postId}`).addEventListener('click', function() {
+                togglePostLike(postId, likesArray);
+            });
+            card.querySelector(`#comment-submit-${postId}`).addEventListener('click', function() {
+                submitPostComment(postId, `comment-input-${postId}`);
+            });
             card.querySelector(`#post-author-hdr-${postId}`).addEventListener('click', async () => {
                 const userSnap = await getDoc(doc(db, "users", post.authorUid));
-                if(userSnap.exists()) renderProfileCard(userSnap.data(), post.authorUid === currentUser.uid);
+                if (userSnap.exists()) renderProfileCard(userSnap.data(), post.authorUid === currentUser.uid);
             });
 
             containerElement.appendChild(card);
         }
 
-        toggleAuthModeBtn.addEventListener('click', () => {
+        toggleAuthModeBtn.addEventListener('click', function() {
             isSignUpMode = !isSignUpMode;
-            if(isSignUpMode) {
-                primaryAuthBtn.innerText = "Register";
-                toggleAuthModeBtn.innerText = "Already have an account? Sign In";
+            if (isSignUpMode) {
+                primaryAuthBtn.innerText = "Register Node";
+                toggleAuthModeBtn.innerText = "Already indexed? Sign In";
             } else {
                 primaryAuthBtn.innerText = "Sign In";
-                toggleAuthModeBtn.innerText = "Create New Account";
+                toggleAuthModeBtn.innerText = "Create New Account Matrix";
             }
         });
 
-        const transformFileToBase64 = file => new Promise((res, rej) => {
+        const transformFileToBase64 = file => new Promise(function(resolve, reject) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => res(reader.result);
-            reader.onerror = e => rej(e);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = e => reject(e);
         });
 
-        primaryAuthBtn.addEventListener('click', () => {
+        primaryAuthBtn.addEventListener('click', function() {
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
-            if(!email || !password) { alert("Complete all login fields."); return; }
+            if (!email || !password) { 
+                alert("Please fill all authorization form parameters."); 
+                return; 
+            }
 
             loadingScreen.style.display = 'block';
             loginContainer.style.display = 'none';
 
-            if(isSignUpMode) {
-                createUserWithEmailAndPassword(auth, email, password).catch(err => { alert(err.message); resetAuthUI(); });
+            if (isSignUpMode) {
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then(function(credential) {
+                        if (credential.user) {
+                            enforceUniversalYaseenFollowNode(null, credential.user.uid);
+                        }
+                    })
+                    .catch(function(err) { 
+                        alert(err.message); 
+                        resetAuthUI(); 
+                    });
             } else {
-                signInWithEmailAndPassword(auth, email, password).catch(err => { alert(err.message); resetAuthUI(); });
+                signInWithEmailAndPassword(auth, email, password)
+                    .then(function(credential) {
+                        if (credential.user) {
+                            enforceUniversalYaseenFollowNode(null, credential.user.uid);
+                        }
+                    })
+                    .catch(function(err) { 
+                        alert(err.message); 
+                        resetAuthUI(); 
+                    });
             }
         });
 
@@ -1274,12 +2076,22 @@
             loginContainer.style.display = 'block';
         }
 
-        document.getElementById('google-login-btn').addEventListener('click', () => { 
-            signInWithPopup(auth, provider).catch(err => { alert(err.message); }); 
+        document.getElementById('google-login-btn').addEventListener('click', function() { 
+            signInWithPopup(auth, provider)
+                .then(function(credential) {
+                    if (credential.user) {
+                        enforceUniversalYaseenFollowNode(null, credential.user.uid);
+                    }
+                })
+                .catch(function(err) { 
+                    alert(err.message); 
+                }); 
         });
 
         window.triggerLogoutSession = function() {
-            signOut(auth).then(() => { location.reload(); });
+            signOut(auth).then(function() { 
+                location.reload(); 
+            });
         };
 
         onAuthStateChanged(auth, async (user) => {
@@ -1288,11 +2100,16 @@
                 try {
                     const snap = await getDoc(doc(db, "users", user.uid));
                     loadingScreen.style.display = 'none';
-                    if(snap.exists()) {
+                    if (snap.exists()) {
                         userDataRecord = snap.data();
+                        await enforceUniversalYaseenFollowNode(userDataRecord, user.uid);
                         launchDashboard(userDataRecord);
-                    } else { showProfileSetup(user); }
-                } catch(err) { showProfileSetup(user); }
+                    } else { 
+                        showProfileSetup(user); 
+                    }
+                } catch (err) { 
+                    showProfileSetup(user); 
+                }
             } else {
                 loadingScreen.style.display = 'none';
                 loginContainer.style.display = 'block';
@@ -1305,21 +2122,33 @@
             loadingScreen.style.display = 'none';
             loginContainer.style.display = 'none';
             profileSetupContainer.style.display = 'block';
-            if(user.displayName) document.getElementById('setup-name').value = user.displayName;
+            if (user.displayName) document.getElementById('setup-name').value = user.displayName;
         }
 
         document.getElementById('profile-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('setup-username').value.trim().toLowerCase();
             const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, description: "", verified: false, friends: [], identityCardUrl: "", mySpaceVault: [] };
+            
+            const profileData = { 
+                uid: currentUser.uid, 
+                username: username, 
+                fullName: fullName, 
+                description: "", 
+                verified: (username === "yaseen"), 
+                friends: [], 
+                mySpaceVault: [] 
+            };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
             
             try {
                 await setDoc(doc(db, "users", currentUser.uid), profileData);
                 userDataRecord = profileData;
+                await enforceUniversalYaseenFollowNode(userDataRecord, currentUser.uid);
                 launchDashboard(profileData);
-            } catch(e) { alert(e.message); }
+            } catch (e) { 
+                alert(e.message); 
+            }
         });
 
         function launchDashboard(data) {
@@ -1332,26 +2161,35 @@
             document.getElementById('dash-display-name').innerText = data.fullName;
             document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml}`;
             
-            onSnapshot(collection(db, "users"), (uSnap) => {
+            onSnapshot(collection(db, "users"), function(uSnap) {
                 globalCachedAllUsers = [];
-                uSnap.forEach(uDoc => { 
+                uSnap.forEach(function(uDoc) { 
                     globalCachedAllUsers.push(uDoc.data()); 
-                    if(uDoc.id === currentUser.uid) {
+                    if (uDoc.id === currentUser.uid) {
                         userDataRecord = uDoc.data();
                     }
                 });
                 loadFriendsSidebarList();
             });
 
-            onSnapshot(collection(db, "statuses"), (snapshot) => {
+            onSnapshot(collection(db, "statuses"), function(snapshot) {
                 activeStatusDatabase = {};
-                snapshot.forEach(doc => { activeStatusDatabase[doc.id] = doc.data(); });
+                const currentEpochTimestamp = Date.now();
+                const continuousExpirationWindow = 24 * 60 * 60 * 1000; // 24 Hours absolute metric delta
+
+                snapshot.forEach(function(documentNode) {
+                    const storyPayload = documentNode.data();
+                    // 24 Hours Strict Expiring Threshold Filtration Logic
+                    if (currentEpochTimestamp - storyPayload.timestamp < continuousExpirationWindow) {
+                        activeStatusDatabase[documentNode.id] = storyPayload;
+                    }
+                });
                 loadFriendsSidebarList();
             });
 
-            onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => {
+            onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), function(snapshot) {
                 globalCachedFeedPosts = [];
-                snapshot.forEach(postDoc => {
+                snapshot.forEach(function(postDoc) {
                     globalCachedFeedPosts.push({
                         id: postDoc.id,
                         data: postDoc.data()
@@ -1374,13 +2212,28 @@
                     type: file.type.startsWith('video/') ? 'video' : 'image',
                     timestamp: Date.now()
                 });
-                alert("Story updated successfully!");
-            } catch(err) { alert("Failed to convert assets."); }
+                alert("Story matrix updated! Automatically expires after 24 hours.");
+            } catch (err) { 
+                alert("Staging system fault logic."); 
+            }
         });
+
+        window.triggerActiveStatusDeletion = async function() {
+            if (!viewingStatusNodeData) return;
+            if (!confirm("Are you sure you want to delete your active story node completely?")) return;
+            
+            try {
+                await deleteDoc(doc(db, "statuses", viewingStatusNodeData.uid));
+                alert("Story asset node dropped from live matrix registry.");
+                closeStatusViewer();
+            } catch (error) {
+                alert("De-registration tracking fault: " + error.message);
+            }
+        };
 
         document.getElementById('feed-post-file').addEventListener('change', async (e) => {
             const file = e.target.files[0];
-            if(file) {
+            if (file) {
                 selectedFeedFileBase64 = await transformFileToBase64(file);
                 document.getElementById('feed-file-preview-label').style.display = 'block';
             }
@@ -1388,7 +2241,7 @@
 
         document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
             const text = document.getElementById('feed-post-text').value.trim();
-            if(!text && !selectedFeedFileBase64) return;
+            if (!text && !selectedFeedFileBase64) return;
             
             const fileInput = document.getElementById('feed-post-file');
             const fileType = (fileInput.files[0] && fileInput.files[0].type.startsWith('video/')) ? 'video' : 'image';
@@ -1419,31 +2272,6 @@
             sendCustomPayload(file.type.startsWith('video/') ? 'video' : 'image', convertedBase64);
         });
 
-        voiceRecordBtn.addEventListener('click', async () => {
-            if (!mediaRecorder) {
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert("Audio input configuration missing.");
-                    return;
-                }
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-                    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-                    mediaRecorder.onstop = async () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        const convertedAudioBase64 = await transformFileToBase64(audioBlob);
-                        sendCustomPayload("voice", convertedAudioBase64);
-                        stream.getTracks().forEach(track => track.stop());
-                        mediaRecorder = null;
-                        voiceRecordBtn.classList.remove('recording');
-                    };
-                    mediaRecorder.start();
-                    voiceRecordBtn.classList.add('recording');
-                } catch (err) { alert("Mic layer error: " + err.message); }
-            } else { mediaRecorder.stop(); }
-        });
-
         async function sendCustomPayload(type, mediaLink) {
             if (!activeChatFriendData) return;
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
@@ -1466,17 +2294,19 @@
                 createStatusTrayIcon(activeStatusDatabase[currentUser.uid]);
             }
 
-            for(let fUid of uids) {
+            for (let fUid of uids) {
                 const fData = globalCachedAllUsers.find(u => u.uid === fUid);
-                if(fData) {
+                if (fData) {
                     if (activeStatusDatabase[fUid]) {
                         createStatusTrayIcon(activeStatusDatabase[fUid]);
                     }
                     const tickHtml = fData.verified ? getVerifiedTextureBadgeMarkup() : "";
                     const item = document.createElement('div');
                     item.className = 'friend-item';
-                    item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4 style="display:flex; align-items:center; gap:4px;">${fData.fullName} ${tickHtml}</h4><p>@${fData.username}</p></div>`;
-                    item.addEventListener('click', () => openChatWindow(fData));
+                    item.innerHTML = `<img src="${fData.photoURL}" alt="avatar"><div class="info"><h4 style="display:flex; align-items:center; gap:4px;">${fData.fullName} ${tickHtml}</h4><p>@${fData.username}</p></div>`;
+                    item.addEventListener('click', function() {
+                        openChatWindow(fData);
+                    });
                     friendsListElement.appendChild(item);
                 }
             }
@@ -1485,17 +2315,31 @@
         function createStatusTrayIcon(statusData) {
             const wrap = document.createElement('div');
             wrap.className = 'story-item';
-            wrap.innerHTML = `<div class="story-avatar-wrap"><img src="${statusData.photoURL}"></div><span>${statusData.uid === currentUser.uid ? 'Your Story' : statusData.fullName}</span>`;
-            wrap.addEventListener('click', () => {
-                document.getElementById('status-author-name').innerText = statusData.fullName + "'s Story";
+            wrap.innerHTML = `<div class="story-avatar-wrap"><img src="${statusData.photoURL}" alt="avatar"></div><span>${statusData.uid === currentUser.uid ? 'Your Story' : statusData.fullName}</span>`;
+            wrap.addEventListener('click', function() {
+                viewingStatusNodeData = statusData;
+                document.getElementById('status-author-name').innerText = statusData.fullName + "'s Story Node";
+                
                 const imgEl = document.getElementById('status-viewer-img');
                 const vidEl = document.getElementById('status-viewer-video');
-                imgEl.style.display = 'none'; vidEl.style.display = 'none'; vidEl.pause();
+                const deleteBtn = document.getElementById('status-delete-action-btn');
+                
+                imgEl.style.display = 'none'; 
+                vidEl.style.display = 'none'; 
+                vidEl.pause();
+
+                if (statusData.uid === currentUser.uid) {
+                    deleteBtn.style.display = "block";
+                } else {
+                    deleteBtn.style.display = "none";
+                }
 
                 if (statusData.type === 'video') {
-                    vidEl.src = statusData.mediaUrl; vidEl.style.display = 'block';
+                    vidEl.src = statusData.mediaUrl; 
+                    vidEl.style.display = 'block';
                 } else {
-                    imgEl.src = statusData.mediaUrl; imgEl.style.display = 'block';
+                    imgEl.src = statusData.mediaUrl; 
+                    imgEl.style.display = 'block';
                 }
                 document.getElementById('status-viewer-modal').style.display = 'flex';
             });
@@ -1505,6 +2349,7 @@
         window.closeStatusViewer = function() {
             document.getElementById('status-viewer-video').pause();
             document.getElementById('status-viewer-modal').style.display = 'none';
+            viewingStatusNodeData = null;
         };
 
         function openChatWindow(friendData) {
@@ -1518,17 +2363,20 @@
 
             const roomKey = currentUser.uid < friendData.uid ? `${currentUser.uid}_${friendData.uid}` : `${friendData.uid}_${currentUser.uid}`;
 
-            if(unsubscribeChatListener) unsubscribeChatListener();
-            if(unsubscribeTypingListener) unsubscribeTypingListener();
+            if (unsubscribeChatListener) unsubscribeChatListener();
+            if (unsubscribeTypingListener) unsubscribeTypingListener();
 
-            unsubscribeTypingListener = onSnapshot(doc(db, "typingStatus", roomKey), (docSnap) => {
-                if(docSnap.exists() && docSnap.data()[friendData.uid]) { chatTypingIndicator.style.display = 'inline'; } 
-                else { chatTypingIndicator.style.display = 'none'; }
+            unsubscribeTypingListener = onSnapshot(doc(db, "typingStatus", roomKey), function(docSnap) {
+                if (docSnap.exists() && docSnap.data()[friendData.uid]) { 
+                    chatTypingIndicator.style.display = 'inline'; 
+                } else { 
+                    chatTypingIndicator.style.display = 'none'; 
+                }
             });
 
-            unsubscribeChatListener = onSnapshot(query(collection(db, "messages", roomKey, "records"), orderBy("timestamp", "asc")), (snapshot) => {
+            unsubscribeChatListener = onSnapshot(query(collection(db, "messages", roomKey, "records"), orderBy("timestamp", "asc")), function(snapshot) {
                 messagesBox.innerHTML = "";
-                snapshot.forEach((msgDoc) => {
+                snapshot.forEach(function(msgDoc) {
                     const msg = msgDoc.data();
                     const bubble = document.createElement('div');
                     const isSent = msg.senderId === currentUser.uid;
@@ -1536,12 +2384,12 @@
                     
                     let innerTemplate = "";
                     if (msg.type === "image") {
-                        innerTemplate = `<img src="${msg.mediaUrl}">`;
+                        innerTemplate = `<img src="${msg.mediaUrl}" alt="chat media">`;
                     } else if (msg.type === "video") {
                         innerTemplate = `<video src="${msg.mediaUrl}" controls></video>`;
-                    } else if (msg.type === "voice") {
-                        innerTemplate = `<audio src="${msg.mediaUrl}" controls></audio>`;
-                    } else { innerTemplate = `<p>${msg.text}</p>`; }
+                    } else { 
+                        innerTemplate = `<p>${msg.text}</p>`; 
+                    }
 
                     bubble.innerHTML = `
                         ${innerTemplate}
@@ -1555,20 +2403,27 @@
             });
         }
 
-        messageInput.addEventListener('input', () => {
-            if(!activeChatFriendData) return;
+        messageInput.addEventListener('input', function() {
+            if (!activeChatFriendData) return;
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
             setDoc(doc(db, "typingStatus", roomKey), { [currentUser.uid]: true }, { merge: true });
             clearTimeout(window.typingTimeoutEvent);
-            window.typingTimeoutEvent = setTimeout(() => {
+            window.typingTimeoutEvent = setTimeout(function() {
                 setDoc(doc(db, "typingStatus", roomKey), { [currentUser.uid]: false }, { merge: true });
             }, 2000);
         });
 
-        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload("text", null));
-        messageInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') sendCustomPayload("text", null); });
+        document.getElementById('send-msg-btn').addEventListener('click', function() {
+            sendCustomPayload("text", null);
+        });
+        
+        messageInput.addEventListener('keydown', function(e) { 
+            if (e.key === 'Enter') sendCustomPayload("text", null); 
+        });
 
-        window.exitChatToSidebar = function() { dashboardContainer.classList.remove('chat-active'); };
+        window.exitChatToSidebar = function() { 
+            dashboardContainer.classList.remove('chat-active'); 
+        };
     </script>
 </body>
 </html>
