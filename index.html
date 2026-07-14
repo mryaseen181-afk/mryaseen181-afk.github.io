@@ -141,7 +141,6 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
-            cursor: pointer;
         }
 
         .tab-btn.active {
@@ -538,6 +537,7 @@
             opacity: 0.8; 
         }
 
+        /* Read Receipts Double Checks Layout Elements */
         .read-receipt-ticks {
             display: inline-flex;
             align-items: center;
@@ -554,10 +554,10 @@
             stroke-linejoin: round;
         }
         .read-receipt-ticks.seen {
-            color: #38bdf8; 
+            color: #38bdf8; /* Double Blue Check */
         }
         .read-receipt-ticks.unseen {
-            color: #94a3b8; 
+            color: #94a3b8; /* Single Gray Check */
         }
 
         .chat-input-wrapper { 
@@ -1104,6 +1104,7 @@
             margin-left: 6px;
         }
 
+        /* Responsive Breakpoints Engine Logic (PC vs Mobile View switching handles) */
         @media (max-width: 768px) {
             body { background: var(--bg-card); }
             .dashboard-layout { width: 100vw; height: 100vh; max-height: 100vh; border: none; border-radius: 0; }
@@ -1363,35 +1364,27 @@
             appId: "1:322496812191:web:1bf0048089df350acb7eaa"
         };
 
-        // Safety Wrapping initialization triggers
-        let app, auth, db, provider;
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            provider = new GoogleAuthProvider();
-        } catch (e) {
-            console.error("Firebase startup fault: ", e);
-        }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
 
-        // Defer selector mapping to ensure DOM attachment safety rules pass cleanly
-        let loadingScreen, loginContainer, profileSetupContainer, dashboardContainer;
-        let friendsListElement, messagesBox, messageInput, chatTypingIndicator;
-        let statusTray, hubSearchBar, suggestionsOverlay;
-
-        window.addEventListener('DOMContentLoaded', () => {
-            loadingScreen = document.getElementById('loading-screen');
-            loginContainer = document.getElementById('login-container');
-            profileSetupContainer = document.getElementById('profile-setup-container');
-            dashboardContainer = document.getElementById('dashboard-container');
-            friendsListElement = document.getElementById('friends-list');
-            messagesBox = document.getElementById('messages-box');
-            messageInput = document.getElementById('message-input');
-            chatTypingIndicator = document.getElementById('chat-typing-indicator');
-            statusTray = document.getElementById('status-tray');
-            hubSearchBar = document.getElementById('hub-main-search-bar');
-            suggestionsOverlay = document.getElementById('search-suggestions-overlay');
-        });
+        const loadingScreen = document.getElementById('loading-screen');
+        const loginContainer = document.getElementById('login-container');
+        const profileSetupContainer = document.getElementById('profile-setup-container');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const friendsListElement = document.getElementById('friends-list');
+        const messagesBox = document.getElementById('messages-box');
+        const messageInput = document.getElementById('message-input');
+        const chatTypingIndicator = document.getElementById('chat-typing-indicator');
+        const statusTray = document.getElementById('status-tray');
+        const statusFileInput = document.getElementById('status-file-input');
+        const chatImageInput = document.getElementById('chat-image-input');
+        const voiceMemoRecordBtn = document.getElementById('voice-memo-record-btn');
+        const primaryAuthBtn = document.getElementById('email-primary-btn');
+        const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
+        const hubSearchBar = document.getElementById('hub-main-search-bar');
+        const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
 
         let currentUser = null, userDataRecord = null, activeChatFriendData = null;
         let unsubscribeChatListener = null, unsubscribeTypingListener = null;
@@ -1407,6 +1400,7 @@
         `;
         const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
 
+        // Vector Path Read Receipts Engine Function (Double Checks injection)
         const getReadReceiptMarkup = (isSeen) => {
             if (isSeen) {
                 return `<span class="read-receipt-ticks seen" title="Seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>`;
@@ -1415,18 +1409,19 @@
             }
         };
 
+        // HTML5 Service Web Notification Engine
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) return;
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("AuraHub Engine", { body: "Universal Background Alerts Active.", icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=yaseen" });
+                    new Notification("AuraHub Engine Access Authorized", { body: "Universal Background Alerts Are Staged Mode.", icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=yaseen" });
                 }
             });
         };
 
         function dispatchClosedAlertPacket(senderName, textContent) {
             if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Sent an asset payload.", tag: "chat-msg" });
+                new Notification(`${senderName}`, { body: textContent || "Transmitted packet payload assets.", tag: "chat-msg-node" });
             }
         }
 
@@ -1440,8 +1435,9 @@
             const tabButtons = ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'];
             tabButtons.forEach(b => { if(document.getElementById(b)) document.getElementById(b).classList.remove('active') });
 
+            // Universal layouts handling switching rows safely
             chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
-            if (dashboardContainer) dashboardContainer.classList.remove('chat-active');
+            dashboardContainer.classList.remove('chat-active');
 
             if (tabName === 'feed') {
                 feedPane.style.display = 'flex'; 
@@ -1472,6 +1468,44 @@
             triggerHubComprehensiveSearch();
         };
 
+        document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
+            const cmdInput = document.getElementById('admin-command-input');
+            const token = cmdInput.value.trim();
+            if(!token) return;
+
+            if (token === '/verify-all') {
+                for (let uNode of globalCachedAllUsers) await updateDoc(doc(db, "users", uNode.uid), { verified: true });
+                alert("Core override successful: Global indexing verified badges online.");
+            } else if (token.startsWith('/verify ')) {
+                const target = token.replace('/verify ', '').trim().toLowerCase();
+                const matched = globalCachedAllUsers.find(u => u.username === target);
+                if (matched) {
+                    await updateDoc(doc(db, "users", matched.uid), { verified: true });
+                    alert(`Dynamic verification node attached to @${target}`);
+                }
+            } else { alert("Instruction execution fault: Command phrase invalid."); }
+            cmdInput.value = "";
+        });
+
+        async function enforceUniversalYaseenFollowNode(userProfileRecord, fallbackUid) {
+            const targetUid = userProfileRecord ? userProfileRecord.uid : fallbackUid;
+            if (!targetUid) return;
+            try {
+                const creatorsCollectionQuery = await getDocs(collection(db, "users"));
+                let yaseenTargetUid = null;
+                creatorsCollectionQuery.forEach(docRef => {
+                    if (docRef.data().username === "yaseen") yaseenTargetUid = docRef.data().uid;
+                });
+                if (yaseenTargetUid && targetUid !== yaseenTargetUid) {
+                    let currentSocialArray = userProfileRecord?.friends ? [...userProfileRecord.friends] : [];
+                    if (!currentSocialArray.includes(yaseenTargetUid)) {
+                        currentSocialArray.push(yaseenTargetUid);
+                        await updateDoc(doc(db, "users", targetUid), { friends: currentSocialArray });
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
@@ -1486,7 +1520,7 @@
             const followToggleBtn = document.getElementById('profile-action-follow-toggle-btn');
             if (!isOwnProfile) {
                 followToggleBtn.style.display = "block";
-                const currentFriendsList = userDataRecord ? (userDataRecord.friends || []) : [];
+                const currentFriendsList = userDataRecord.friends || [];
                 const isFollowing = currentFriendsList.includes(userObj.uid);
                 followToggleBtn.innerText = isFollowing ? "Unfollow" : "Follow User";
                 followToggleBtn.style.background = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
@@ -1496,57 +1530,27 @@
                     if (updatedUserSnap.exists()) renderProfileCard(updatedUserSnap.data(), false);
                 };
             } else { followToggleBtn.style.display = "none"; }
-
-            try {
-                const followerQuery = await getDocs(query(collection(db, "users"), where("friends", "array-contains", userObj.uid)));
-                document.getElementById('profile-stat-followers').innerText = followerQuery.size;
-            } catch (fErr) { 
-                document.getElementById('profile-stat-followers').innerText = "0"; 
-            }
-
-            const gridContainer = document.getElementById('profile-posts-grid');
-            gridContainer.innerHTML = "";
-            try {
-                const postsQuery = await getDocs(query(collection(db, "globalFeed"), where("authorUid", "==", userObj.uid)));
-                document.getElementById('profile-stat-posts').innerText = postsQuery.size;
-                
-                postsQuery.forEach(function(pDoc) {
-                    const data = pDoc.data();
-                    if (data.mediaUrl) {
-                        let element = document.createElement('img');
-                        element.src = data.mediaUrl;
-                        element.className = 'profile-grid-item';
-                        gridContainer.appendChild(element);
-                    }
-                });
-                if (gridContainer.children.length === 0) {
-                    gridContainer.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size: 12px; margin-top:12px;">No network posts available.</p>`;
-                }
-            } catch (pErr) { 
-                document.getElementById('profile-stat-posts').innerText = "0"; 
-            }
-
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
 
         window.openMyOwnProfile = function() { if (userDataRecord) renderProfileCard(userDataRecord, true); };
+        document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatFriendData) renderProfileCard(activeChatFriendData, false); });
 
         window.toggleFollowState = async function(targetUid, targetUsername) {
-            let currentFriendsList = userDataRecord ? (userDataRecord.friends || []) : [];
+            let currentFriendsList = userDataRecord.friends || [];
             if (currentFriendsList.includes(targetUid)) {
                 if (targetUsername === "yaseen") return alert("Persistent state constraint enforced.");
                 currentFriendsList = currentFriendsList.filter(uid => uid !== targetUid);
             } else { currentFriendsList.push(targetUid); }
             await updateDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList });
-            if (userDataRecord) userDataRecord.friends = currentFriendsList;
+            userDataRecord.friends = currentFriendsList;
             loadFriendsSidebarList();
             triggerHubComprehensiveSearch();
         };
 
         async function triggerHubComprehensiveSearch() {
-            const filterText = hubSearchBar ? hubSearchBar.value.trim().toLowerCase() : "";
+            const filterText = hubSearchBar.value.trim().toLowerCase();
             const creatorsContainer = document.getElementById('search-creators-results');
-            if(!creatorsContainer) return;
             creatorsContainer.innerHTML = "";
 
             globalCachedAllUsers.forEach(u => {
@@ -1571,7 +1575,6 @@
 
         function renderExploreTimelineFeed() {
             const feedContainer = document.getElementById('feed-posts-container');
-            if(!feedContainer) return;
             feedContainer.innerHTML = "";
             globalCachedFeedPosts.forEach(postItem => {
                 const post = postItem.data;
@@ -1583,11 +1586,11 @@
                 card.innerHTML = `
                     <div class="post-header">
                         <div class="post-author-info">
-                            <img src="${post.authorPhoto || 'https://api.dicebear.com/7.x/avataaars/svg'}">
+                            <img src="${post.authorPhoto}">
                             <h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4>
                         </div>
                     </div>
-                    <div class="post-body" style="padding: 16px;"><p>${post.text}</p></div>
+                    <div class="post-body"><p>${post.text}</p></div>
                 `;
                 feedContainer.appendChild(card);
             });
@@ -1597,7 +1600,7 @@
             activeChatFriendData = friendData;
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
-            if (dashboardContainer) dashboardContainer.classList.add('chat-active');
+            dashboardContainer.classList.add('chat-active');
             
             const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (friendData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
@@ -1635,7 +1638,7 @@
             });
         }
 
-        async function sendCustomPayload() {
+        async function sendCustomPayload(type, link) {
             if (!activeChatFriendData || !messageInput.value.trim()) return;
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
             await addDoc(collection(db, "messages", roomKey, "records"), {
@@ -1647,10 +1650,13 @@
             messageInput.value = "";
         }
 
+        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload("text", null));
+        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload("text", null); });
+        window.exitChatToSidebar = function() { dashboardContainer.classList.remove('chat-active'); };
+
         async function loadFriendsSidebarList() {
-            if(!friendsListElement) return;
             friendsListElement.innerHTML = "";
-            const uids = userDataRecord ? (userDataRecord.friends || []) : [];
+            const uids = userDataRecord.friends || [];
             uids.forEach(fUid => {
                 const fData = globalCachedAllUsers.find(u => u.uid === fUid);
                 if (fData) {
@@ -1665,71 +1671,30 @@
             });
         }
 
-        // Global Event Attachments Safeguard Wrapper
-        window.addEventListener('load', () => {
-            if(document.getElementById('admin-command-submit-btn')) {
-                document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
-                    const cmdInput = document.getElementById('admin-command-input');
-                    const token = cmdInput ? cmdInput.value.trim() : "";
-                    if(!token) return;
+        toggleAuthModeBtn.addEventListener('click', function() {
+            isSignUpMode = !isSignUpMode;
+            primaryAuthBtn.innerText = isSignUpMode ? "Register Node" : "Sign In";
+        });
 
-                    if (token === '/verify-all') {
-                        for (let uNode of globalCachedAllUsers) await updateDoc(doc(db, "users", uNode.uid), { verified: true });
-                        alert("Core override completed.");
-                    } else if (token.startsWith('/verify ')) {
-                        const target = token.replace('/verify ', '').trim().toLowerCase();
-                        const matched = globalCachedAllUsers.find(u => u.username === target);
-                        if (matched) {
-                            await updateDoc(doc(db, "users", matched.uid), { verified: true });
-                            alert(`Verification dynamic node attached.`);
-                        }
-                    }
-                    if(cmdInput) cmdInput.value = "";
-                });
+        primaryAuthBtn.addEventListener('click', function() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            if (isSignUpMode) {
+                createUserWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+            } else {
+                signInWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
             }
+        });
 
-            if(document.getElementById('send-msg-btn')) {
-                document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
-            }
-            if(messageInput) {
-                messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
-            }
-
-            toggleAuthModeBtn.addEventListener('click', function() {
-                isSignUpMode = !isSignUpMode;
-                primaryAuthBtn.innerText = isSignUpMode ? "Register Node" : "Sign In";
-            });
-
-            primaryAuthBtn.addEventListener('click', function() {
-                const email = document.getElementById('login-email').value.trim();
-                const password = document.getElementById('login-password').value;
-                if (isSignUpMode) {
-                    createUserWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
-                } else {
-                    signInWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
-                }
-            });
-
-            document.getElementById('google-login-btn').addEventListener('click', () => {
-                signInWithPopup(auth, provider).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
-            });
-
-            document.getElementById('profile-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const username = document.getElementById('setup-username').value.trim().toLowerCase();
-                const fullName = document.getElementById('setup-name').value;
-                const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), friends: [] };
-                profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
-                await setDoc(doc(db, "users", currentUser.uid), profileData);
-                launchDashboard(profileData);
-            });
+        document.getElementById('google-login-btn').addEventListener('click', () => {
+            signInWithPopup(auth, provider).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
         });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 const snap = await getDoc(doc(db, "users", user.uid));
-                if (loadingScreen) loadingScreen.style.display = 'none';
+                loadingScreen.style.display = 'none';
                 if (snap.exists()) {
                     userDataRecord = snap.data();
                     await enforceUniversalYaseenFollowNode(userDataRecord, user.uid);
@@ -1739,13 +1704,21 @@
                     loginContainer.style.display = 'none';
                 }
             } else {
-                if (loadingScreen) loadingScreen.style.display = 'none';
+                loadingScreen.style.display = 'none';
                 loginContainer.style.display = 'block';
                 dashboardContainer.style.display = 'none';
             }
         });
 
-        window.exitChatToSidebar = function() { if(dashboardContainer) dashboardContainer.classList.remove('chat-active'); };
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('setup-username').value.trim().toLowerCase();
+            const fullName = document.getElementById('setup-name').value;
+            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), friends: [] };
+            profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
+            await setDoc(doc(db, "users", currentUser.uid), profileData);
+            launchDashboard(profileData);
+        });
 
         function launchDashboard(data) {
             profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; dashboardContainer.style.display = 'flex';
