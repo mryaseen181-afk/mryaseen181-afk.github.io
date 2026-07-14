@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraHub Pro - Unified Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AuraHub Pro - Unified Responsive Edition</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -25,6 +25,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -66,7 +67,8 @@
         }
 
         .dashboard-layout {
-            width: 100%;
+            width: 100vw;
+            height: 100vh;
             max-width: 1080px;
             height: 90vh;
             background: var(--bg-card);
@@ -116,6 +118,33 @@
         
         .nav-item:hover, .nav-item.active { 
             color: var(--accent-glow); 
+        }
+
+        .mobile-bottom-tabs {
+            display: none;
+            height: 64px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-card);
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-glow);
         }
 
         .main-content-area {
@@ -501,10 +530,34 @@
         .msg-meta-row { 
             display: flex; 
             align-items: center; 
+            justify-content: flex-end;
             gap: 4px; 
             margin-top: 6px; 
             font-size: 10px; 
-            opacity: 0.6; 
+            opacity: 0.8; 
+        }
+
+        /* Read Receipts Double Checks Layout Elements */
+        .read-receipt-ticks {
+            display: inline-flex;
+            align-items: center;
+            width: 15px;
+            height: 11px;
+        }
+        .read-receipt-ticks svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .read-receipt-ticks.seen {
+            color: #38bdf8; /* Double Blue Check */
+        }
+        .read-receipt-ticks.unseen {
+            color: #94a3b8; /* Single Gray Check */
         }
 
         .chat-input-wrapper { 
@@ -1050,6 +1103,21 @@
             letter-spacing: 0.5px;
             margin-left: 6px;
         }
+
+        /* Responsive Breakpoints Engine Logic (PC vs Mobile View switching handles) */
+        @media (max-width: 768px) {
+            body { background: var(--bg-card); }
+            .dashboard-layout { width: 100vw; height: 100vh; max-height: 100vh; border: none; border-radius: 0; }
+            .app-navbar { display: none; }
+            .mobile-bottom-tabs { display: flex; }
+            .sidebar, .chat-area, .feed-area, .search-tab-area {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none;
+            }
+            .sidebar { border-right: none; width: 100%; }
+            .dashboard-layout.chat-active .app-chat-pane { display: flex; z-index: 5; }
+            .back-arrow { display: block; }
+            .msg { max-width: 80%; }
+        }
     </style>
 </head>
 <body>
@@ -1091,6 +1159,7 @@
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
                 <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
                 <button id="nav-btn-search" class="nav-item" onclick="switchTab('search')">Search Hub</button>
+                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--accent-glow); font-weight: bold;">🔔 Setup Alerts</button>
                 <button onclick="triggerLogoutSession()" class="nav-item" style="color: var(--accent-rose);">Logout</button>
             </div>
         </div>
@@ -1229,7 +1298,13 @@
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="mobile-bottom-tabs">
+            <button id="tab-btn-chats" class="tab-btn active" onclick="switchTab('chats')">Messages</button>
+            <button id="tab-btn-feed" class="tab-btn" onclick="switchTab('feed')">Explore</button>
+            <button id="tab-btn-search" class="tab-btn" onclick="switchTab('search')">Search</button>
+            <button id="tab-btn-admin" class="tab-btn" onclick="switchTab('admin')" style="display:none; color:var(--admin-glow);">Admin</button>
         </div>
     </div>
 
@@ -1311,40 +1386,44 @@
         const hubSearchBar = document.getElementById('hub-main-search-bar');
         const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
 
-        let currentUser = null;
-        let userDataRecord = null;
-        let activeChatFriendData = null;
-        let unsubscribeChatListener = null;
-        let unsubscribeTypingListener = null;
-        let activeStatusDatabase = {}; 
-        let isSignUpMode = false;
-        let selectedFeedFileBase64 = "";
-        let globalCachedFeedPosts = [];
-        let globalCachedAllUsers = [];
-        let currentSearchSortMode = "default";
-        let viewingStatusNodeData = null;
-        
-        let localAudioMediaRecorder = null;
-        let recordedVoiceChunks = [];
+        let currentUser = null, userDataRecord = null, activeChatFriendData = null;
+        let unsubscribeChatListener = null, unsubscribeTypingListener = null;
+        let activeStatusDatabase = {}, isSignUpMode = false, selectedFeedFileBase64 = "";
+        let globalCachedFeedPosts = [], globalCachedAllUsers = [], currentSearchSortMode = "default", viewingStatusNodeData = null;
+        let localAudioMediaRecorder = null, recordedVoiceChunks = [];
 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="premiumBlueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#2563eb" />
-                        <stop offset="30%" stop-color="#0095f6" />
-                        <stop offset="100%" stop-color="#38bdf8" />
-                    </linearGradient>
-                    <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
-                        <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.2"/>
-                    </filter>
-                </defs>
-                <path d="M12 2.25l1.826 1.135a1.5 1.5 0 001.385.16l2.072-.674a1.5 1.5 0 011.83 1.222l.374 2.148a1.5 1.5 0 00.75 1.127l1.91 1.025a1.5 1.5 0 01.698 2.094l-1.025 1.91a1.5 1.5 0 000 1.353l1.025 1.91a1.5 1.5 0 01-.699 2.094l-1.91 1.025a1.5 1.5 0 00-.749 1.127l-.374 2.148a1.5 1.5 0 01-1.83 1.222l-2.072-.674a1.5 1.5 0 00-1.385.16L12 21.75l-1.826-1.135a1.5 1.5 0 00-1.385-.16l-2.072.674a1.5 1.5 0 01-1.83-1.222l-.374-2.148a1.5 1.5 0 00-.75-1.127l-1.91-1.025a1.5 1.5 0 01-.698-2.094l1.025-1.91a1.5 1.5 0 000-1.353l-1.025-1.91a1.5 1.5 0 01.699-2.094l1.91-1.025a1.5 1.5 0 00.749-1.127l.374-2.148a1.5 1.5 0 011.83-1.222l2.072.674a1.5 1.5 0 001.385-.16L12 2.25z" fill="url(#premiumBlueGradient)" filter="url(#badgeShadow)"/>
+                <path d="M12 2.25l1.826 1.135a1.5 1.5 0 001.385.16l2.072-.674a1.5 1.5 0 011.83 1.222l.374 2.148a1.5 1.5 0 00.75 1.127l1.91 1.025a1.5 1.5 0 01.698 2.094l-1.025 1.91a1.5 1.5 0 000 1.353l1.025 1.91a1.5 1.5 0 01-.699 2.094l-1.91 1.025a1.5 1.5 0 00-.749 1.127l-.374 2.148a1.5 1.5 0 01-1.83 1.222l-2.072-.674a1.5 1.5 0 00-1.385.16L12 21.75l-1.826-1.135a1.5 1.5 0 00-1.385-.16l-2.072.674a1.5 1.5 0 01-1.83-1.222l-.374-2.148a1.5 1.5 0 00-.75-1.127l-1.91-1.025a1.5 1.5 0 01-.698-2.094l1.025-1.91a1.5 1.5 0 000-1.353l-1.025-1.91a1.5 1.5 0 01.699-2.094l1.91-1.025a1.5 1.5 0 00.749-1.127l.374-2.148a1.5 1.5 0 011.83-1.222l2.072.674a1.5 1.5 0 001.385-.16L12 2.25z" fill="#0095f6"/>
                 <path d="M8.5 12.25l2.25 2.25 5.25-5.5" stroke="#ffffff" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         `;
-
         const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
+
+        // Vector Path Read Receipts Engine Function (Double Checks injection)
+        const getReadReceiptMarkup = (isSeen) => {
+            if (isSeen) {
+                return `<span class="read-receipt-ticks seen" title="Seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>`;
+            } else {
+                return `<span class="read-receipt-ticks unseen" title="Sent"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>`;
+            }
+        };
+
+        // HTML5 Service Web Notification Engine
+        window.requestPushNotificationPerms = function() {
+            if (!("Notification" in window)) return;
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification("AuraHub Engine Access Authorized", { body: "Universal Background Alerts Are Staged Mode.", icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=yaseen" });
+                }
+            });
+        };
+
+        function dispatchClosedAlertPacket(senderName, textContent) {
+            if (Notification.permission === "granted" && document.hidden) {
+                new Notification(`${senderName}`, { body: textContent || "Transmitted packet payload assets.", tag: "chat-msg-node" });
+            }
+        }
 
         window.switchTab = function(tabName) {
             const chatPane = document.getElementById('app-chat-pane');
@@ -1353,28 +1432,30 @@
             const adminPane = document.getElementById('app-admin-pane');
             const sidePane = document.getElementById('app-sidebar-pane');
             
-            const btnChats = document.getElementById('nav-btn-chats');
-            const btnFeed = document.getElementById('nav-btn-feed');
-            const btnSearch = document.getElementById('nav-btn-search');
-            const btnAdmin = document.getElementById('nav-btn-admin');
+            const tabButtons = ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'];
+            tabButtons.forEach(b => { if(document.getElementById(b)) document.getElementById(b).classList.remove('active') });
 
-            btnChats.classList.remove('active');
-            btnFeed.classList.remove('active');
-            btnSearch.classList.remove('active');
-            btnAdmin.classList.remove('active');
+            // Universal layouts handling switching rows safely
+            chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
+            dashboardContainer.classList.remove('chat-active');
 
             if (tabName === 'feed') {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
-                feedPane.style.display = 'flex'; btnFeed.classList.add('active');
+                feedPane.style.display = 'flex'; 
+                if(document.getElementById('tab-btn-feed')) document.getElementById('tab-btn-feed').classList.add('active');
+                if(document.getElementById('nav-btn-feed')) document.getElementById('nav-btn-feed').classList.add('active');
             } else if (tabName === 'search') {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; adminPane.style.display = 'none';
-                searchPane.style.display = 'flex'; btnSearch.classList.add('active'); triggerHubComprehensiveSearch();
+                searchPane.style.display = 'flex'; 
+                if(document.getElementById('tab-btn-search')) document.getElementById('tab-btn-search').classList.add('active');
+                if(document.getElementById('nav-btn-search')) document.getElementById('nav-btn-search').classList.add('active');
+                triggerHubComprehensiveSearch();
             } else if (tabName === 'admin') {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none';
-                adminPane.style.display = 'block'; btnAdmin.classList.add('active');
+                adminPane.style.display = 'block';
+                if(document.getElementById('tab-btn-admin')) document.getElementById('tab-btn-admin').classList.add('active');
+                if(document.getElementById('nav-btn-admin')) document.getElementById('nav-btn-admin').classList.add('active');
             } else {
-                feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
-                sidePane.style.display = 'flex'; chatPane.style.display = 'flex'; btnChats.classList.add('active');
+                sidePane.style.display = 'flex'; chatPane.style.display = 'flex';
+                if(document.getElementById('tab-btn-chats')) document.getElementById('tab-btn-chats').classList.add('active');
+                if(document.getElementById('nav-btn-chats')) document.getElementById('nav-btn-chats').classList.add('active');
             }
         };
 
@@ -1382,85 +1463,50 @@
             currentSearchSortMode = filterMode;
             document.getElementById('filter-sort-default').classList.remove('active');
             document.getElementById('filter-sort-followed').classList.remove('active');
-            
-            if (filterMode === 'most-followed') {
-                document.getElementById('filter-sort-followed').classList.add('active');
-            } else {
-                document.getElementById('filter-sort-default').classList.add('active');
-            }
+            if (filterMode === 'most-followed') document.getElementById('filter-sort-followed').classList.add('active');
+            else document.getElementById('filter-sort-default').classList.add('active');
             triggerHubComprehensiveSearch();
         };
 
-        // Command Console Parsing and Execution Core Engine Script
         document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
-            const commandBox = document.getElementById('admin-command-input');
-            const commandText = commandBox.value.trim();
-            if (!commandText) return;
+            const cmdInput = document.getElementById('admin-command-input');
+            const token = cmdInput.value.trim();
+            if(!token) return;
 
-            if (commandText.startsWith('/verify ')) {
-                const targetUser = commandText.replace('/verify ', '').trim().toLowerCase();
-                const matchedUser = globalCachedAllUsers.find(u => u.username === targetUser);
-                if (matchedUser) {
-                    await updateDoc(doc(db, "users", matchedUser.uid), { verified: true });
-                    alert(`Node execution success: User @${targetUser} has been verified.`);
-                } else {
-                    alert(`Execution failure: Username @${targetUser} not found in cache.`);
-                }
-            } else if (commandText === '/verify-all') {
-                if (!confirm("Are you sure you want to verify all node accounts globally?")) return;
-                for (let userNode of globalCachedAllUsers) {
-                    await updateDoc(doc(db, "users", userNode.uid), { verified: true });
-                }
+            if (token === '/verify-all') {
+                for (let uNode of globalCachedAllUsers) await updateDoc(doc(db, "users", uNode.uid), { verified: true });
                 alert("Core override successful: Global indexing verified badges online.");
-            } else if (commandText === '/unverify-all') {
-                if (!confirm("Remove verification from all nodes?")) return;
-                for (let userNode of globalCachedAllUsers) {
-                    if (userNode.username !== 'yaseen') {
-                        await updateDoc(doc(db, "users", userNode.uid), { verified: false });
-                    }
+            } else if (token.startsWith('/verify ')) {
+                const target = token.replace('/verify ', '').trim().toLowerCase();
+                const matched = globalCachedAllUsers.find(u => u.username === target);
+                if (matched) {
+                    await updateDoc(doc(db, "users", matched.uid), { verified: true });
+                    alert(`Dynamic verification node attached to @${target}`);
                 }
-                alert("Core update: Revoked verification from non-admin clusters.");
-            } else {
-                alert("Syntax error: Unknown pipeline script instruction command phrase.");
-            }
-            commandBox.value = "";
+            } else { alert("Instruction execution fault: Command phrase invalid."); }
+            cmdInput.value = "";
         });
 
         async function enforceUniversalYaseenFollowNode(userProfileRecord, fallbackUid) {
             const targetUid = userProfileRecord ? userProfileRecord.uid : fallbackUid;
             if (!targetUid) return;
-
             try {
                 const creatorsCollectionQuery = await getDocs(collection(db, "users"));
                 let yaseenTargetUid = null;
-                
-                creatorsCollectionQuery.forEach(function(docRef) {
-                    const parsedData = docRef.data();
-                    if (parsedData.username === "yaseen") {
-                        yaseenTargetUid = parsedData.uid;
-                    }
+                creatorsCollectionQuery.forEach(docRef => {
+                    if (docRef.data().username === "yaseen") yaseenTargetUid = docRef.data().uid;
                 });
-
                 if (yaseenTargetUid && targetUid !== yaseenTargetUid) {
                     let currentSocialArray = userProfileRecord?.friends ? [...userProfileRecord.friends] : [];
                     if (!currentSocialArray.includes(yaseenTargetUid)) {
                         currentSocialArray.push(yaseenTargetUid);
-                        await updateDoc(doc(db, "users", targetUid), { 
-                            friends: currentSocialArray 
-                        });
-                        if (userDataRecord && userDataRecord.uid === targetUid) {
-                            userDataRecord.friends = currentSocialArray;
-                        }
+                        await updateDoc(doc(db, "users", targetUid), { friends: currentSocialArray });
                     }
                 }
-            } catch (errorException) {
-                console.error("Auto-follow system layout error: ", errorException);
-            }
+            } catch (e) { console.error(e); }
         }
 
-        window.closeViewProfileModal = function() { 
-            document.getElementById('view-profile-modal').style.display = 'none'; 
-        };
+        window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
@@ -1476,771 +1522,228 @@
                 followToggleBtn.style.display = "block";
                 const currentFriendsList = userDataRecord.friends || [];
                 const isFollowing = currentFriendsList.includes(userObj.uid);
-                
                 followToggleBtn.innerText = isFollowing ? "Unfollow" : "Follow User";
                 followToggleBtn.style.background = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
-                followToggleBtn.style.borderColor = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
-                
                 followToggleBtn.onclick = async () => {
                     await toggleFollowState(userObj.uid, userObj.username);
                     const updatedUserSnap = await getDoc(doc(db, "users", userObj.uid));
                     if (updatedUserSnap.exists()) renderProfileCard(updatedUserSnap.data(), false);
                 };
-            } else {
-                followToggleBtn.style.display = "none";
-            }
-
-            try {
-                const followerQuery = await getDocs(query(collection(db, "users"), where("friends", "array-contains", userObj.uid)));
-                document.getElementById('profile-stat-followers').innerText = followerQuery.size;
-            } catch (fErr) { 
-                document.getElementById('profile-stat-followers').innerText = "0"; 
-            }
-
-            const gridContainer = document.getElementById('profile-posts-grid');
-            gridContainer.innerHTML = "";
-            try {
-                const postsQuery = await getDocs(query(collection(db, "globalFeed"), where("authorUid", "==", userObj.uid)));
-                document.getElementById('profile-stat-posts').innerText = postsQuery.size;
-                
-                postsQuery.forEach(function(pDoc) {
-                    const data = pDoc.data();
-                    if (data.mediaUrl) {
-                        let element = document.createElement(data.mediaType === 'video' ? 'video' : 'img');
-                        element.src = data.mediaUrl;
-                        element.className = 'profile-grid-item';
-                        gridContainer.appendChild(element);
-                    }
-                });
-                if (gridContainer.children.length === 0) {
-                    gridContainer.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size: 12px; margin-top:12px;">No network posts available.</p>`;
-                }
-            } catch (pErr) { 
-                document.getElementById('profile-stat-posts').innerText = "0"; 
-            }
-
+            } else { followToggleBtn.style.display = "none"; }
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
 
-        window.openMyOwnProfile = function() {
-            if (userDataRecord) renderProfileCard(userDataRecord, true);
-        };
-
-        document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() {
-            if (activeChatFriendData) renderProfileCard(activeChatFriendData, false);
-        });
+        window.openMyOwnProfile = function() { if (userDataRecord) renderProfileCard(userDataRecord, true); };
+        document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatFriendData) renderProfileCard(activeChatFriendData, false); });
 
         window.toggleFollowState = async function(targetUid, targetUsername) {
             let currentFriendsList = userDataRecord.friends || [];
             if (currentFriendsList.includes(targetUid)) {
-                if (targetUsername === "yaseen") {
-                    alert("System Override: Connection bound loop persistent. Unfollowing @yaseen is prohibited.");
-                    return;
-                }
+                if (targetUsername === "yaseen") return alert("Persistent state constraint enforced.");
                 currentFriendsList = currentFriendsList.filter(uid => uid !== targetUid);
-                alert("Unfollowed @" + targetUsername);
-            } else {
-                currentFriendsList.push(targetUid);
-                alert("Following @" + targetUsername);
-            }
+            } else { currentFriendsList.push(targetUid); }
             await updateDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList });
             userDataRecord.friends = currentFriendsList;
             loadFriendsSidebarList();
-            renderExploreTimelineFeed();
             triggerHubComprehensiveSearch();
         };
-
-        window.togglePostLike = async function(postId, currentLikes = []) {
-            const postRef = doc(db, "globalFeed", postId);
-            let updatedLikes = [...currentLikes];
-            if (updatedLikes.includes(currentUser.uid)) {
-                updatedLikes = updatedLikes.filter(id => id !== currentUser.uid);
-            } else { 
-                updatedLikes.push(currentUser.uid); 
-            }
-            await updateDoc(postRef, { likes: updatedLikes });
-        };
-
-        window.submitPostComment = async function(postId, commentInputId) {
-            const inputEl = document.getElementById(commentInputId);
-            const text = inputEl.value.trim();
-            if (!text) return;
-
-            const postRef = doc(db, "globalFeed", postId);
-            const postSnap = await getDoc(postRef);
-            let commentsList = postSnap.exists() && postSnap.data().comments ? postSnap.data().comments : [];
-            
-            commentsList.push({
-                username: userDataRecord.username,
-                text: text,
-                timestamp: Date.now()
-            });
-
-            await updateDoc(postRef, { comments: commentsList });
-            inputEl.value = "";
-        };
-
-        hubSearchBar.addEventListener('input', function() { 
-            triggerHubComprehensiveSearch(); 
-        });
 
         async function triggerHubComprehensiveSearch() {
             const filterText = hubSearchBar.value.trim().toLowerCase();
             const creatorsContainer = document.getElementById('search-creators-results');
-            const postsContainer = document.getElementById('search-posts-results');
-            
             creatorsContainer.innerHTML = "";
-            postsContainer.innerHTML = "";
-            suggestionsOverlay.innerHTML = "";
-            suggestionsOverlay.style.display = "none";
 
-            if (filterText.length >= 1) {
-                const uniqueSuggestions = globalCachedAllUsers.filter(u => u.username.includes(filterText) || u.fullName.toLowerCase().includes(filterText));
-                if (uniqueSuggestions.length > 0) {
-                    suggestionsOverlay.style.display = "block";
-                    uniqueSuggestions.forEach(function(sUser) {
-                        const sugItem = document.createElement('div');
-                        sugItem.className = "suggestion-list-item";
-                        sugItem.innerHTML = `<img src="${sUser.photoURL}"><span>@${sUser.username} (${sUser.fullName})</span>`;
-                        sugItem.onclick = function() {
-                            renderProfileCard(sUser, sUser.uid === currentUser.uid);
-                            suggestionsOverlay.style.display = "none";
-                        };
-                        suggestionsOverlay.appendChild(sugItem);
-                    });
-                }
-            }
-
-            let renderedUsersList = [...globalCachedAllUsers];
-
-            if (currentSearchSortMode === "most-followed") {
-                let popularityMapping = {};
-                globalCachedAllUsers.forEach(function(uObj) {
-                    popularityMapping[uObj.uid] = 0;
-                });
-
-                globalCachedAllUsers.forEach(function(uObj) {
-                    const socialArray = uObj.friends || [];
-                    socialArray.forEach(function(targetId) {
-                        if (popularityMapping[targetId] !== undefined) {
-                            popularityMapping[targetId] = popularityMapping[targetId] + 1;
-                        }
-                    });
-                });
-
-                renderedUsersList.sort(function(firstItem, secondItem) {
-                    const scoreA = popularityMapping[firstItem.uid] || 0;
-                    const scoreB = popularityMapping[secondItem.uid] || 0;
-                    return scoreB - scoreA;
-                });
-            }
-
-            renderedUsersList.forEach(function(u) {
+            globalCachedAllUsers.forEach(u => {
                 if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
-                
                 const tickHtml = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 const adminHtml = (u.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-                const isFriend = (userDataRecord.friends || []).includes(u.uid);
-                let btnHtml = "";
-                if (u.uid !== currentUser.uid) {
-                    btnHtml = isFriend 
-                        ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Unfollow</button>`
-                        : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Follow</button>`;
-                }
-
+                
                 const row = document.createElement('div');
                 row.className = "friend-item";
                 row.style.margin = "0";
-                row.style.padding = "8px 12px";
                 row.innerHTML = `
-                    <img src="${u.photoURL}" style="width:34px; height:34px;" alt="avatar">
+                    <img src="${u.photoURL}" style="width:34px; height:34px;">
                     <div class="info" style="flex:1;">
-                        <h4 style="display:flex; align-items:center; gap:4px; font-size:13px;">${u.fullName} ${tickHtml} ${adminHtml}</h4>
+                        <h4 style="font-size:13px;">${u.fullName} ${tickHtml} ${adminHtml}</h4>
                         <p style="font-size:11px;">@${u.username}</p>
                     </div>
-                    ${btnHtml}
                 `;
-                row.querySelector('img').onclick = function() {
-                    renderProfileCard(u, u.uid === currentUser.uid);
-                };
+                row.onclick = () => renderProfileCard(u, u.uid === currentUser.uid);
                 creatorsContainer.appendChild(row);
-            });
-
-            globalCachedFeedPosts.forEach(function(postItem) {
-                const post = postItem.data;
-                if (filterText && !post.text.toLowerCase().includes(filterText) && !post.authorUsername.includes(filterText)) return;
-                appendPostMarkupCardToTargetContainer(postItem, postsContainer);
             });
         }
 
         function renderExploreTimelineFeed() {
             const feedContainer = document.getElementById('feed-posts-container');
             feedContainer.innerHTML = "";
-            globalCachedFeedPosts.forEach(function(postItem) {
-                appendPostMarkupCardToTargetContainer(postItem, feedContainer);
-            });
-        }
+            globalCachedFeedPosts.forEach(postItem => {
+                const post = postItem.data;
+                const card = document.createElement('div');
+                card.className = 'insta-post';
+                const verifiedTick = (post.authorUsername === 'yaseen' || post.verified) ? getVerifiedTextureBadgeMarkup() : "";
+                const adminHtml = (post.authorUsername === 'yaseen') ? getAdminBadgeMarkup() : "";
 
-        function appendPostMarkupCardToTargetContainer(postItem, containerElement) {
-            const post = postItem.data;
-            const postId = postItem.id;
-            const card = document.createElement('div');
-            card.className = 'insta-post';
-            
-            let mediaBlock = "";
-            if (post.mediaUrl) {
-                if (post.mediaType === 'video') {
-                    mediaBlock = `<div class="post-media-wrap"><video class="post-media" src="${post.mediaUrl}" controls></video></div>`;
-                } else {
-                    mediaBlock = `
-                        <div class="post-media-wrap">
-                            <img class="post-media" src="${post.mediaUrl}" alt="media">
+                card.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-author-info">
+                            <img src="${post.authorPhoto}">
+                            <h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4>
                         </div>
-                    `;
-                }
-            }
-
-            const likesArray = post.likes || [];
-            const commentsArray = post.comments || [];
-            const isLiked = likesArray.includes(currentUser.uid);
-            const isFriend = (userDataRecord.friends || []).includes(post.authorUid);
-            
-            let followActionHtml = "";
-            if (post.authorUid !== currentUser.uid) {
-                followActionHtml = isFriend 
-                    ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Unfollow</button>` 
-                    : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Follow</button>`;
-            }
-
-            const verifiedTick = (post.authorUsername === 'yaseen' || post.verified) ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (post.authorUsername === 'yaseen') ? getAdminBadgeMarkup() : "";
-
-            let deleteUtilityButtonHtml = "";
-            if (post.authorUid === currentUser.uid) {
-                deleteUtilityButtonHtml = `<button class="post-delete-icon-trigger" onclick="triggerPostRemovalDeletion('${postId}')">Delete Post</button>`;
-            }
-
-            let commentsHtml = commentsArray.map(c => `
-                <div class="comment-row"><span class="comment-user">@${c.username}</span>${c.text}</div>
-            `).join('');
-
-            card.innerHTML = `
-                <div class="post-header">
-                    <div class="post-author-info" id="post-author-hdr-${postId}">
-                        <img src="${post.authorPhoto}" alt="author">
-                        <h4 style="display:flex; align-items:center; gap:4px;">${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        ${deleteUtilityButtonHtml}
-                        ${followActionHtml}
-                    </div>
-                </div>
-                ${mediaBlock}
-                <div class="post-body">
-                    <p><span class="author-name">${post.authorUsername}</span>${post.text}</p>
-                    
-                    <div class="post-actions-toolbar" style="margin-top:14px;">
-                        <button class="post-action-item ${isLiked ? 'liked' : ''}" id="like-btn-${postId}">
-                            <svg viewBox="0 0 24 24"><path fill="none" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                            <span>${likesArray.length}</span>
-                        </button>
-                    </div>
-
-                    <div class="post-comments-section">${commentsHtml}</div>
-                    
-                    <div class="comment-input-row">
-                        <input type="text" id="comment-input-${postId}" placeholder="Write comment...">
-                        <button class="send-txt-btn" id="comment-submit-${postId}">Post</button>
-                    </div>
-                </div>
-            `;
-
-            card.querySelector(`#like-btn-${postId}`).addEventListener('click', function() {
-                togglePostLike(postId, likesArray);
-            });
-            card.querySelector(`#comment-submit-${postId}`).addEventListener('click', function() {
-                submitPostComment(postId, `comment-input-${postId}`);
-            });
-            card.querySelector(`#post-author-hdr-${postId}`).addEventListener('click', async () => {
-                const userSnap = await getDoc(doc(db, "users", post.authorUid));
-                if (userSnap.exists()) renderProfileCard(userSnap.data(), post.authorUid === currentUser.uid);
-            });
-
-            containerElement.appendChild(card);
-        }
-
-        toggleAuthModeBtn.addEventListener('click', function() {
-            isSignUpMode = !isSignUpMode;
-            if (isSignUpMode) {
-                primaryAuthBtn.innerText = "Register Node";
-                toggleAuthModeBtn.innerText = "Already indexed? Sign In";
-            } else {
-                primaryAuthBtn.innerText = "Sign In";
-                toggleAuthModeBtn.innerText = "Create New Account Matrix";
-            }
-        });
-
-        const transformFileToBase64 = file => new Promise(function(resolve, reject) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = e => reject(e);
-        });
-
-        primaryAuthBtn.addEventListener('click', function() {
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            if (!email || !password) { 
-                alert("Please fill all configuration fields."); 
-                return; 
-            }
-
-            loadingScreen.style.display = 'block';
-            loginContainer.style.display = 'none';
-
-            if (isSignUpMode) {
-                createUserWithEmailAndPassword(auth, email, password)
-                    .then(function(credential) {
-                        if (credential.user) {
-                            enforceUniversalYaseenFollowNode(null, credential.user.uid);
-                        }
-                    })
-                    .catch(function(err) { 
-                        alert(err.message); 
-                        resetAuthUI(); 
-                    });
-            } else {
-                signInWithEmailAndPassword(auth, email, password)
-                    .then(function(credential) {
-                        if (credential.user) {
-                            enforceUniversalYaseenFollowNode(null, credential.user.uid);
-                        }
-                    })
-                    .catch(function(err) { 
-                        alert(err.message); 
-                        resetAuthUI(); 
-                    });
-            }
-        });
-
-        function resetAuthUI() {
-            loadingScreen.style.display = 'none';
-            loginContainer.style.display = 'block';
-        }
-
-        document.getElementById('google-login-btn').addEventListener('click', function() { 
-            signInWithPopup(auth, provider)
-                .then(function(credential) {
-                    if (credential.user) {
-                        enforceUniversalYaseenFollowNode(null, credential.user.uid);
-                    }
-                })
-                .catch(function(err) { 
-                    alert(err.message); 
-                }); 
-        });
-
-        window.triggerLogoutSession = function() {
-            signOut(auth).then(function() { 
-                location.reload(); 
-            });
-        };
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                try {
-                    const snap = await getDoc(doc(db, "users", user.uid));
-                    loadingScreen.style.display = 'none';
-                    if (snap.exists()) {
-                        userDataRecord = snap.data();
-                        await enforceUniversalYaseenFollowNode(userDataRecord, user.uid);
-                        launchDashboard(userDataRecord);
-                    } else { 
-                        showProfileSetup(user); 
-                    }
-                } catch (err) { 
-                    showProfileSetup(user); 
-                }
-            } else {
-                loadingScreen.style.display = 'none';
-                loginContainer.style.display = 'block';
-                dashboardContainer.style.display = 'none';
-                profileSetupContainer.style.display = 'none';
-            }
-        });
-
-        function showProfileSetup(user) {
-            loadingScreen.style.display = 'none';
-            loginContainer.style.display = 'none';
-            profileSetupContainer.style.display = 'block';
-            if (user.displayName) document.getElementById('setup-name').value = user.displayName;
-        }
-
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('setup-username').value.trim().toLowerCase();
-            const fullName = document.getElementById('setup-name').value;
-            
-            const profileData = { 
-                uid: currentUser.uid, 
-                username: username, 
-                fullName: fullName, 
-                description: "", 
-                verified: (username === "yaseen"), 
-                friends: []
-            };
-            profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
-            
-            try {
-                await setDoc(doc(db, "users", currentUser.uid), profileData);
-                userDataRecord = profileData;
-                await enforceUniversalYaseenFollowNode(userDataRecord, currentUser.uid);
-                launchDashboard(profileData);
-            } catch (e) { 
-                alert(e.message); 
-            }
-        });
-
-        function launchDashboard(data) {
-            profileSetupContainer.style.display = 'none';
-            loginContainer.style.display = 'none';
-            dashboardContainer.style.display = 'flex';
-            
-            if (data.username === 'yaseen') {
-                document.getElementById('nav-btn-admin').style.display = 'inline-block';
-            }
-
-            const tickHtml = (data.verified || data.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (data.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-
-            document.getElementById('dash-avatar').src = data.photoURL;
-            document.getElementById('dash-display-name').innerText = data.fullName;
-            document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml} ${adminHtml}`;
-            
-            onSnapshot(collection(db, "users"), function(uSnap) {
-                globalCachedAllUsers = [];
-                uSnap.forEach(function(uDoc) { 
-                    globalCachedAllUsers.push(uDoc.data()); 
-                    if (uDoc.id === currentUser.uid) {
-                        userDataRecord = uDoc.data();
-                    }
-                });
-                loadFriendsSidebarList();
-            });
-
-            onSnapshot(collection(db, "statuses"), function(snapshot) {
-                activeStatusDatabase = {};
-                const currentEpochTimestamp = Date.now();
-                const continuousExpirationWindow = 24 * 60 * 60 * 1000; 
-
-                snapshot.forEach(function(documentNode) {
-                    const storyPayload = documentNode.data();
-                    if (currentEpochTimestamp - storyPayload.timestamp < continuousExpirationWindow) {
-                        activeStatusDatabase[documentNode.id] = storyPayload;
-                    }
-                });
-                loadFriendsSidebarList();
-            });
-
-            onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), function(snapshot) {
-                globalCachedFeedPosts = [];
-                snapshot.forEach(function(postDoc) {
-                    globalCachedFeedPosts.push({
-                        id: postDoc.id,
-                        data: postDoc.data()
-                    });
-                });
-                renderExploreTimelineFeed();
+                    <div class="post-body"><p>${post.text}</p></div>
+                `;
+                feedContainer.appendChild(card);
             });
         }
-
-        statusFileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            try {
-                const convertedBase64 = await transformFileToBase64(file);
-                await setDoc(doc(db, "statuses", currentUser.uid), {
-                    uid: currentUser.uid,
-                    fullName: userDataRecord.fullName,
-                    photoURL: userDataRecord.photoURL,
-                    mediaUrl: convertedBase64,
-                    type: file.type.startsWith('video/') ? 'video' : 'image',
-                    timestamp: Date.now()
-                });
-                alert("Story updated successfully! Automatically expires after 24 hours.");
-            } catch (err) { 
-                alert("Staging processing error."); 
-            }
-        });
-
-        window.triggerActiveStatusDeletion = async function() {
-            if (!viewingStatusNodeData) return;
-            if (!confirm("Permanently drop your active story?")) return;
-            
-            try {
-                await deleteDoc(doc(db, "statuses", viewingStatusNodeData.uid));
-                alert("Story asset removed.");
-                closeStatusViewer();
-            } catch (error) {
-                alert("Registry fault: " + error.message);
-            }
-        };
-
-        document.getElementById('feed-post-file').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                selectedFeedFileBase64 = await transformFileToBase64(file);
-                document.getElementById('feed-file-preview-label').style.display = 'block';
-            }
-        });
-
-        document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
-            const text = document.getElementById('feed-post-text').value.trim();
-            if (!text && !selectedFeedFileBase64) return;
-            
-            const fileInput = document.getElementById('feed-post-file');
-            const fileType = (fileInput.files[0] && fileInput.files[0].type.startsWith('video/')) ? 'video' : 'image';
-
-            await addDoc(collection(db, "globalFeed"), {
-                authorUid: currentUser.uid,
-                authorName: userDataRecord.fullName,
-                authorUsername: userDataRecord.username,
-                authorPhoto: userDataRecord.photoURL,
-                text: text,
-                mediaUrl: selectedFeedFileBase64,
-                mediaType: fileType,
-                likes: [],
-                comments: [],
-                timestamp: Date.now()
-            });
-
-            document.getElementById('feed-post-text').value = "";
-            selectedFeedFileBase64 = "";
-            fileInput.value = "";
-            document.getElementById('feed-file-preview-label').style.display = 'none';
-        });
-
-        chatImageInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const convertedBase64 = await transformFileToBase64(file);
-            sendCustomPayload(file.type.startsWith('video/') ? 'video' : 'image', convertedBase64);
-        });
-
-        voiceMemoRecordBtn.addEventListener('click', async function() {
-            if (!localAudioMediaRecorder) {
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert("Audio device access layer is unsupported on this browser system.");
-                    return;
-                }
-                try {
-                    const captureAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    localAudioMediaRecorder = new MediaRecorder(captureAudioStream);
-                    recordedVoiceChunks = [];
-                    
-                    localAudioMediaRecorder.ondataavailable = function(event) {
-                        if (event.data.size > 0) {
-                            recordedVoiceChunks.push(event.data);
-                        }
-                    };
-
-                    localAudioMediaRecorder.onstop = async function() {
-                        const compiledAudioBlob = new Blob(recordedVoiceChunks, { type: 'audio/webm' });
-                        const rawAudioBase64String = await transformFileToBase64(compiledAudioBlob);
-                        sendCustomPayload("voice", rawAudioBase64String);
-                        
-                        captureAudioStream.getTracks().forEach(trackItem => trackItem.stop());
-                        localAudioMediaRecorder = null;
-                        voiceMemoRecordBtn.classList.remove('recording-active');
-                    };
-
-                    localAudioMediaRecorder.start();
-                    voiceMemoRecordBtn.classList.add('recording-active');
-                } catch (micHardwareError) {
-                    alert("Microphone integration interface failure: " + micHardwareError.message);
-                }
-            } else {
-                localAudioMediaRecorder.stop();
-            }
-        });
-
-        async function sendCustomPayload(type, mediaLink) {
-            if (!activeChatFriendData) return;
-            const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
-            await addDoc(collection(db, "messages", roomKey, "records"), {
-                senderId: currentUser.uid,
-                text: type === "text" ? messageInput.value.trim() : "",
-                type: type,
-                mediaUrl: mediaLink || "",
-                timestamp: Date.now()
-            });
-            messageInput.value = "";
-        }
-
-        window.executeChatMessageDeletionNode = async function(messageDocId) {
-            if (!confirm("Permanently delete this message from the database collection row?")) return;
-            if (!activeChatFriendData) return;
-            const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
-            
-            try {
-                await deleteDoc(doc(db, "messages", roomKey, "records", messageDocId));
-            } catch (err) {
-                console.error("Failed to delete target message: ", err);
-            }
-        };
-
-        async function loadFriendsSidebarList() {
-            friendsListElement.innerHTML = "";
-            statusTray.innerHTML = "";
-            const uids = userDataRecord.friends || [];
-
-            if (activeStatusDatabase[currentUser.uid]) {
-                createStatusTrayIcon(activeStatusDatabase[currentUser.uid]);
-            }
-
-            for (let fUid of uids) {
-                const fData = globalCachedAllUsers.find(u => u.uid === fUid);
-                if (fData) {
-                    if (activeStatusDatabase[fUid]) {
-                        createStatusTrayIcon(activeStatusDatabase[fUid]);
-                    }
-                    
-                    const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                    const adminHtml = (fData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-                    const item = document.createElement('div');
-                    item.className = 'friend-item';
-                    item.innerHTML = `<img src="${fData.photoURL}" alt="avatar"><div class="info"><h4 style="display:flex; align-items:center; gap:4px;">${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
-                    item.addEventListener('click', function() {
-                        openChatWindow(fData);
-                    });
-                    friendsListElement.appendChild(item);
-                }
-            }
-        }
-
-        function createStatusTrayIcon(statusData) {
-            const wrap = document.createElement('div');
-            wrap.className = 'story-item';
-            wrap.innerHTML = `<div class="story-avatar-wrap"><img src="${statusData.photoURL}" alt="avatar"></div><span>${statusData.uid === currentUser.uid ? 'Your Story' : statusData.fullName}</span>`;
-            wrap.addEventListener('click', function() {
-                viewingStatusNodeData = statusData;
-                document.getElementById('status-author-name').innerText = statusData.fullName + "'s Story Node";
-                
-                const imgEl = document.getElementById('status-viewer-img');
-                const fontVidEl = document.getElementById('status-viewer-video');
-                const deleteBtn = document.getElementById('status-delete-action-btn');
-                
-                imgEl.style.display = 'none'; 
-                fontVidEl.style.display = 'none'; 
-                fontVidEl.pause();
-
-                if (statusData.uid === currentUser.uid) {
-                    deleteBtn.style.display = "block";
-                } else {
-                    deleteBtn.style.display = "none";
-                }
-
-                if (statusData.type === 'video') {
-                    fontVidEl.src = statusData.mediaUrl; 
-                    fontVidEl.style.display = 'block';
-                } else {
-                    imgEl.src = statusData.mediaUrl; 
-                    imgEl.style.display = 'block';
-                }
-                document.getElementById('status-viewer-modal').style.display = 'flex';
-            });
-            statusTray.appendChild(wrap);
-        }
-
-        window.closeStatusViewer = function() {
-            document.getElementById('status-viewer-video').pause();
-            document.getElementById('status-viewer-modal').style.display = 'none';
-            viewingStatusNodeData = null;
-        };
 
         function openChatWindow(friendData) {
             activeChatFriendData = friendData;
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
+            dashboardContainer.classList.add('chat-active');
             
             const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (friendData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
             document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml} ${adminHtml}`;
-            dashboardContainer.classList.add('chat-active');
 
             const roomKey = currentUser.uid < friendData.uid ? `${currentUser.uid}_${friendData.uid}` : `${friendData.uid}_${currentUser.uid}`;
 
             if (unsubscribeChatListener) unsubscribeChatListener();
-            if (unsubscribeTypingListener) unsubscribeTypingListener();
-
-            unsubscribeTypingListener = onSnapshot(doc(db, "typingStatus", roomKey), function(docSnap) {
-                if (docSnap.exists() && docSnap.data()[friendData.uid]) { 
-                    chatTypingIndicator.style.display = 'inline'; 
-                } else { 
-                    chatTypingIndicator.style.display = 'none'; 
-                }
-            });
-
             unsubscribeChatListener = onSnapshot(query(collection(db, "messages", roomKey, "records"), orderBy("timestamp", "asc")), function(snapshot) {
                 messagesBox.innerHTML = "";
                 snapshot.forEach(function(msgDoc) {
                     const msg = msgDoc.data();
                     const msgId = msgDoc.id;
-                    const bubble = document.createElement('div');
                     const isSent = msg.senderId === currentUser.uid;
-                    bubble.className = `msg ${isSent ? 'sent' : 'received'}`;
                     
-                    let innerTemplate = "";
-                    if (msg.type === "image") {
-                        innerTemplate = `<img src="${msg.mediaUrl}" alt="chat media">`;
-                    } else if (msg.type === "video") {
-                        innerTemplate = `<video src="${msg.mediaUrl}" controls></video>`;
-                    } else if (msg.type === "voice") {
-                        innerTemplate = `<audio src="${msg.mediaUrl}" controls></audio>`;
-                    } else { 
-                        innerTemplate = `<p>${msg.text}</p>`; 
+                    if (!isSent && !msg.seen) {
+                        updateDoc(doc(db, "messages", roomKey, "records", msgId), { seen: true });
                     }
 
-                    let deleteOverlayMarkup = "";
-                    if (isSent) {
-                        deleteOverlayMarkup = `<div class="msg-delete-trigger-overlay" onclick="executeChatMessageDeletionNode('${msgId}')">Delete</div>`;
-                    }
-
+                    const bubble = document.createElement('div');
+                    bubble.className = `msg ${isSent ? 'sent' : 'received'}`;
+                    let receiptTickMarkup = isSent ? getReadReceiptMarkup(msg.seen) : "";
+                    
                     bubble.innerHTML = `
-                        ${deleteOverlayMarkup}
-                        ${innerTemplate}
+                        <p>${msg.text}</p>
                         <div class="msg-meta-row">
                             <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            ${receiptTickMarkup}
                         </div>
                     `;
                     messagesBox.appendChild(bubble);
+                    if(!isSent && !msg.seen) dispatchClosedAlertPacket(friendData.fullName, msg.text);
                 });
                 messagesBox.scrollTop = messagesBox.scrollHeight;
             });
         }
 
-        messageInput.addEventListener('input', function() {
-            if (!activeChatFriendData) return;
+        async function sendCustomPayload(type, link) {
+            if (!activeChatFriendData || !messageInput.value.trim()) return;
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
-            setDoc(doc(db, "typingStatus", roomKey), { [currentUser.uid]: true }, { merge: true });
-            clearTimeout(window.typingTimeoutEvent);
-            window.typingTimeoutEvent = setTimeout(function() {
-                setDoc(doc(db, "typingStatus", roomKey), { [currentUser.uid]: false }, { merge: true });
-            }, 2000);
+            await addDoc(collection(db, "messages", roomKey, "records"), {
+                senderId: currentUser.uid,
+                text: messageInput.value.trim(),
+                timestamp: Date.now(),
+                seen: false
+            });
+            messageInput.value = "";
+        }
+
+        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload("text", null));
+        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload("text", null); });
+        window.exitChatToSidebar = function() { dashboardContainer.classList.remove('chat-active'); };
+
+        async function loadFriendsSidebarList() {
+            friendsListElement.innerHTML = "";
+            const uids = userDataRecord.friends || [];
+            uids.forEach(fUid => {
+                const fData = globalCachedAllUsers.find(u => u.uid === fUid);
+                if (fData) {
+                    const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+                    const adminHtml = (fData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
+                    const item = document.createElement('div');
+                    item.className = 'friend-item';
+                    item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
+                    item.onclick = () => openChatWindow(fData);
+                    friendsListElement.appendChild(item);
+                }
+            });
+        }
+
+        toggleAuthModeBtn.addEventListener('click', function() {
+            isSignUpMode = !isSignUpMode;
+            primaryAuthBtn.innerText = isSignUpMode ? "Register Node" : "Sign In";
         });
 
-        document.getElementById('send-msg-btn').addEventListener('click', function() {
-            sendCustomPayload("text", null);
-        });
-        
-        messageInput.addEventListener('keydown', function(e) { 
-            if (e.key === 'Enter') sendCustomPayload("text", null); 
+        primaryAuthBtn.addEventListener('click', function() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            if (isSignUpMode) {
+                createUserWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+            } else {
+                signInWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+            }
         });
 
-        window.exitChatToSidebar = function() { 
-            dashboardContainer.classList.remove('chat-active'); 
-        };
+        document.getElementById('google-login-btn').addEventListener('click', () => {
+            signInWithPopup(auth, provider).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const snap = await getDoc(doc(db, "users", user.uid));
+                loadingScreen.style.display = 'none';
+                if (snap.exists()) {
+                    userDataRecord = snap.data();
+                    await enforceUniversalYaseenFollowNode(userDataRecord, user.uid);
+                    launchDashboard(userDataRecord);
+                } else {
+                    profileSetupContainer.style.display = 'block';
+                    loginContainer.style.display = 'none';
+                }
+            } else {
+                loadingScreen.style.display = 'none';
+                loginContainer.style.display = 'block';
+                dashboardContainer.style.display = 'none';
+            }
+        });
+
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('setup-username').value.trim().toLowerCase();
+            const fullName = document.getElementById('setup-name').value;
+            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), friends: [] };
+            profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
+            await setDoc(doc(db, "users", currentUser.uid), profileData);
+            launchDashboard(profileData);
+        });
+
+        function launchDashboard(data) {
+            profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; dashboardContainer.style.display = 'flex';
+            if (data.username === 'yaseen') document.getElementById('nav-btn-admin').style.display = 'inline-block';
+            
+            const tickHtml = (data.verified || data.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+            const adminHtml = (data.username === 'yaseen') ? getAdminBadgeMarkup() : "";
+            document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml} ${adminHtml}`;
+            document.getElementById('dash-display-name').innerText = data.fullName;
+            document.getElementById('dash-avatar').src = data.photoURL;
+
+            onSnapshot(collection(db, "users"), (uSnap) => {
+                globalCachedAllUsers = [];
+                uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); if (uDoc.id === currentUser.uid) userDataRecord = uDoc.data(); });
+                loadFriendsSidebarList();
+            });
+
+            onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => {
+                globalCachedFeedPosts = [];
+                snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() }));
+                renderExploreTimelineFeed();
+            });
+        }
+
+        window.triggerLogoutSession = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
 </html>
