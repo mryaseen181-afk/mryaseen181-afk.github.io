@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuraHub Pro - Unified Responsive Edition</title>
+    <title>AuraHub Pro - Matrix Unified Edition</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -216,55 +216,6 @@
             font-size: 12px; 
         }
 
-        .story-tray {
-            display: flex;
-            gap: 16px;
-            padding: 16px 20px;
-            overflow-x: auto;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-main);
-        }
-        
-        .story-item { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-width: 70px; 
-            cursor: pointer; 
-            position: relative;
-        }
-        
-        .story-avatar-wrap {
-            width: 60px; 
-            height: 60px; 
-            border-radius: 50%; 
-            padding: 2.5px;
-            background: var(--story-gradient); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-        }
-        
-        .story-avatar-wrap img { 
-            width: 100%; 
-            height: 100%; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            background: var(--bg-card); 
-            padding: 2px; 
-        }
-        
-        .story-item span { 
-            font-size: 11px; 
-            margin-top: 6px; 
-            max-width: 66px; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            white-space: nowrap; 
-            text-align: center; 
-            color: var(--text-muted); 
-        }
-
         .friends-list-container { 
             flex: 1; 
             overflow-y: auto; 
@@ -426,13 +377,6 @@
             gap: 6px;
         }
         
-        .typing-indicator-span { 
-            font-size: 12px; 
-            color: var(--accent-glow); 
-            margin-left: 6px; 
-            display: none; 
-        }
-        
         .back-arrow { 
             display: none; 
             background: none; 
@@ -475,6 +419,13 @@
             border: 1px solid var(--border-color); 
         }
         
+        .msg img, .msg audio {
+            max-width: 100%;
+            display: block;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
         .msg-meta-row { 
             display: flex; 
             align-items: center; 
@@ -544,6 +495,16 @@
             color: var(--text-muted); 
         }
         
+        .action-icon-btn.recording-active {
+            color: var(--accent-rose);
+            animation: pulseVoice 1s infinite alternate;
+        }
+
+        @keyframes pulseVoice {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
         .action-icon-btn svg { 
             width: 22px; 
             height: 22px; 
@@ -648,6 +609,13 @@
             padding: 18px 20px; 
             font-size: 14px; 
             line-height: 1.6; 
+        }
+
+        .post-body img {
+            max-width: 100%;
+            display: block;
+            border-radius: 12px;
+            margin-top: 10px;
         }
 
         .aesthetic-follow-btn {
@@ -816,7 +784,6 @@
             margin-left: 6px;
         }
 
-        /* Responsive Breakpoints Engine Logic */
         @media (max-width: 768px) {
             body { background: var(--bg-card); }
             .dashboard-layout { width: 100vw; height: 100vh; max-height: 100vh; border: none; border-radius: 0; }
@@ -829,7 +796,6 @@
             }
             .sidebar { border-right: none; }
             
-            /* Chat window state rules on mobile viewports */
             .dashboard-layout.chat-active #app-sidebar-pane { display: none !important; }
             .dashboard-layout.chat-active #app-chat-pane { display: flex !important; }
             
@@ -900,8 +866,6 @@
                     </div>
                 </div>
 
-                <div id="status-tray" class="story-tray" style="display:none;"></div>
-                
                 <div class="friends-list-container">
                     <div class="friends-list-heading">Direct Channels</div>
                     <div id="friends-list"></div>
@@ -914,7 +878,6 @@
                         <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
                         <div class="chat-header-meta">
                             <h3 id="chat-with-heading">Chat Terminal</h3>
-                            <span id="chat-typing-indicator" class="typing-indicator-span">typing core transmission...</span>
                         </div>
                         <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect</button>
                     </div>
@@ -923,6 +886,15 @@
                     
                     <div class="chat-input-wrapper">
                         <div class="chat-input-container">
+                            <button id="chat-file-trigger" class="action-icon-btn" title="Add File">
+                                <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+                            </button>
+                            <input type="file" id="chat-file-input" accept="image/*" style="display: none;">
+
+                            <button id="voice-memo-btn" class="action-icon-btn" title="Voice Note">
+                                <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zm6 8v1a6 6 0 0 1-12 0v-1"/></svg>
+                            </button>
+
                             <input type="text" id="message-input" placeholder="Transmit packet data...">
                             <button id="send-msg-btn" class="send-txt-btn">Send</button>
                         </div>
@@ -937,9 +909,11 @@
                 <div class="feed-composer">
                     <textarea id="feed-post-text" placeholder="Publish updates to the worldwide network matrix..."></textarea>
                     <div class="feed-composer-actions">
-                        <div></div>
+                        <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 14px;" id="feed-file-trigger">Add Media File</button>
+                        <input type="file" id="feed-file-input" accept="image/*" style="display: none;">
                         <button class="main-btn" style="width: auto; padding: 8px 16px;" id="submit-feed-post-btn">Publish Post</button>
                     </div>
+                    <div id="feed-file-preview" style="font-size: 12px; color: var(--accent-glow); margin-top: 8px; display: none;">Attachment ready.</div>
                 </div>
                 <div id="feed-posts-container" class="feed-posts-container"></div>
             </div>
@@ -947,39 +921,12 @@
             <div class="search-tab-area" id="app-search-pane">
                 <div class="search-pane-header">
                     <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Query creator index or dynamic keywords...">
-                    <div class="search-filter-row">
-                        <button id="filter-sort-default" class="filter-toggle-btn active" onclick="toggleSearchSortFilter('default')">All Creators</button>
-                        <button id="filter-sort-followed" class="filter-toggle-btn" onclick="toggleSearchSortFilter('most-followed')">🔥 Most Followed</button>
-                    </div>
                 </div>
                 
                 <div class="search-split-layout">
                     <div class="search-column-panel">
                         <div class="search-section-title">Creator Index Nodes</div>
                         <div id="search-creators-results" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                    </div>
-                    <div class="search-column-panel">
-                        <div class="search-section-title">Discovered Feed Content</div>
-                        <div id="search-posts-results" style="display: flex; flex-direction: column; gap: 16px;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="feed-area" id="app-admin-pane" style="display: none; padding: 28px; width: 100%; overflow-y: auto;">
-                <div class="feed-composer" style="max-width: 800px; border-color: var(--admin-glow);">
-                    <h2 style="color: var(--admin-glow); margin-bottom: 16px; text-align: left; display: flex; align-items: center; gap: 8px;">
-                        System Core Terminal <span>[Root Access Authorized]</span>
-                    </h2>
-                    <p style="text-align: left; font-size: 14px; margin-bottom: 24px; color: var(--text-muted);">
-                        Welcome back, Administrator <strong>yaseen</strong>. Enter core override scripts below.
-                    </p>
-                    
-                    <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); text-align: left;">
-                        <h4 style="margin-bottom: 8px; color: var(--text-color);">Interactive Command Console</h4>
-                        <div style="display: flex; gap: 12px;">
-                            <input type="text" id="admin-command-input" placeholder="Execute core switch pipeline (e.g. /verify-all)..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none;">
-                            <button class="main-btn" id="admin-command-submit-btn" style="width: auto; padding: 0 24px; background: var(--admin-glow); border-color: var(--admin-glow);">Run Script</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -989,7 +936,6 @@
             <button id="tab-btn-chats" class="tab-btn active" onclick="switchTab('chats')">Messages</button>
             <button id="tab-btn-feed" class="tab-btn" onclick="switchTab('feed')">Explore</button>
             <button id="tab-btn-search" class="tab-btn" onclick="switchTab('search')">Search</button>
-            <button id="tab-btn-admin" class="tab-btn" onclick="switchTab('admin')" style="display:none; color:var(--admin-glow);">Admin</button>
         </div>
     </div>
 
@@ -1002,16 +948,6 @@
                 </div>
                 <h2 id="view-modal-name" style="display:flex; align-items:center; gap:6px;">Node Profile</h2>
                 <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700;">@username</p>
-                <div class="profile-stat-row">
-                    <div class="profile-stat-box">
-                        <h5 id="profile-stat-followers">0</h5>
-                        <p>Followers</p>
-                    </div>
-                    <div class="profile-stat-box">
-                        <h5 id="profile-stat-posts">0</h5>
-                        <p>Matrix Posts</p>
-                    </div>
-                </div>
                 <div id="view-modal-description" class="profile-description-txt">No descriptive bio assigned yet.</div>
                 <button id="profile-action-follow-toggle-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--accent-glow); border-color: var(--accent-glow); color:#fff;"></button>
             </div>
@@ -1047,11 +983,17 @@
         const primaryAuthBtn = document.getElementById('email-primary-btn');
         const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
         const hubSearchBar = document.getElementById('hub-main-search-bar');
+        
+        const chatFileInput = document.getElementById('chat-file-input');
+        const feedFileInput = document.getElementById('feed-file-input');
+        const feedFilePreview = document.getElementById('feed-file-preview');
+        const voiceMemoBtn = document.getElementById('voice-memo-btn');
 
         let currentUser = null, userDataRecord = null, activeChatFriendData = null;
         let unsubscribeChatListener = null;
-        let isSignUpMode = false;
+        let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
         let globalCachedFeedPosts = [], globalCachedAllUsers = [];
+        let stagedChatFileBase64 = "", stagedFeedFileBase64 = "";
 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1062,37 +1004,26 @@
         const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
 
         const getReadReceiptMarkup = (isSeen) => {
-            if (isSeen) {
-                return `<span class="read-receipt-ticks seen" title="Seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>`;
-            } else {
-                return `<span class="read-receipt-ticks unseen" title="Sent"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>`;
-            }
+            return isSeen ? 
+                `<span class="read-receipt-ticks seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>` : 
+                `<span class="read-receipt-ticks unseen"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>`;
         };
 
-        // Complete Operating Push Notification Manager Engine
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) {
-                alert("This device browser setup matrix does not support universal push alerts.");
+                alert("Alert notifications are not supported on this framework.");
                 return;
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("AuraHub Engine Authorized", { 
-                        body: "Universal system core alerts have been activated completely.", 
-                        icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=yaseen" 
-                    });
-                } else {
-                    alert("Alert authorizations skipped or rejected.");
+                    new Notification("Matrix Engine Online", { body: "System event notices initialized." });
                 }
             });
         };
 
         function dispatchClosedAlertPacket(senderName, textContent) {
             if (Notification.permission === "granted") {
-                new Notification(`${senderName}`, { 
-                    body: textContent || "Transmitted node data asset payload standard transmission.", 
-                    tag: "chat-msg-node" 
-                });
+                new Notification(`${senderName}`, { body: textContent || "Data asset received.", tag: "chat" });
             }
         }
 
@@ -1103,40 +1034,25 @@
             const adminPane = document.getElementById('app-admin-pane');
             const sidePane = document.getElementById('app-sidebar-pane');
             
-            const tabButtons = ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'];
-            tabButtons.forEach(b => { if(document.getElementById(b)) document.getElementById(b).classList.remove('active') });
+            ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search'].forEach(b => document.getElementById(b)?.classList.remove('active'));
 
-            chatPane.style.display = 'none'; 
-            sidePane.style.display = 'none'; 
-            feedPane.style.display = 'none'; 
-            searchPane.style.display = 'none'; 
-            adminPane.style.display = 'none';
+            chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
             dashboardContainer.classList.remove('chat-active');
 
             if (tabName === 'feed') {
                 feedPane.style.display = 'flex'; 
-                if(document.getElementById('tab-btn-feed')) document.getElementById('tab-btn-feed').classList.add('active');
-                if(document.getElementById('nav-btn-feed')) document.getElementById('nav-btn-feed').classList.add('active');
+                document.getElementById('tab-btn-feed')?.classList.add('active');
             } else if (tabName === 'search') {
                 searchPane.style.display = 'flex'; 
-                if(document.getElementById('tab-btn-search')) document.getElementById('tab-btn-search').classList.add('active');
-                if(document.getElementById('nav-btn-search')) document.getElementById('nav-btn-search').classList.add('active');
+                document.getElementById('tab-btn-search')?.classList.add('active');
                 triggerHubComprehensiveSearch();
-            } else if (tabName === 'admin') {
-                adminPane.style.display = 'block';
-                if(document.getElementById('tab-btn-admin')) document.getElementById('tab-btn-admin').classList.add('active');
-                if(document.getElementById('nav-btn-admin')) document.getElementById('nav-btn-admin').classList.add('active');
             } else {
-                // Responsive view optimization handling rule mapping logic engine
                 if(window.innerWidth <= 768) {
                     sidePane.style.display = 'flex';
-                    chatPane.style.display = 'none';
                 } else {
-                    sidePane.style.display = 'flex'; 
-                    chatPane.style.display = 'flex';
+                    sidePane.style.display = 'flex'; chatPane.style.display = 'flex';
                 }
-                if(document.getElementById('tab-btn-chats')) document.getElementById('tab-btn-chats').classList.add('active');
-                if(document.getElementById('nav-btn-chats')) document.getElementById('nav-btn-chats').classList.add('active');
+                document.getElementById('tab-btn-chats')?.classList.add('active');
             }
         };
 
@@ -1148,51 +1064,59 @@
             }
         };
 
-        window.toggleSearchSortFilter = function(filterMode) {
-            document.getElementById('filter-sort-default').classList.remove('active');
-            document.getElementById('filter-sort-followed').classList.remove('active');
-            if (filterMode === 'most-followed') document.getElementById('filter-sort-followed').classList.add('active');
-            else document.getElementById('filter-sort-default').classList.add('active');
-            triggerHubComprehensiveSearch();
-        };
+        document.getElementById('chat-file-trigger').addEventListener('click', () => chatFileInput.click());
+        document.getElementById('feed-file-trigger').addEventListener('click', () => feedFileInput.click());
 
-        document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
-            const cmdInput = document.getElementById('admin-command-input');
-            const token = cmdInput.value.trim();
-            if(!token) return;
-
-            if (token === '/verify-all') {
-                for (let uNode of globalCachedAllUsers) await updateDoc(doc(db, "users", uNode.uid), { verified: true });
-                alert("Core override successful: Global indexing verified badges online.");
-            } else if (token.startsWith('/verify ')) {
-                const target = token.replace('/verify ', '').trim().toLowerCase();
-                const matched = globalCachedAllUsers.find(u => u.username === target);
-                if (matched) {
-                    await updateDoc(doc(db, "users", matched.uid), { verified: true });
-                    alert(`Dynamic verification node attached to @${target}`);
-                }
-            } else { alert("Instruction execution fault: Command phrase invalid."); }
-            cmdInput.value = "";
+        chatFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (el) => {
+                stagedChatFileBase64 = el.target.result;
+                sendCustomPayload("[Image Attached]");
+            };
+            reader.readAsDataURL(file);
         });
 
-        async function enforceUniversalYaseenFollowNode(userProfileRecord, fallbackUid) {
-            const targetUid = userProfileRecord ? userProfileRecord.uid : fallbackUid;
-            if (!targetUid) return;
-            try {
-                const creatorsCollectionQuery = await getDocs(collection(db, "users"));
-                let yaseenTargetUid = null;
-                creatorsCollectionQuery.forEach(docRef => {
-                    if (docRef.data().username === "yaseen") yaseenTargetUid = docRef.data().uid;
-                });
-                if (yaseenTargetUid && targetUid !== yaseenTargetUid) {
-                    let currentSocialArray = userProfileRecord?.friends ? [...userProfileRecord.friends] : [];
-                    if (!currentSocialArray.includes(yaseenTargetUid)) {
-                        currentSocialArray.push(yaseenTargetUid);
-                        await updateDoc(doc(db, "users", targetUid), { friends: currentSocialArray });
-                    }
+        feedFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (el) => {
+                stagedFeedFileBase64 = el.target.result;
+                feedFilePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Simulating functional runtime setup configurations for voice packets
+        voiceMemoBtn.addEventListener('click', async () => {
+            if (!mediaRecorder) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
+                        const reader = new FileReader();
+                        reader.onload = (el) => {
+                            sendCustomPayload("[Voice Note Attached]", el.target.result);
+                        };
+                        reader.readAsDataURL(blob);
+                        audioChunks = [];
+                    };
+                    mediaRecorder.start();
+                    voiceMemoBtn.classList.add('recording-active');
+                } catch (err) {
+                    alert("Media devices entry standard blocked.");
                 }
-            } catch (e) { console.error(e); }
-        }
+            } else {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                mediaRecorder = null;
+                voiceMemoBtn.classList.remove('recording-active');
+            }
+        });
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
@@ -1203,37 +1127,8 @@
             document.getElementById('view-modal-avatar').src = userObj.photoURL;
             document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml} ${adminHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
-            document.getElementById('view-modal-description').innerText = userObj.description || "No bio parameters configured.";
-            
-            const followToggleBtn = document.getElementById('profile-action-follow-toggle-btn');
-            if (!isOwnProfile) {
-                followToggleBtn.style.display = "block";
-                const currentFriendsList = userDataRecord.friends || [];
-                const isFollowing = currentFriendsList.includes(userObj.uid);
-                followToggleBtn.innerText = isFollowing ? "Unfollow" : "Follow User";
-                followToggleBtn.style.background = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
-                followToggleBtn.onclick = async () => {
-                    await toggleFollowState(userObj.uid, userObj.username);
-                    const updatedUserSnap = await getDoc(doc(db, "users", userObj.uid));
-                    if (updatedUserSnap.exists()) renderProfileCard(updatedUserSnap.data(), false);
-                };
-            } else { followToggleBtn.style.display = "none"; }
+            document.getElementById('view-modal-description').innerText = userObj.description || "Active node instance.";
             document.getElementById('view-profile-modal').style.display = 'flex';
-        };
-
-        window.openMyOwnProfile = function() { if (userDataRecord) renderProfileCard(userDataRecord, true); };
-        document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatFriendData) renderProfileCard(activeChatFriendData, false); });
-
-        window.toggleFollowState = async function(targetUid, targetUsername) {
-            let currentFriendsList = userDataRecord.friends || [];
-            if (currentFriendsList.includes(targetUid)) {
-                if (targetUsername === "yaseen") return alert("Persistent state constraint enforced.");
-                currentFriendsList = currentFriendsList.filter(uid => uid !== targetUid);
-            } else { currentFriendsList.push(targetUid); }
-            await updateDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList });
-            userDataRecord.friends = currentFriendsList;
-            loadFriendsSidebarList();
-            triggerHubComprehensiveSearch();
         };
 
         async function triggerHubComprehensiveSearch() {
@@ -1244,16 +1139,14 @@
             globalCachedAllUsers.forEach(u => {
                 if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
                 const tickHtml = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                const adminHtml = (u.username === 'yaseen') ? getAdminBadgeMarkup() : "";
                 
                 const row = document.createElement('div');
                 row.className = "friend-item";
-                row.style.margin = "0";
                 row.innerHTML = `
-                    <img src="${u.photoURL}" style="width:34px; height:34px;">
+                    <img src="${u.photoURL}">
                     <div class="info" style="flex:1;">
-                        <h4 style="font-size:13px;">${u.fullName} ${tickHtml} ${adminHtml}</h4>
-                        <p style="font-size:11px;">@${u.username}</p>
+                        <h4>${u.fullName} ${tickHtml}</h4>
+                        <p>@${u.username}</p>
                     </div>
                 `;
                 row.onclick = () => renderProfileCard(u, u.uid === currentUser.uid);
@@ -1269,20 +1162,40 @@
                 const card = document.createElement('div');
                 card.className = 'insta-post';
                 const verifiedTick = (post.authorUsername === 'yaseen' || post.verified) ? getVerifiedTextureBadgeMarkup() : "";
-                const adminHtml = (post.authorUsername === 'yaseen') ? getAdminBadgeMarkup() : "";
 
                 card.innerHTML = `
                     <div class="post-header">
                         <div class="post-author-info">
                             <img src="${post.authorPhoto}">
-                            <h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4>
+                            <h4>${post.authorName} ${verifiedTick}</h4>
                         </div>
                     </div>
-                    <div class="post-body"><p>${post.text}</p></div>
+                    <div class="post-body">
+                        <p>${post.text}</p>
+                        ${post.attachedFile ? `<img src="${post.attachedFile}">` : ''}
+                    </div>
                 `;
                 feedContainer.appendChild(card);
             });
         }
+
+        document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
+            const text = document.getElementById('feed-post-text').value.trim();
+            if (!text && !stagedFeedFileBase64) return;
+            
+            await addDoc(collection(db, "globalFeed"), {
+                authorName: userDataRecord.fullName,
+                authorUsername: userDataRecord.username,
+                authorPhoto: userDataRecord.photoURL,
+                text: text,
+                attachedFile: stagedFeedFileBase64,
+                timestamp: Date.now()
+            });
+            
+            document.getElementById('feed-post-text').value = "";
+            stagedFeedFileBase64 = "";
+            feedFilePreview.style.display = 'none';
+        });
 
         function openChatWindow(friendData) {
             activeChatFriendData = friendData;
@@ -1296,8 +1209,7 @@
             }
             
             const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (friendData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-            document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml} ${adminHtml}`;
+            document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml}`;
 
             const roomKey = currentUser.uid < friendData.uid ? `${currentUser.uid}_${friendData.uid}` : `${friendData.uid}_${currentUser.uid}`;
 
@@ -1306,23 +1218,26 @@
                 messagesBox.innerHTML = "";
                 snapshot.forEach(function(msgDoc) {
                     const msg = msgDoc.data();
-                    const msgId = msgDoc.id;
                     const isSent = msg.senderId === currentUser.uid;
                     
                     if (!isSent && !msg.seen) {
-                        updateDoc(doc(db, "messages", roomKey, "records", msgId), { seen: true });
+                        updateDoc(doc(db, "messages", roomKey, "records", msgDoc.id), { seen: true });
                         dispatchClosedAlertPacket(friendData.fullName, msg.text);
                     }
 
                     const bubble = document.createElement('div');
                     bubble.className = `msg ${isSent ? 'sent' : 'received'}`;
-                    let receiptTickMarkup = isSent ? getReadReceiptMarkup(msg.seen) : "";
                     
+                    let assetPayload = '';
+                    if (msg.file) assetPayload += `<img src="${msg.file}">`;
+                    if (msg.audio) assetPayload += `<audio src="${msg.audio}" controls></audio>`;
+
                     bubble.innerHTML = `
                         <p>${msg.text}</p>
+                        ${assetPayload}
                         <div class="msg-meta-row">
                             <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            ${receiptTickMarkup}
+                            ${isSent ? getReadReceiptMarkup(msg.seen) : ""}
                         </div>
                     `;
                     messagesBox.appendChild(bubble);
@@ -1331,35 +1246,39 @@
             });
         }
 
-        async function sendCustomPayload() {
-            if (!activeChatFriendData || !messageInput.value.trim()) return;
+        async function sendCustomPayload(overrideText = null, voiceBase64 = null) {
+            const textValue = overrideText || messageInput.value.trim();
+            if (!textValue && !stagedChatFileBase64 && !voiceBase64) return;
+            
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
+            
             await addDoc(collection(db, "messages", roomKey, "records"), {
                 senderId: currentUser.uid,
-                text: messageInput.value.trim(),
+                text: textValue,
+                file: stagedChatFileBase64,
+                audio: voiceBase64,
                 timestamp: Date.now(),
                 seen: false
             });
-            messageInput.value = "";
+            
+            if (!overrideText) messageInput.value = "";
+            stagedChatFileBase64 = "";
+            chatFileInput.value = "";
         }
 
-        document.getElementById('send-msg-btn').addEventListener('click', sendCustomPayload);
+        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
         messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
 
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
-            const uids = userDataRecord.friends || [];
-            uids.forEach(fUid => {
-                const fData = globalCachedAllUsers.find(u => u.uid === fUid);
-                if (fData) {
-                    const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                    const adminHtml = (fData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-                    const item = document.createElement('div');
-                    item.className = 'friend-item';
-                    item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
-                    item.onclick = () => openChatWindow(fData);
-                    friendsListElement.appendChild(item);
-                }
+            globalCachedAllUsers.forEach(fData => {
+                if (fData.uid === currentUser.uid) return;
+                const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+                const item = document.createElement('div');
+                item.className = 'friend-item';
+                item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml}</h4><p>@${fData.username}</p></div>`;
+                item.onclick = () => openChatWindow(fData);
+                friendsListElement.appendChild(item);
             });
         }
 
@@ -1372,15 +1291,13 @@
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
             if (isSignUpMode) {
-                createUserWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+                createUserWithEmailAndPassword(auth, email, password);
             } else {
-                signInWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+                signInWithEmailAndPassword(auth, email, password);
             }
         });
 
-        document.getElementById('google-login-btn').addEventListener('click', () => {
-            signInWithPopup(auth, provider).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
-        });
+        document.getElementById('google-login-btn').addEventListener('click', () => signInWithPopup(auth, provider));
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -1389,7 +1306,6 @@
                 loadingScreen.style.display = 'none';
                 if (snap.exists()) {
                     userDataRecord = snap.data();
-                    await enforceUniversalYaseenFollowNode(userDataRecord, user.uid);
                     launchDashboard(userDataRecord);
                 } else {
                     profileSetupContainer.style.display = 'block';
@@ -1406,7 +1322,7 @@
             e.preventDefault();
             const username = document.getElementById('setup-username').value.trim().toLowerCase();
             const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), friends: [] };
+            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen") };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
             await setDoc(doc(db, "users", currentUser.uid), profileData);
             launchDashboard(profileData);
@@ -1416,14 +1332,7 @@
             profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; 
             dashboardContainer.style.display = 'flex';
             
-            if (data.username === 'yaseen') {
-                document.getElementById('nav-btn-admin').style.display = 'inline-block';
-                document.getElementById('tab-btn-admin').style.display = 'inline-block';
-            }
-            
-            const tickHtml = (data.verified || data.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (data.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-            document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml} ${adminHtml}`;
+            document.getElementById('dash-username').innerText = `@${data.username}`;
             document.getElementById('dash-display-name').innerText = data.fullName;
             document.getElementById('dash-avatar').src = data.photoURL;
 
@@ -1439,14 +1348,11 @@
                 renderExploreTimelineFeed();
             });
 
-            // Run structural view allocation checks instantly on login setup
             switchTab('chats');
         }
 
         hubSearchBar.addEventListener('input', triggerHubComprehensiveSearch);
         window.triggerLogoutSession = () => signOut(auth).then(() => location.reload());
-        
-        // Listen for screen layout resize updates on-the-fly dynamically
         window.addEventListener('resize', () => { switchTab('chats'); });
     </script>
 </body>
