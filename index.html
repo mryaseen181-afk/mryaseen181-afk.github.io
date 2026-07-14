@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuraHub Pro - Master Management Edition</title>
+    <title>Convofy - Next-Gen Social Matrix Platform</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -15,7 +15,7 @@
             --accent-glow: #0284c7;
             --accent-purple: #6366f1;
             --accent-rose: #e11d48;
-            --story-gradient: linear-gradient(135deg, #c084fc 0%, #6366f1 50%, #38bdf8 100%);
+            --story-gradient: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #ec4899 100%);
             --verified-color: #0095f6;
             --admin-glow: #10b981;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -28,7 +28,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -46,8 +46,9 @@
         #loading-screen { 
             color: var(--text-muted); 
             font-size: 16px; 
-            font-weight: 600; 
-            letter-spacing: 1.5px;
+            font-weight: 700; 
+            letter-spacing: 2px;
+            text-transform: uppercase;
             animation: pulseText 2s infinite ease-in-out;
         }
 
@@ -66,17 +67,20 @@
             text-align: center;
             box-shadow: var(--shadow-lg);
             margin: 20px;
-            transition: var(--transition-smooth);
         }
 
         .app-logo-title {
-            font-size: 38px;
+            font-family: "Impact", "Arial Black", system-ui, sans-serif;
+            font-size: 46px;
             font-weight: 900;
-            letter-spacing: -1.75px;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            font-style: italic;
             margin-bottom: 24px;
             background: var(--story-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.2));
         }
 
         .dashboard-layout {
@@ -92,7 +96,6 @@
             overflow: hidden;
             position: relative;
             box-shadow: var(--shadow-lg);
-            transition: var(--transition-smooth);
         }
 
         .app-navbar {
@@ -117,14 +120,6 @@
             background: var(--bg-card);
             flex-shrink: 0;
             z-index: 10;
-        }
-
-        .nav-brand { 
-            font-weight: 900; 
-            font-size: 26px; 
-            cursor: pointer; 
-            letter-spacing: -1.2px; 
-            color: var(--text-color); 
         }
         
         .nav-links { 
@@ -183,7 +178,6 @@
             justify-content: center;
             gap: 4px;
             cursor: pointer;
-            transition: var(--transition-smooth);
         }
 
         .tab-btn.active {
@@ -215,7 +209,6 @@
             gap: 16px;
             padding: 24px;
             border-bottom: 1px solid var(--border-color);
-            background: var(--bg-card);
         }
         
         .user-bar img { 
@@ -225,12 +218,6 @@
             object-fit: cover; 
             border: 2px solid var(--border-color); 
             cursor: pointer; 
-            transition: var(--transition-smooth);
-        }
-
-        .user-bar img:hover {
-            transform: scale(1.04);
-            border-color: var(--accent-glow);
         }
         
         .user-details { 
@@ -251,9 +238,6 @@
         .user-details p { 
             color: var(--text-muted); 
             font-size: 13px; 
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         .friends-list-container { 
@@ -282,12 +266,8 @@
             transition: var(--transition-smooth); 
         }
         
-        .friend-item:hover { 
+        .friend-item:hover, .friend-item.active { 
             background: var(--bg-secondary); 
-        }
-
-        .friend-item.active {
-            background: #e0f2fe;
         }
         
         .friend-item img { 
@@ -295,7 +275,6 @@
             height: 48px; 
             border-radius: 50%; 
             object-fit: cover; 
-            background: var(--bg-secondary);
         }
         
         .friend-item .info h4 { 
@@ -346,17 +325,11 @@
             outline: none; 
             background: var(--bg-card); 
             box-shadow: var(--shadow-sm); 
-            transition: var(--transition-smooth);
-        }
-
-        .search-input-box:focus {
-            border-color: var(--accent-glow);
-            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
         }
         
         .search-split-layout { 
             display: grid; 
-            grid-template-columns: 1fr; 
+            grid-template-columns: 1fr 1fr; 
             gap: 32px; 
             max-width: 800px; 
             width: 100%; 
@@ -365,7 +338,7 @@
         
         .search-column-panel { 
             background: var(--bg-card); 
-            padding: 28px; 
+            padding: 24px; 
             border-radius: 24px; 
             border: 1px solid var(--border-color); 
             height: fit-content; 
@@ -412,8 +385,6 @@
             font-weight: 700;
             color: var(--accent-glow); 
             cursor: pointer; 
-            align-items: center;
-            gap: 4px;
         }
 
         .messages-box { 
@@ -434,7 +405,6 @@
             line-height: 1.55; 
             position: relative;
             box-shadow: var(--shadow-sm);
-            word-wrap: break-word;
         }
         
         .msg.sent { 
@@ -452,19 +422,15 @@
             border-bottom-left-radius: 4px;
         }
         
-        .msg img {
+        .msg img, .msg audio {
             max-width: 100%;
             display: block;
             border-radius: 14px;
-            margin-top: 10px;
-            box-shadow: var(--shadow-sm);
+            margin-top: 8px;
         }
 
         .msg audio {
             width: 240px;
-            display: block;
-            margin-top: 10px;
-            border-radius: 28px;
         }
 
         .msg.sent audio {
@@ -481,34 +447,11 @@
             opacity: 0.75; 
         }
 
-        .read-receipt-ticks {
-            display: inline-flex;
-            align-items: center;
-            width: 16px;
-            height: 12px;
-        }
-        .read-receipt-ticks svg {
-            width: 100%;
-            height: 100%;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        .read-receipt-ticks.seen {
-            color: #38bdf8;
-        }
-        .read-receipt-ticks.unseen {
-            color: #94a3b8;
-        }
-
         .chat-input-wrapper { 
             padding: 24px; 
             background: var(--bg-card); 
             border-top: 1px solid var(--border-color); 
             flex-shrink: 0;
-            z-index: 4;
         }
         
         .chat-input-container {
@@ -539,14 +482,8 @@
             align-items: center; 
             justify-content: center; 
             color: var(--text-muted); 
-            transition: var(--transition-smooth);
             padding: 4px;
             border-radius: 50%;
-        }
-
-        .action-icon-btn:hover {
-            color: var(--text-color);
-            background: rgba(0,0,0,0.04);
         }
         
         .action-icon-btn.recording-active {
@@ -556,8 +493,8 @@
         }
 
         @keyframes pulseVoice {
-            from { transform: scale(1); box-shadow: 0 0 0 0 rgba(225,29,72,0.4); }
-            to { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(225,29,72,0); }
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
         }
 
         .action-icon-btn svg { 
@@ -575,11 +512,6 @@
             font-weight: 700; 
             font-size: 15px; 
             cursor: pointer; 
-            transition: var(--transition-smooth);
-        }
-
-        .send-txt-btn:hover {
-            transform: translate(2px);
         }
 
         .feed-composer {
@@ -607,12 +539,6 @@
             resize: none; 
             font-size: 15px; 
             margin-bottom: 16px; 
-            transition: var(--transition-smooth);
-        }
-
-        .feed-composer textarea:focus {
-            border-color: var(--accent-glow);
-            background: var(--bg-card);
         }
         
         .feed-composer-actions { 
@@ -702,19 +628,10 @@
             transition: var(--transition-smooth);
         }
 
-        .aesthetic-follow-btn:hover {
-            background: #f1f5f9;
-            color: var(--text-color);
-        }
-
         .aesthetic-follow-btn.unfollow-mode {
             background: #fff5f5;
             color: var(--accent-rose);
             border-color: #fca5a5;
-        }
-
-        .aesthetic-follow-btn.unfollow-mode:hover {
-            background: #fee2e2;
         }
 
         .verified-badge-texture-star {
@@ -723,7 +640,6 @@
             display: inline-block; 
             vertical-align: middle; 
             flex-shrink: 0;
-            filter: drop-shadow(0px 2px 4px rgba(0, 149, 246, 0.25));
         }
 
         .modal { 
@@ -738,12 +654,6 @@
             justify-content: center; 
             align-items: center; 
             z-index: 100; 
-            animation: fadeIn 0.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
         
         .modal-content { 
@@ -752,7 +662,7 @@
             border-radius: 32px; 
             border: 1px solid var(--border-color); 
             width: 90%; 
-            max-width: 460px; 
+            max-width: 480px; 
             text-align: center; 
             position: relative; 
             box-shadow: var(--shadow-lg); 
@@ -765,98 +675,15 @@
             font-size: 26px; 
             color: var(--text-muted); 
             cursor: pointer; 
-            transition: var(--transition-smooth);
-        }
-
-        .close-modal:hover {
-            color: var(--text-color);
-        }
-        
-        .input-group { 
-            margin-bottom: 20px; 
-            text-align: left; 
-        }
-        
-        .input-group label { 
-            display: block; 
-            font-size: 14px; 
-            margin-bottom: 8px; 
-            font-weight: 600; 
-            color: var(--text-muted); 
-        }
-        
-        .input-group input { 
-            width: 100%; 
-            padding: 14px; 
-            border: 1px solid var(--border-color); 
-            border-radius: 14px; 
-            font-size: 15px; 
-            background: var(--bg-secondary); 
-            color: var(--text-color); 
-            outline: none; 
-            transition: var(--transition-smooth);
-        }
-
-        .input-group input:focus {
-            border-color: var(--accent-glow);
-            background: var(--bg-card);
-        }
-        
-        .main-btn {
-            width: 100%; 
-            padding: 16px; 
-            background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
-            color: #fff; 
-            border: 1px solid #0284c7; 
-            border-radius: 14px; 
-            font-size: 15px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2);
-            transition: var(--transition-smooth);
-        }
-
-        .main-btn:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-        }
-        
-        .secondary-btn {
-            width: 100%; 
-            padding: 16px; 
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-            color: #334155; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 14px; 
-            font-size: 15px; 
-            cursor: pointer; 
-            margin-top: 12px; 
-            font-weight: 600; 
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition-smooth);
-        }
-
-        .secondary-btn:hover {
-            background: #f1f5f9;
-        }
-        
-        .no-chat-selected { 
-            flex: 1; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            color: var(--text-muted); 
-            font-size: 15px; 
-            font-weight: 500;
         }
         
         .profile-modal-hdr { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            margin-bottom: 24px; 
+            margin-bottom: 16px; 
             border-bottom: 1px solid var(--border-color); 
-            padding-bottom: 24px; 
+            padding-bottom: 16px; 
         }
         
         .profile-stat-row { 
@@ -874,20 +701,41 @@
         .profile-stat-box p { 
             font-size: 13px; 
             color: var(--text-muted); 
-            font-weight: 500;
         }
-        
-        .profile-description-txt { 
-            font-size: 15px; 
-            color: var(--text-color); 
-            margin-top: 8px; 
-            line-height: 1.5; 
-            font-style: italic; 
-            background: var(--bg-secondary); 
-            padding: 12px 18px; 
-            border-radius: 16px; 
-            width: 100%; 
-            border: 1px solid var(--border-color); 
+
+        .profile-posts-grid-container {
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            margin-top: 12px;
+            padding: 4px;
+        }
+
+        .profile-mini-post-row {
+            background: var(--bg-secondary);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 6px;
+            border-left: 3px solid var(--accent-glow);
+        }
+
+        .leaderboard-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .leaderboard-rank {
+            font-weight: 800;
+            color: var(--accent-purple);
+            font-size: 14px;
+            min-width: 24px;
         }
 
         .admin-badge-indicator {
@@ -923,8 +771,8 @@
             
             .back-arrow { display: inline-flex; }
             .msg { max-width: 85%; }
-            .search-split-layout { grid-template-columns: 1fr; gap: 20px; }
-            .search-column-panel { max-height: 60vh; }
+            .search-split-layout { grid-template-columns: 1fr; gap: 24px; }
+            .search-column-panel { max-height: 50vh; }
             .feed-area, .search-tab-area { padding: 20px 16px; }
         }
     </style>
@@ -934,7 +782,7 @@
     <div id="loading-screen">Syncing spatial core databases...</div>
 
     <div id="login-container" class="form-container" style="display: none;">
-        <div class="app-logo-title">AuraHub Pro</div>
+        <div class="app-logo-title">Convofy</div>
         <div class="input-group"><input type="email" id="login-email" placeholder="Email Address"></div>
         <div class="input-group"><input type="password" id="login-password" placeholder="Password"></div>
         <button id="email-primary-btn" class="main-btn">Sign In</button>
@@ -944,7 +792,7 @@
     </div>
 
     <div id="profile-setup-container" class="form-container" style="display: none;">
-        <div class="app-logo-title">Profile Matrix</div>
+        <div class="app-logo-title">Convofy Setup</div>
         <form id="profile-form">
             <div class="input-group"><input type="text" id="setup-username" placeholder="Username" required></div>
             <div class="input-group"><input type="text" id="setup-name" placeholder="Full Name" required></div>
@@ -954,7 +802,7 @@
 
     <div id="dashboard-container" class="dashboard-layout" data-tab="chats" style="display: none;">
         <div class="app-navbar">
-            <div class="nav-brand" onclick="switchTab('chats')">AuraHub Pro</div>
+            <div class="app-logo-title" style="margin: 0; font-size: 28px; cursor: pointer;" onclick="switchTab('chats')">Convofy</div>
             <div class="nav-links">
                 <button id="nav-btn-admin" class="nav-item" onclick="switchTab('admin')" style="display: none; color: var(--admin-glow); font-weight: 800;">⚡ Admin Terminal</button>
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
@@ -966,7 +814,7 @@
         </div>
 
         <div class="mobile-header">
-            <div class="nav-brand" onclick="switchTab('chats')">AuraHub Pro</div>
+            <div class="app-logo-title" style="margin:0; font-size: 26px;">Convofy</div>
             <div style="display: flex; gap: 8px;">
                 <button id="mobile-nav-btn-admin" class="nav-item" onclick="switchTab('admin')" style="display: none; color: var(--admin-glow); font-weight: 800;">⚡</button>
                 <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--accent-glow); font-weight: bold; font-size: 13px;">🔔 Alerts</button>
@@ -983,7 +831,7 @@
                     </div>
                 </div>
                 <div class="friends-list-container">
-                    <div class="friends-list-heading">Channels List</div>
+                    <div class="friends-list-heading">Direct Channels</div>
                     <div id="friends-list"></div>
                 </div>
             </div>
@@ -1014,50 +862,54 @@
                         </div>
                     </div>
                 </div>
-                <div id="no-chat-fallback" class="no-chat-selected"><p>Select a node parameters node index to begin transmission</p></div>
+                <div id="no-chat-fallback" class="no-chat-selected"><p>Select a node index profile parameters node to begin transmission</p></div>
             </div>
 
             <div class="feed-area" id="app-feed-pane">
                 <div class="feed-composer">
-                    <textarea id="feed-post-text" placeholder="Publish updates to the matrix..."></textarea>
+                    <textarea id="feed-post-text" placeholder="Publish updates to the global matrix network stream..."></textarea>
                     <div class="feed-composer-actions">
                         <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 14px;" id="feed-file-trigger">Add Media File</button>
                         <input type="file" id="feed-file-input" accept="image/*" style="display: none;">
                         <button class="main-btn" style="width: auto; padding: 8px 16px;" id="submit-feed-post-btn">Publish Post</button>
                     </div>
-                    <div id="feed-file-preview" style="font-size: 13px; color: var(--accent-glow); margin-top: 10px; display: none; font-weight: 600;">Attachment payload staged successfully.</div>
+                    <div id="feed-file-preview" style="font-size: 13px; color: var(--accent-glow); margin-top: 10px; display: none; font-weight: 600;">Attachment payload staged.</div>
                 </div>
                 <div id="feed-posts-container" class="feed-posts-container"></div>
             </div>
 
             <div class="search-tab-area" id="app-search-pane">
                 <div class="search-pane-header">
-                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Query creator index or keywords...">
+                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Query creator index or match post context content words...">
                 </div>
                 <div class="search-split-layout">
                     <div class="search-column-panel">
-                        <div class="search-section-title">Creator Index Nodes</div>
+                        <div class="search-section-title">Creator Hub Index</div>
                         <div id="search-creators-results" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                    </div>
+                    <div class="search-column-panel">
+                        <div class="search-section-title">🏆 Follower Leaderboard</div>
+                        <div id="leaderboard-ranking-list" style="display: flex; flex-direction: column; gap: 4px;"></div>
+                        
+                        <div class="search-section-title" style="margin-top: 24px;">📝 Matched Matrix Posts</div>
+                        <div id="search-posts-results" style="display: flex; flex-direction: column; gap: 12px;"></div>
                     </div>
                 </div>
             </div>
 
             <div class="feed-area" id="app-admin-pane" style="display: none; padding: 28px; width: 100%; overflow-y: auto;">
                 <div class="feed-composer" style="max-width: 800px; border-color: var(--admin-glow);">
-                    <h2 style="color: var(--admin-glow); margin-bottom: 16px; text-align: left; display: flex; align-items: center; gap: 8px;">System Core Terminal <span>[Root Access Authorized]</span></h2>
-                    <p style="text-align: left; font-size: 14px; margin-bottom: 24px; color: var(--text-muted);">Welcome back, Administrator <strong>yaseen</strong>. Enter core override scripts below.</p>
+                    <h2 style="color: var(--admin-glow); margin-bottom: 16px; text-align: left; display: flex; align-items: center; gap: 8px;">System Core Override Console</h2>
                     
                     <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); text-align: left;">
-                        <h4 style="margin-bottom: 8px; color: var(--text-color);">Interactive Command Console</h4>
+                        <h4 style="margin-bottom: 8px; color: var(--text-color);">Interactive Operations Panel</h4>
                         <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-                            Available commands: <br>
-                            <code>/verify [username]</code> - Grant verification manually to any target node account handle.<br>
-                            <code>/unverify [username]</code> - Strip verification manually from a target node account handle.<br>
-                            <code>/verify-all</code> - Instantly apply the badge to every profile registered on the network.<br>
-                            <code>/unverify-all</code> - Strip verification from all network profiles completely.
+                            Available command switches:<br>
+                            <code>/verify [username]</code> | <code>/unverify [username]</code><br>
+                            <code>/verify-all</code> | <code>/unverify-all</code>
                         </p>
                         <div style="display: flex; gap: 12px;">
-                            <input type="text" id="admin-command-input" placeholder="Execute core override switch pipeline (e.g. /verify-all)..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none;">
+                            <input type="text" id="admin-command-input" placeholder="Execute core shift switch directive phrase..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none;">
                             <button class="main-btn" id="admin-command-submit-btn" style="width: auto; padding: 0 24px; background: var(--admin-glow); border-color: var(--admin-glow);">Run Script</button>
                         </div>
                     </div>
@@ -1077,13 +929,27 @@
         <div class="modal-content">
             <span class="close-modal" onclick="closeViewProfileModal()">&times;</span>
             <div class="profile-modal-hdr">
-                <div style="width:90px; height:90px; border-radius:50%; overflow:hidden; margin-bottom: 12px; border: 2.5px solid var(--accent-glow); box-shadow: var(--shadow-sm);">
+                <div style="width:90px; height:90px; border-radius:50%; overflow:hidden; margin-bottom: 12px; border: 2.5px solid var(--accent-glow);">
                     <img id="view-modal-avatar" src="" style="width:100%; height:100%; object-fit:cover;" alt="Avatar">
                 </div>
                 <h2 id="view-modal-name" style="display:flex; align-items:center; gap:6px;">Node Profile</h2>
-                <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700; margin-top: 4px;">@username</p>
-                <div id="view-modal-description" class="profile-description-txt">No descriptive bio assigned yet.</div>
-                <button id="modal-follow-action-btn" class="main-btn" style="margin-top: 16px; display: none;"></button>
+                <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700;">@username</p>
+                
+                <div class="profile-stat-row">
+                    <div class="profile-stat-box">
+                        <h5 id="profile-stat-followers">0</h5>
+                        <p>Followers</p>
+                    </div>
+                    <div class="profile-stat-box">
+                        <h5 id="profile-stat-posts">0</h5>
+                        <p>Matrix Posts</p>
+                    </div>
+                </div>
+                
+                <button id="modal-follow-action-btn" class="main-btn" style="margin-bottom: 12px; display: none;"></button>
+                
+                <h4 style="text-align: left; width: 100%; font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 8px;">Node Broadcast Logs</h4>
+                <div id="profile-modal-posts-grid" class="profile-posts-grid-container"></div>
             </div>
         </div>
     </div>
@@ -1146,19 +1012,19 @@
 
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) {
-                alert("This device browser environment does not support system push notices.");
+                alert("Push notification structures are not supported on this ecosystem.");
                 return;
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("AuraHub Matrix Active", { body: "System event alert pipelines running successfully." });
+                    new Notification("Convofy Interface Armed", { body: "Real-time background notices active." });
                 }
             });
         };
 
         function dispatchClosedAlertPacket(senderName, textContent) {
             if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Incoming operational payload asset packet received.", tag: "chat" });
+                new Notification(`${senderName}`, { body: textContent || "Operational data transmission received.", tag: "chat" });
             }
         }
 
@@ -1211,7 +1077,7 @@
             const reader = new FileReader();
             reader.onload = (el) => {
                 stagedChatFileBase64 = el.target.result;
-                sendCustomPayload("[Payload File Transmitted]");
+                sendCustomPayload("[Payload Transmitted]");
             };
             reader.readAsDataURL(file);
         });
@@ -1237,7 +1103,7 @@
                         const blob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
                         const reader = new FileReader();
                         reader.onload = (el) => {
-                            sendCustomPayload("[Voice Packet Matrix Payload Attached]", el.target.result);
+                            sendCustomPayload("[Audio Broadcast Attachment Transmitted]", el.target.result);
                         };
                         reader.readAsDataURL(blob);
                         audioChunks = [];
@@ -1245,7 +1111,7 @@
                     mediaRecorder.start();
                     voiceMemoBtn.classList.add('recording-active');
                 } catch (err) {
-                    alert("Capture stream initialization fault.");
+                    alert("Audio device handshake failure.");
                 }
             } else {
                 mediaRecorder.stop();
@@ -1264,8 +1130,28 @@
             document.getElementById('view-modal-avatar').src = userObj.photoURL;
             document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml} ${adminHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
-            document.getElementById('view-modal-description').innerText = userObj.description || "Active Node.";
             
+            // Render Follower Metrics 
+            const totalFollowers = globalCachedAllUsers.filter(u => u.following && u.following.includes(userObj.uid)).length;
+            document.getElementById('profile-stat-followers').innerText = totalFollowers;
+            
+            // Filter and Append User Nodes Posts Elements 
+            const nodePosts = globalCachedFeedPosts.filter(p => p.data.authorUsername === userObj.username);
+            document.getElementById('profile-stat-posts').innerText = nodePosts.length;
+            
+            const postsGrid = document.getElementById('profile-modal-posts-grid');
+            postsGrid.innerHTML = "";
+            if (nodePosts.length === 0) {
+                postsGrid.innerHTML = `<p style="font-size:12px; color:var(--text-muted);">No broadcasts archived.</p>`;
+            } else {
+                nodePosts.forEach(p => {
+                    const postRow = document.createElement('div');
+                    postRow.className = "profile-mini-post-row";
+                    postRow.innerText = p.data.text || "[Image Asset Matrix Frame]";
+                    postsGrid.appendChild(postRow);
+                });
+            }
+
             const actionBtn = document.getElementById('modal-follow-action-btn');
             if (!isOwnProfile && userDataRecord) {
                 actionBtn.style.display = "block";
@@ -1273,11 +1159,11 @@
                 const isFollowing = activeFollowing.includes(userObj.uid);
                 
                 if (isFollowing) {
-                    actionBtn.innerText = "Unfollow User";
+                    actionBtn.innerText = "Unfollow Network Member";
                     actionBtn.style.background = "var(--accent-rose)";
                     actionBtn.onclick = () => toggleFollowState(userObj.uid, false);
                 } else {
-                    actionBtn.innerText = "Follow User";
+                    actionBtn.innerText = "Follow Network Member";
                     actionBtn.style.background = "var(--accent-glow)";
                     actionBtn.onclick = () => toggleFollowState(userObj.uid, true);
                 }
@@ -1288,7 +1174,6 @@
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
 
-        // Follow & Unfollow Structural Pipeline Implementation
         async function toggleFollowState(targetUid, stateFlag) {
             if (!currentUser || !userDataRecord) return;
             let currentFollowing = userDataRecord.following || [];
@@ -1309,7 +1194,7 @@
             loadFriendsSidebarList();
         }
 
-        // Administrative Pipeline Shell Controls Module Script
+        // Administrative Core Commands Processor
         document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
             if (userDataRecord.username !== 'yaseen') return;
             const cmdInput = document.getElementById('admin-command-input');
@@ -1320,7 +1205,7 @@
                 for (let userNode of globalCachedAllUsers) {
                     await updateDoc(doc(db, "users", userNode.uid), { verified: true });
                 }
-                alert("Core override successful: Network verify execution completed.");
+                alert("Core override successful: Global indexing verified badges online.");
             } else if (statement === '/unverify-all') {
                 for (let userNode of globalCachedAllUsers) {
                     if (userNode.username !== 'yaseen') {
@@ -1333,55 +1218,85 @@
                 const found = globalCachedAllUsers.find(u => u.username === targetNode);
                 if (found) {
                     await updateDoc(doc(db, "users", found.uid), { verified: true });
-                    alert(`Verification granted manually to @${targetNode}`);
-                } else { alert("User node target parameters not found."); }
+                    alert(`Verification granted to @${targetNode}`);
+                }
             } else if (statement.startsWith('/unverify ')) {
                 const targetNode = statement.replace('/unverify ', '').trim().toLowerCase();
-                if (targetNode === 'yaseen') return alert("System structural failure: Cannot self-strip authorization.");
+                if (targetNode === 'yaseen') return;
                 const found = globalCachedAllUsers.find(u => u.username === targetNode);
                 if (found) {
                     await updateDoc(doc(db, "users", found.uid), { verified: false });
                     alert(`Verification stripped from @${targetNode}`);
-                } else { alert("User node target parameters not found."); }
-            } else { alert("Instruction phrase sequence invalid."); }
+                }
+            }
             cmdInput.value = "";
         });
 
         window.openMyOwnProfile = function() { if (userDataRecord) renderProfileCard(userDataRecord, true); };
         document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatFriendData) renderProfileCard(activeChatFriendData, false); });
 
+        // Search Engine with Live Post Filtering & Follower Leaderboards
         async function triggerHubComprehensiveSearch() {
             const filterText = hubSearchBar.value.trim().toLowerCase();
+            
+            // Creators Index Filtering Output
             const creatorsContainer = document.getElementById('search-creators-results');
             creatorsContainer.innerHTML = "";
-
             globalCachedAllUsers.forEach(u => {
                 if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
                 const tickHtml = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                const adminHtml = (u.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-                
-                const currentFollowing = userDataRecord?.following || [];
-                const isFollowed = currentFollowing.includes(u.uid);
                 
                 const row = document.createElement('div');
                 row.className = "friend-item";
-                row.style.justifyContent = "space-between";
+                row.style.margin = "4px 0";
                 row.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:16px;">
-                        <img src="${u.photoURL}">
-                        <div class="info">
-                            <h4>${u.fullName} ${tickHtml} ${adminHtml}</h4>
-                            <p>@${u.username}</p>
-                        </div>
+                    <img src="${u.photoURL}">
+                    <div class="info">
+                        <h4>${u.fullName} ${tickHtml}</h4>
+                        <p>@${u.username}</p>
                     </div>
-                    ${u.uid !== currentUser.uid ? `
-                        <button class="aesthetic-follow-btn ${isFollowed ? 'unfollow-mode' : ''}" onclick="event.stopPropagation(); toggleFollowState('${u.uid}', ${!isFollowed})">
-                            ${isFollowed ? 'Unfollow' : 'Follow'}
-                        </button>
-                    ` : ''}
                 `;
                 row.onclick = () => renderProfileCard(u, u.uid === currentUser.uid);
                 creatorsContainer.appendChild(row);
+            });
+
+            // Live Post Context Text Matching Search Core
+            const postsContainer = document.getElementById('search-posts-results');
+            postsContainer.innerHTML = "";
+            const matchedPosts = globalCachedFeedPosts.filter(p => filterText && p.data.text && p.data.text.toLowerCase().includes(filterText));
+            
+            if (matchedPosts.length === 0) {
+                postsContainer.innerHTML = `<p style="font-size:12px; color:var(--text-muted);">No logs match search metrics.</p>`;
+            } else {
+                matchedPosts.forEach(p => {
+                    const row = document.createElement('div');
+                    row.className = "profile-mini-post-row";
+                    row.innerHTML = `<strong>@${p.data.authorUsername}</strong>: ${p.data.text}`;
+                    postsContainer.appendChild(row);
+                });
+            }
+
+            // High Performance Leaderboard Generation
+            const leaderboardContainer = document.getElementById('leaderboard-ranking-list');
+            leaderboardContainer.innerHTML = "";
+            
+            const mappedLeaderboard = globalCachedAllUsers.map(user => {
+                const count = globalCachedAllUsers.filter(u => u.following && u.following.includes(user.uid)).length;
+                return { profile: user, followerCount: count };
+            }).sort((a, b) => b.followerCount - a.followerCount);
+
+            mappedLeaderboard.slice(0, 5).forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = "leaderboard-row";
+                row.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span class="leaderboard-rank">#${index + 1}</span>
+                        <img src="${item.profile.photoURL}" style="width:28px; height:28px; border-radius:50%;">
+                        <span style="font-size:13px; font-weight:600;">@${item.profile.username}</span>
+                    </div>
+                    <span style="font-size:12px; font-weight:700; color:var(--text-muted);">${item.followerCount} fans</span>
+                `;
+                leaderboardContainer.appendChild(row);
             });
         }
 
@@ -1587,1617 +1502,14 @@
                 globalCachedAllUsers = [];
                 uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); if (uDoc.id === currentUser.uid) userDataRecord = uDoc.data(); });
                 loadFriendsSidebarList();
+                triggerHubComprehensiveSearch();
             });
 
             onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => {
                 globalCachedFeedPosts = [];
                 snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() }));
                 renderExploreTimelineFeed();
-            });
-
-            switchTab('chats');
-        }
-
-        hubSearchBar.addEventListener('input', triggerHubComprehensiveSearch);
-        window.triggerLogoutSession = () => signOut(auth).then(() => location.reload());
-        window.addEventListener('resize', () => { switchTab(dashboardContainer.getAttribute('data-tab')); });
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuraHub Pro - Master Management Edition</title>
-    <style>
-        :root {
-            --bg-main: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-secondary: #f1f5f9;
-            --border-color: #cbd5e1;
-            --text-color: #0f172a;
-            --text-muted: #64748b;
-            --accent-glow: #0284c7;
-            --accent-purple: #6366f1;
-            --accent-rose: #e11d48;
-            --story-gradient: linear-gradient(135deg, #c084fc 0%, #6366f1 50%, #38bdf8 100%);
-            --verified-color: #0095f6;
-            --admin-glow: #10b981;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background: var(--bg-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-color);
-            overflow: hidden;
-            width: 100vw;
-        }
-
-        #loading-screen { 
-            color: var(--text-muted); 
-            font-size: 16px; 
-            font-weight: 600; 
-            letter-spacing: 1.5px;
-            animation: pulseText 2s infinite ease-in-out;
-        }
-
-        @keyframes pulseText {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        .form-container {
-            background: var(--bg-card);
-            padding: 40px;
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-            margin: 20px;
-            transition: var(--transition-smooth);
-        }
-
-        .app-logo-title {
-            font-size: 38px;
-            font-weight: 900;
-            letter-spacing: -1.75px;
-            margin-bottom: 24px;
-            background: var(--story-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .dashboard-layout {
-            width: 100vw;
-            height: 100vh;
-            max-width: 1200px;
-            max-height: 92vh;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 28px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            box-shadow: var(--shadow-lg);
-            transition: var(--transition-smooth);
-        }
-
-        .app-navbar {
-            height: 72px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 32px;
-            background: var(--bg-card);
-            z-index: 10;
-            flex-shrink: 0;
-        }
-
-        .mobile-header {
-            display: none;
-            height: 64px;
-            border-bottom: 1px solid var(--border-color);
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            background: var(--bg-card);
-            flex-shrink: 0;
-            z-index: 10;
-        }
-
-        .nav-brand { 
-            font-weight: 900; 
-            font-size: 26px; 
-            cursor: pointer; 
-            letter-spacing: -1.2px; 
-            color: var(--text-color); 
-        }
-        
-        .nav-links { 
-            display: flex; 
-            gap: 24px; 
-            align-items: center; 
-        }
-        
-        .nav-item { 
-            cursor: pointer; 
-            font-weight: 600; 
-            font-size: 14px; 
-            background: none; 
-            border: none; 
-            color: var(--text-muted); 
-            transition: var(--transition-smooth); 
-            position: relative;
-            padding: 6px 0;
-        }
-        
-        .nav-item:hover, .nav-item.active { 
-            color: var(--accent-glow); 
-        }
-
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--accent-glow);
-            border-radius: 2px;
-        }
-
-        .mobile-bottom-tabs {
-            display: none;
-            height: 68px;
-            border-top: 1px solid var(--border-color);
-            background: var(--bg-card);
-            flex-shrink: 0;
-            z-index: 10;
-            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.02);
-        }
-
-        .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-
-        .tab-btn.active {
-            color: var(--accent-glow);
-        }
-
-        .main-content-area {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-            position: relative;
-            width: 100%;
-        }
-
-        .sidebar {
-            width: 380px;
-            background: var(--bg-card);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-            height: 100%;
-            z-index: 5;
-        }
-
-        .user-bar {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 24px;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-card);
-        }
-        
-        .user-bar img { 
-            width: 56px; 
-            height: 56px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            border: 2px solid var(--border-color); 
-            cursor: pointer; 
-            transition: var(--transition-smooth);
-        }
-
-        .user-bar img:hover {
-            transform: scale(1.04);
-            border-color: var(--accent-glow);
-        }
-        
-        .user-details { 
-            flex: 1; 
-            min-width: 0; 
-            cursor: pointer; 
-        }
-        
-        .user-details h3 { 
-            font-size: 15px; 
-            font-weight: 700; 
-            color: var(--text-color); 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-        }
-        
-        .user-details p { 
-            color: var(--text-muted); 
-            font-size: 13px; 
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .friends-list-container { 
-            flex: 1; 
-            overflow-y: auto; 
-            padding: 12px 0;
-        }
-        
-        .friends-list-heading { 
-            font-size: 12px; 
-            font-weight: 800; 
-            color: var(--text-muted); 
-            padding: 16px 24px 8px 24px; 
-            letter-spacing: 1.2px; 
-            text-transform: uppercase; 
-        }
-        
-        .friend-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 16px; 
-            padding: 14px 24px; 
-            cursor: pointer; 
-            border-radius: 16px; 
-            margin: 2px 12px; 
-            transition: var(--transition-smooth); 
-        }
-        
-        .friend-item:hover { 
-            background: var(--bg-secondary); 
-        }
-
-        .friend-item.active {
-            background: #e0f2fe;
-        }
-        
-        .friend-item img { 
-            width: 48px; 
-            height: 48px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            background: var(--bg-secondary);
-        }
-        
-        .friend-item .info h4 { 
-            font-size: 15px; 
-            font-weight: 600; 
-            color: var(--text-color); 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-        }
-        
-        .friend-item .info p { 
-            font-size: 13px; 
-            color: var(--text-muted); 
-        }
-
-        .chat-area, .feed-area, .search-tab-area { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            background: var(--bg-main); 
-            min-width: 0; 
-            height: 100%;
-        }
-        
-        .feed-area, .search-tab-area { 
-            display: none; 
-            overflow-y: auto; 
-            padding: 32px; 
-        }
-        
-        .search-pane-header { 
-            max-width: 800px; 
-            width: 100%; 
-            margin: 0 auto 32px auto; 
-            position: relative; 
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        .search-input-box { 
-            width: 100%; 
-            padding: 18px 28px; 
-            border-radius: 24px; 
-            border: 1px solid var(--border-color); 
-            font-size: 16px; 
-            outline: none; 
-            background: var(--bg-card); 
-            box-shadow: var(--shadow-sm); 
-            transition: var(--transition-smooth);
-        }
-
-        .search-input-box:focus {
-            border-color: var(--accent-glow);
-            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
-        }
-        
-        .search-split-layout { 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 32px; 
-            max-width: 800px; 
-            width: 100%; 
-            margin: 0 auto; 
-        }
-        
-        .search-column-panel { 
-            background: var(--bg-card); 
-            padding: 28px; 
-            border-radius: 24px; 
-            border: 1px solid var(--border-color); 
-            height: fit-content; 
-            box-shadow: var(--shadow-sm); 
-        }
-        
-        .search-section-title { 
-            font-size: 13px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            color: var(--text-muted); 
-            letter-spacing: 0.75px; 
-            margin-bottom: 20px; 
-            padding-bottom: 10px; 
-            border-bottom: 1px solid var(--border-color); 
-        }
-
-        .chat-header { 
-            height: 72px; 
-            padding: 0 32px; 
-            border-bottom: 1px solid var(--border-color); 
-            display: flex; 
-            align-items: center; 
-            gap: 16px; 
-            background: var(--bg-card); 
-            flex-shrink: 0;
-            z-index: 4;
-        }
-        
-        .chat-header h3 { 
-            font-size: 17px; 
-            font-weight: 700; 
-            color: var(--text-color); 
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .back-arrow { 
-            display: none; 
-            background: none; 
-            border: none; 
-            font-size: 16px; 
-            font-weight: 700;
-            color: var(--accent-glow); 
-            cursor: pointer; 
-            align-items: center;
-            gap: 4px;
-        }
-
-        .messages-box { 
-            flex: 1; 
-            overflow-y: auto; 
-            padding: 32px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 16px; 
-            background: #f8fafc;
-        }
-        
-        .msg { 
-            max-width: 65%; 
-            padding: 14px 20px; 
-            border-radius: 22px; 
-            font-size: 15px; 
-            line-height: 1.55; 
-            position: relative;
-            box-shadow: var(--shadow-sm);
-            word-wrap: break-word;
-        }
-        
-        .msg.sent { 
-            background: var(--accent-purple); 
-            color: #fff; 
-            align-self: flex-end; 
-            border-bottom-right-radius: 4px;
-        }
-        
-        .msg.received { 
-            background: var(--bg-card); 
-            color: var(--text-color); 
-            align-self: flex-start; 
-            border: 1px solid var(--border-color); 
-            border-bottom-left-radius: 4px;
-        }
-        
-        .msg img {
-            max-width: 100%;
-            display: block;
-            border-radius: 14px;
-            margin-top: 10px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .msg audio {
-            width: 240px;
-            display: block;
-            margin-top: 10px;
-            border-radius: 28px;
-        }
-
-        .msg.sent audio {
-            filter: invert(1) hue-rotate(180deg);
-        }
-
-        .msg-meta-row { 
-            display: flex; 
-            align-items: center; 
-            justify-content: flex-end;
-            gap: 6px; 
-            margin-top: 8px; 
-            font-size: 11px; 
-            opacity: 0.75; 
-        }
-
-        .read-receipt-ticks {
-            display: inline-flex;
-            align-items: center;
-            width: 16px;
-            height: 12px;
-        }
-        .read-receipt-ticks svg {
-            width: 100%;
-            height: 100%;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        .read-receipt-ticks.seen {
-            color: #38bdf8;
-        }
-        .read-receipt-ticks.unseen {
-            color: #94a3b8;
-        }
-
-        .chat-input-wrapper { 
-            padding: 24px; 
-            background: var(--bg-card); 
-            border-top: 1px solid var(--border-color); 
-            flex-shrink: 0;
-            z-index: 4;
-        }
-        
-        .chat-input-container {
-            background: var(--bg-secondary); 
-            border: 1px solid var(--border-color); 
-            border-radius: 24px; 
-            padding: 12px 24px; 
-            display: flex; 
-            gap: 16px; 
-            align-items: center;
-        }
-        
-        .chat-input-container input[type="text"] { 
-            flex: 1; 
-            padding: 6px 0; 
-            background: transparent; 
-            border: none; 
-            color: var(--text-color); 
-            font-size: 15px; 
-            outline: none; 
-        }
-        
-        .action-icon-btn { 
-            background: none; 
-            border: none; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: var(--text-muted); 
-            transition: var(--transition-smooth);
-            padding: 4px;
-            border-radius: 50%;
-        }
-
-        .action-icon-btn:hover {
-            color: var(--text-color);
-            background: rgba(0,0,0,0.04);
-        }
-        
-        .action-icon-btn.recording-active {
-            color: var(--accent-rose);
-            background: rgba(225, 29, 72, 0.1);
-            animation: pulseVoice 1.2s infinite alternate ease-in-out;
-        }
-
-        @keyframes pulseVoice {
-            from { transform: scale(1); box-shadow: 0 0 0 0 rgba(225,29,72,0.4); }
-            to { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(225,29,72,0); }
-        }
-
-        .action-icon-btn svg { 
-            width: 24px; 
-            height: 24px; 
-            fill: none; 
-            stroke: currentColor; 
-            stroke-width: 2; 
-        }
-        
-        .send-txt-btn { 
-            background: none; 
-            border: none; 
-            color: var(--accent-glow); 
-            font-weight: 700; 
-            font-size: 15px; 
-            cursor: pointer; 
-            transition: var(--transition-smooth);
-        }
-
-        .send-txt-btn:hover {
-            transform: translate(2px);
-        }
-
-        .feed-composer {
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            border-radius: 24px; 
-            padding: 28px; 
-            margin-bottom: 32px; 
-            max-width: 600px; 
-            width: 100%; 
-            margin-left: auto; 
-            margin-right: auto;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .feed-composer textarea { 
-            width: 100%; 
-            height: 90px; 
-            background: var(--bg-secondary); 
-            border: 1px solid var(--border-color); 
-            border-radius: 16px; 
-            padding: 16px; 
-            color: var(--text-color); 
-            outline: none; 
-            resize: none; 
-            font-size: 15px; 
-            margin-bottom: 16px; 
-            transition: var(--transition-smooth);
-        }
-
-        .feed-composer textarea:focus {
-            border-color: var(--accent-glow);
-            background: var(--bg-card);
-        }
-        
-        .feed-composer-actions { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-        
-        .feed-posts-container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 32px; 
-            max-width: 600px; 
-            width: 100%; 
-            margin-left: auto; 
-            margin-right: auto; 
-        }
-        
-        .insta-post { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            border-radius: 24px; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            position: relative; 
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .post-header { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 20px; 
-            border-bottom: 1px solid var(--border-color); 
-        }
-        
-        .post-author-info { 
-            display: flex; 
-            align-items: center; 
-            gap: 14px; 
-            cursor: pointer; 
-        }
-        
-        .post-header img { 
-            width: 42px; 
-            height: 42px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-        }
-        
-        .post-header h4 { 
-            font-size: 15px; 
-            font-weight: 700; 
-            color: var(--text-color); 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-        }
-        
-        .post-body { 
-            padding: 20px 24px; 
-            font-size: 15px; 
-            line-height: 1.65; 
-        }
-
-        .post-body img {
-            width: 100%;
-            max-height: 450px;
-            display: block;
-            border-radius: 16px;
-            margin-top: 14px;
-            object-fit: cover;
-            box-shadow: var(--shadow-md);
-        }
-
-        .aesthetic-follow-btn {
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-            border: 1px solid #cbd5e1;
-            box-shadow: var(--shadow-sm);
-            color: #334155; 
-            padding: 8px 16px; 
-            border-radius: 12px; 
-            font-size: 13px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: var(--transition-smooth);
-        }
-
-        .aesthetic-follow-btn:hover {
-            background: #f1f5f9;
-            color: var(--text-color);
-        }
-
-        .aesthetic-follow-btn.unfollow-mode {
-            background: #fff5f5;
-            color: var(--accent-rose);
-            border-color: #fca5a5;
-        }
-
-        .aesthetic-follow-btn.unfollow-mode:hover {
-            background: #fee2e2;
-        }
-
-        .verified-badge-texture-star {
-            width: 20px; 
-            height: 20px; 
-            display: inline-block; 
-            vertical-align: middle; 
-            flex-shrink: 0;
-            filter: drop-shadow(0px 2px 4px rgba(0, 149, 246, 0.25));
-        }
-
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(15,23,42,0.3); 
-            backdrop-filter: blur(12px); 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 100; 
-            animation: fadeIn 0.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .modal-content { 
-            background: var(--bg-card); 
-            padding: 36px; 
-            border-radius: 32px; 
-            border: 1px solid var(--border-color); 
-            width: 90%; 
-            max-width: 460px; 
-            text-align: center; 
-            position: relative; 
-            box-shadow: var(--shadow-lg); 
-        }
-        
-        .close-modal { 
-            position: absolute; 
-            top: 20px; 
-            right: 24px; 
-            font-size: 26px; 
-            color: var(--text-muted); 
-            cursor: pointer; 
-            transition: var(--transition-smooth);
-        }
-
-        .close-modal:hover {
-            color: var(--text-color);
-        }
-        
-        .input-group { 
-            margin-bottom: 20px; 
-            text-align: left; 
-        }
-        
-        .input-group label { 
-            display: block; 
-            font-size: 14px; 
-            margin-bottom: 8px; 
-            font-weight: 600; 
-            color: var(--text-muted); 
-        }
-        
-        .input-group input { 
-            width: 100%; 
-            padding: 14px; 
-            border: 1px solid var(--border-color); 
-            border-radius: 14px; 
-            font-size: 15px; 
-            background: var(--bg-secondary); 
-            color: var(--text-color); 
-            outline: none; 
-            transition: var(--transition-smooth);
-        }
-
-        .input-group input:focus {
-            border-color: var(--accent-glow);
-            background: var(--bg-card);
-        }
-        
-        .main-btn {
-            width: 100%; 
-            padding: 16px; 
-            background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
-            color: #fff; 
-            border: 1px solid #0284c7; 
-            border-radius: 14px; 
-            font-size: 15px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2);
-            transition: var(--transition-smooth);
-        }
-
-        .main-btn:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-        }
-        
-        .secondary-btn {
-            width: 100%; 
-            padding: 16px; 
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-            color: #334155; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 14px; 
-            font-size: 15px; 
-            cursor: pointer; 
-            margin-top: 12px; 
-            font-weight: 600; 
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition-smooth);
-        }
-
-        .secondary-btn:hover {
-            background: #f1f5f9;
-        }
-        
-        .no-chat-selected { 
-            flex: 1; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            color: var(--text-muted); 
-            font-size: 15px; 
-            font-weight: 500;
-        }
-        
-        .profile-modal-hdr { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            margin-bottom: 24px; 
-            border-bottom: 1px solid var(--border-color); 
-            padding-bottom: 24px; 
-        }
-        
-        .profile-stat-row { 
-            display: flex; 
-            gap: 36px; 
-            margin: 16px 0; 
-        }
-        
-        .profile-stat-box h5 { 
-            font-size: 22px; 
-            font-weight: 800; 
-            color: var(--text-color); 
-        }
-        
-        .profile-stat-box p { 
-            font-size: 13px; 
-            color: var(--text-muted); 
-            font-weight: 500;
-        }
-        
-        .profile-description-txt { 
-            font-size: 15px; 
-            color: var(--text-color); 
-            margin-top: 8px; 
-            line-height: 1.5; 
-            font-style: italic; 
-            background: var(--bg-secondary); 
-            padding: 12px 18px; 
-            border-radius: 16px; 
-            width: 100%; 
-            border: 1px solid var(--border-color); 
-        }
-
-        .admin-badge-indicator {
-            background: var(--admin-glow);
-            color: #ffffff;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-left: 8px;
-        }
-
-        @media (max-width: 768px) {
-            body { background: var(--bg-card); }
-            .dashboard-layout { width: 100vw; height: 100vh; max-height: 100vh; border: none; border-radius: 0; }
-            .app-navbar { display: none; }
-            .mobile-header { display: flex; }
-            .mobile-bottom-tabs { display: flex; }
-            
-            .sidebar, .chat-area, .feed-area, .search-tab-area {
-                width: 100%; height: 100%; display: none !important;
-            }
-            
-            .dashboard-layout[data-tab="chats"] #app-sidebar-pane { display: flex !important; }
-            .dashboard-layout[data-tab="feed"] #app-feed-pane { display: flex !important; }
-            .dashboard-layout[data-tab="search"] #app-search-pane { display: flex !important; }
-            .dashboard-layout[data-tab="admin"] #app-admin-pane { display: flex !important; }
-            
-            .dashboard-layout.chat-active #app-sidebar-pane { display: none !important; }
-            .dashboard-layout.chat-active #app-chat-pane { display: flex !important; }
-            
-            .back-arrow { display: inline-flex; }
-            .msg { max-width: 85%; }
-            .search-split-layout { grid-template-columns: 1fr; gap: 20px; }
-            .search-column-panel { max-height: 60vh; }
-            .feed-area, .search-tab-area { padding: 20px 16px; }
-        }
-    </style>
-</head>
-<body>
-
-    <div id="loading-screen">Syncing spatial core databases...</div>
-
-    <div id="login-container" class="form-container" style="display: none;">
-        <div class="app-logo-title">AuraHub Pro</div>
-        <div class="input-group"><input type="email" id="login-email" placeholder="Email Address"></div>
-        <div class="input-group"><input type="password" id="login-password" placeholder="Password"></div>
-        <button id="email-primary-btn" class="main-btn">Sign In</button>
-        <button id="auth-toggle-mode-btn" class="secondary-btn">Create New Account</button>
-        <div style="margin:16px 0; color:var(--text-muted); font-size:13px; font-weight:600;">OR</div>
-        <button id="google-login-btn" class="secondary-btn" style="color: var(--accent-glow);">Log in with Google</button>
-    </div>
-
-    <div id="profile-setup-container" class="form-container" style="display: none;">
-        <div class="app-logo-title">Profile Matrix</div>
-        <form id="profile-form">
-            <div class="input-group"><input type="text" id="setup-username" placeholder="Username" required></div>
-            <div class="input-group"><input type="text" id="setup-name" placeholder="Full Name" required></div>
-            <button type="submit" class="main-btn">Complete Matrix Setup</button>
-        </form>
-    </div>
-
-    <div id="dashboard-container" class="dashboard-layout" data-tab="chats" style="display: none;">
-        <div class="app-navbar">
-            <div class="nav-brand" onclick="switchTab('chats')">AuraHub Pro</div>
-            <div class="nav-links">
-                <button id="nav-btn-admin" class="nav-item" onclick="switchTab('admin')" style="display: none; color: var(--admin-glow); font-weight: 800;">⚡ Admin Terminal</button>
-                <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
-                <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
-                <button id="nav-btn-search" class="nav-item" onclick="switchTab('search')">Search Hub</button>
-                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--accent-glow); font-weight: bold;">🔔 Setup Alerts</button>
-                <button onclick="triggerLogoutSession()" class="nav-item" style="color: var(--accent-rose);">Logout</button>
-            </div>
-        </div>
-
-        <div class="mobile-header">
-            <div class="nav-brand" onclick="switchTab('chats')">AuraHub Pro</div>
-            <div style="display: flex; gap: 8px;">
-                <button id="mobile-nav-btn-admin" class="nav-item" onclick="switchTab('admin')" style="display: none; color: var(--admin-glow); font-weight: 800;">⚡</button>
-                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--accent-glow); font-weight: bold; font-size: 13px;">🔔 Alerts</button>
-            </div>
-        </div>
-
-        <div class="main-content-area">
-            <div class="sidebar" id="app-sidebar-pane">
-                <div class="user-bar">
-                    <img id="dash-avatar" src="" onclick="openMyOwnProfile()" alt="Profile Avatar">
-                    <div class="user-details" onclick="openMyOwnProfile()">
-                        <h3 id="dash-username">@username</h3>
-                        <p id="dash-display-name">Loading parameters...</p>
-                    </div>
-                </div>
-                <div class="friends-list-container">
-                    <div class="friends-list-heading">Channels List</div>
-                    <div id="friends-list"></div>
-                </div>
-            </div>
-
-            <div class="chat-area" id="app-chat-pane">
-                <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1; height: 100%;">
-                    <div class="chat-header">
-                        <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
-                        <div class="chat-header-meta"><h3 id="chat-with-heading">Chat Terminal</h3></div>
-                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect</button>
-                    </div>
-                    
-                    <div id="messages-box" class="messages-box"></div>
-                    
-                    <div class="chat-input-wrapper">
-                        <div class="chat-input-container">
-                            <button id="chat-file-trigger" class="action-icon-btn" title="Add File">
-                                <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
-                            </button>
-                            <input type="file" id="chat-file-input" accept="image/*" style="display: none;">
-
-                            <button id="voice-memo-btn" class="action-icon-btn" title="Voice Note">
-                                <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zm6 8v1a6 6 0 0 1-12 0v-1"/></svg>
-                            </button>
-
-                            <input type="text" id="message-input" placeholder="Transmit packet data...">
-                            <button id="send-msg-btn" class="send-txt-btn">Send</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="no-chat-fallback" class="no-chat-selected"><p>Select a node parameters node index to begin transmission</p></div>
-            </div>
-
-            <div class="feed-area" id="app-feed-pane">
-                <div class="feed-composer">
-                    <textarea id="feed-post-text" placeholder="Publish updates to the matrix..."></textarea>
-                    <div class="feed-composer-actions">
-                        <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 14px;" id="feed-file-trigger">Add Media File</button>
-                        <input type="file" id="feed-file-input" accept="image/*" style="display: none;">
-                        <button class="main-btn" style="width: auto; padding: 8px 16px;" id="submit-feed-post-btn">Publish Post</button>
-                    </div>
-                    <div id="feed-file-preview" style="font-size: 13px; color: var(--accent-glow); margin-top: 10px; display: none; font-weight: 600;">Attachment payload staged successfully.</div>
-                </div>
-                <div id="feed-posts-container" class="feed-posts-container"></div>
-            </div>
-
-            <div class="search-tab-area" id="app-search-pane">
-                <div class="search-pane-header">
-                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Query creator index or keywords...">
-                </div>
-                <div class="search-split-layout">
-                    <div class="search-column-panel">
-                        <div class="search-section-title">Creator Index Nodes</div>
-                        <div id="search-creators-results" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="feed-area" id="app-admin-pane" style="display: none; padding: 28px; width: 100%; overflow-y: auto;">
-                <div class="feed-composer" style="max-width: 800px; border-color: var(--admin-glow);">
-                    <h2 style="color: var(--admin-glow); margin-bottom: 16px; text-align: left; display: flex; align-items: center; gap: 8px;">System Core Terminal <span>[Root Access Authorized]</span></h2>
-                    <p style="text-align: left; font-size: 14px; margin-bottom: 24px; color: var(--text-muted);">Welcome back, Administrator <strong>yaseen</strong>. Enter core override scripts below.</p>
-                    
-                    <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); text-align: left;">
-                        <h4 style="margin-bottom: 8px; color: var(--text-color);">Interactive Command Console</h4>
-                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-                            Available commands: <br>
-                            <code>/verify [username]</code> - Grant verification manually to any target node account handle.<br>
-                            <code>/unverify [username]</code> - Strip verification manually from a target node account handle.<br>
-                            <code>/verify-all</code> - Instantly apply the badge to every profile registered on the network.<br>
-                            <code>/unverify-all</code> - Strip verification from all network profiles completely.
-                        </p>
-                        <div style="display: flex; gap: 12px;">
-                            <input type="text" id="admin-command-input" placeholder="Execute core override switch pipeline (e.g. /verify-all)..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none;">
-                            <button class="main-btn" id="admin-command-submit-btn" style="width: auto; padding: 0 24px; background: var(--admin-glow); border-color: var(--admin-glow);">Run Script</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mobile-bottom-tabs">
-            <button id="tab-btn-chats" class="tab-btn active" onclick="switchTab('chats')">Messages</button>
-            <button id="tab-btn-feed" class="tab-btn" onclick="switchTab('feed')">Explore</button>
-            <button id="tab-btn-search" class="tab-btn" onclick="switchTab('search')">Search</button>
-            <button id="tab-btn-admin" class="tab-btn" onclick="switchTab('admin')" style="display:none; color:var(--admin-glow);">Admin</button>
-        </div>
-    </div>
-
-    <div id="view-profile-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeViewProfileModal()">&times;</span>
-            <div class="profile-modal-hdr">
-                <div style="width:90px; height:90px; border-radius:50%; overflow:hidden; margin-bottom: 12px; border: 2.5px solid var(--accent-glow); box-shadow: var(--shadow-sm);">
-                    <img id="view-modal-avatar" src="" style="width:100%; height:100%; object-fit:cover;" alt="Avatar">
-                </div>
-                <h2 id="view-modal-name" style="display:flex; align-items:center; gap:6px;">Node Profile</h2>
-                <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700; margin-top: 4px;">@username</p>
-                <div id="view-modal-description" class="profile-description-txt">No descriptive bio assigned yet.</div>
-                <button id="modal-follow-action-btn" class="main-btn" style="margin-top: 16px; display: none;"></button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
-            authDomain: "commoftheworld.firebaseapp.com", 
-            projectId: "commoftheworld",
-            storageBucket: "commoftheworld.firebasestorage.app",
-            messagingSenderId: "322496812191",
-            appId: "1:322496812191:web:1bf0048089df350acb7eaa"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
-
-        const loadingScreen = document.getElementById('loading-screen');
-        const loginContainer = document.getElementById('login-container');
-        const profileSetupContainer = document.getElementById('profile-setup-container');
-        const dashboardContainer = document.getElementById('dashboard-container');
-        const friendsListElement = document.getElementById('friends-list');
-        const messagesBox = document.getElementById('messages-box');
-        const messageInput = document.getElementById('message-input');
-        const primaryAuthBtn = document.getElementById('email-primary-btn');
-        const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
-        const hubSearchBar = document.getElementById('hub-main-search-bar');
-        
-        const chatFileInput = document.getElementById('chat-file-input');
-        const feedFileInput = document.getElementById('feed-file-input');
-        const feedFilePreview = document.getElementById('feed-file-preview');
-        const voiceMemoBtn = document.getElementById('voice-memo-btn');
-
-        let currentUser = null, userDataRecord = null, activeChatFriendData = null;
-        let unsubscribeChatListener = null;
-        let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
-        let globalCachedFeedPosts = [], globalCachedAllUsers = [];
-        let stagedChatFileBase64 = "", stagedFeedFileBase64 = "";
-
-        const getVerifiedTextureBadgeMarkup = () => `
-            <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2.25l1.826 1.135a1.5 1.5 0 001.385.16l2.072-.674a1.5 1.5 0 011.83 1.222l.374 2.148a1.5 1.5 0 00.75 1.127l1.91 1.025a1.5 1.5 0 01.698 2.094l-1.025 1.91a1.5 1.5 0 000 1.353l1.025 1.91a1.5 1.5 0 01-.699 2.094l-1.91 1.025a1.5 1.5 0 00-.749 1.127l-.374 2.148a1.5 1.5 0 01-1.83 1.222l-2.072-.674a1.5 1.5 0 00-1.385.16L12 21.75l-1.826-1.135a1.5 1.5 0 00-1.385-.16l-2.072.674a1.5 1.5 0 01-1.83-1.222l-.374-2.148a1.5 1.5 0 00-.75-1.127l-1.91-1.025a1.5 1.5 0 01-.698-2.094l1.025-1.91a1.5 1.5 0 000-1.353l-1.025-1.91a1.5 1.5 0 01.699-2.094l1.91-1.025a1.5 1.5 0 00.749-1.127l.374-2.148a1.5 1.5 0 011.83-1.222l2.072.674a1.5 1.5 0 001.385-.16L12 2.25z" fill="#0095f6"/>
-                <path d="M8.5 12.25l2.25 2.25 5.25-5.5" stroke="#ffffff" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        `;
-
-        const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
-
-        const getReadReceiptMarkup = (isSeen) => {
-            return isSeen ? 
-                `<span class="read-receipt-ticks seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>` : 
-                `<span class="read-receipt-ticks unseen"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>`;
-        };
-
-        window.requestPushNotificationPerms = function() {
-            if (!("Notification" in window)) {
-                alert("This device browser environment does not support system push notices.");
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    new Notification("AuraHub Matrix Active", { body: "System event alert pipelines running successfully." });
-                }
-            });
-        };
-
-        function dispatchClosedAlertPacket(senderName, textContent) {
-            if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Incoming operational payload asset packet received.", tag: "chat" });
-            }
-        }
-
-        window.switchTab = function(tabName) {
-            dashboardContainer.setAttribute('data-tab', tabName);
-            dashboardContainer.classList.remove('chat-active');
-
-            const chatPane = document.getElementById('app-chat-pane');
-            const feedPane = document.getElementById('app-feed-pane');
-            const searchPane = document.getElementById('app-search-pane');
-            const adminPane = document.getElementById('app-admin-pane');
-            const sidePane = document.getElementById('app-sidebar-pane');
-            
-            ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'].forEach(b => document.getElementById(b)?.classList.remove('active'));
-
-            if (window.innerWidth > 768) {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
-                
-                if (tabName === 'feed') {
-                    feedPane.style.display = 'flex';
-                    document.getElementById('nav-btn-feed')?.classList.add('active');
-                } else if (tabName === 'search') {
-                    searchPane.style.display = 'flex';
-                    document.getElementById('nav-btn-search')?.classList.add('active');
-                    triggerHubComprehensiveSearch();
-                } else if (tabName === 'admin') {
-                    adminPane.style.display = 'block';
-                    document.getElementById('nav-btn-admin')?.classList.add('active');
-                } else {
-                    sidePane.style.display = 'flex'; chatPane.style.display = 'flex';
-                    document.getElementById('nav-btn-chats')?.classList.add('active');
-                }
-            } else {
-                document.getElementById(`tab-btn-${tabName}`)?.classList.add('active');
-                if (tabName === 'search') triggerHubComprehensiveSearch();
-            }
-        };
-
-        window.exitChatToSidebar = function() {
-            dashboardContainer.classList.remove('chat-active');
-            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
-        };
-
-        document.getElementById('chat-file-trigger').addEventListener('click', () => chatFileInput.click());
-        document.getElementById('feed-file-trigger').addEventListener('click', () => feedFileInput.click());
-
-        chatFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (el) => {
-                stagedChatFileBase64 = el.target.result;
-                sendCustomPayload("[Payload File Transmitted]");
-            };
-            reader.readAsDataURL(file);
-        });
-
-        feedFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (el) => {
-                stagedFeedFileBase64 = el.target.result;
-                feedFilePreview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        });
-
-        voiceMemoBtn.addEventListener('click', async () => {
-            if (!mediaRecorder) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
-                    mediaRecorder.onstop = () => {
-                        const blob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
-                        const reader = new FileReader();
-                        reader.onload = (el) => {
-                            sendCustomPayload("[Voice Packet Matrix Payload Attached]", el.target.result);
-                        };
-                        reader.readAsDataURL(blob);
-                        audioChunks = [];
-                    };
-                    mediaRecorder.start();
-                    voiceMemoBtn.classList.add('recording-active');
-                } catch (err) {
-                    alert("Capture stream initialization fault.");
-                }
-            } else {
-                mediaRecorder.stop();
-                mediaRecorder.stream.getTracks().forEach(track => track.stop());
-                mediaRecorder = null;
-                voiceMemoBtn.classList.remove('recording-active');
-            }
-        });
-
-        window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
-
-        window.renderProfileCard = async function(userObj, isOwnProfile = false) {
-            const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-            
-            document.getElementById('view-modal-avatar').src = userObj.photoURL;
-            document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml} ${adminHtml}`;
-            document.getElementById('view-modal-username').innerText = "@" + userObj.username;
-            document.getElementById('view-modal-description').innerText = userObj.description || "Active Node.";
-            
-            const actionBtn = document.getElementById('modal-follow-action-btn');
-            if (!isOwnProfile && userDataRecord) {
-                actionBtn.style.display = "block";
-                const activeFollowing = userDataRecord.following || [];
-                const isFollowing = activeFollowing.includes(userObj.uid);
-                
-                if (isFollowing) {
-                    actionBtn.innerText = "Unfollow User";
-                    actionBtn.style.background = "var(--accent-rose)";
-                    actionBtn.onclick = () => toggleFollowState(userObj.uid, false);
-                } else {
-                    actionBtn.innerText = "Follow User";
-                    actionBtn.style.background = "var(--accent-glow)";
-                    actionBtn.onclick = () => toggleFollowState(userObj.uid, true);
-                }
-            } else {
-                actionBtn.style.display = "none";
-            }
-            
-            document.getElementById('view-profile-modal').style.display = 'flex';
-        };
-
-        // Follow & Unfollow Structural Pipeline Implementation
-        async function toggleFollowState(targetUid, stateFlag) {
-            if (!currentUser || !userDataRecord) return;
-            let currentFollowing = userDataRecord.following || [];
-            
-            if (stateFlag) {
-                if (!currentFollowing.includes(targetUid)) currentFollowing.push(targetUid);
-            } else {
-                currentFollowing = currentFollowing.filter(id => id !== targetUid);
-            }
-            
-            await updateDoc(doc(db, "users", currentUser.uid), { following: currentFollowing });
-            userDataRecord.following = currentFollowing;
-            
-            const updatedSnap = await getDoc(doc(db, "users", targetUid));
-            if (updatedSnap.exists()) renderProfileCard(updatedSnap.data(), false);
-            
-            triggerHubComprehensiveSearch();
-            loadFriendsSidebarList();
-        }
-
-        // Administrative Pipeline Shell Controls Module Script
-        document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
-            if (userDataRecord.username !== 'yaseen') return;
-            const cmdInput = document.getElementById('admin-command-input');
-            const statement = cmdInput.value.trim();
-            if(!statement) return;
-
-            if (statement === '/verify-all') {
-                for (let userNode of globalCachedAllUsers) {
-                    await updateDoc(doc(db, "users", userNode.uid), { verified: true });
-                }
-                alert("Core override successful: Network verify execution completed.");
-            } else if (statement === '/unverify-all') {
-                for (let userNode of globalCachedAllUsers) {
-                    if (userNode.username !== 'yaseen') {
-                        await updateDoc(doc(db, "users", userNode.uid), { verified: false });
-                    }
-                }
-                alert("Core override successful: Verification stripped globally.");
-            } else if (statement.startsWith('/verify ')) {
-                const targetNode = statement.replace('/verify ', '').trim().toLowerCase();
-                const found = globalCachedAllUsers.find(u => u.username === targetNode);
-                if (found) {
-                    await updateDoc(doc(db, "users", found.uid), { verified: true });
-                    alert(`Verification granted manually to @${targetNode}`);
-                } else { alert("User node target parameters not found."); }
-            } else if (statement.startsWith('/unverify ')) {
-                const targetNode = statement.replace('/unverify ', '').trim().toLowerCase();
-                if (targetNode === 'yaseen') return alert("System structural failure: Cannot self-strip authorization.");
-                const found = globalCachedAllUsers.find(u => u.username === targetNode);
-                if (found) {
-                    await updateDoc(doc(db, "users", found.uid), { verified: false });
-                    alert(`Verification stripped from @${targetNode}`);
-                } else { alert("User node target parameters not found."); }
-            } else { alert("Instruction phrase sequence invalid."); }
-            cmdInput.value = "";
-        });
-
-        window.openMyOwnProfile = function() { if (userDataRecord) renderProfileCard(userDataRecord, true); };
-        document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatFriendData) renderProfileCard(activeChatFriendData, false); });
-
-        async function triggerHubComprehensiveSearch() {
-            const filterText = hubSearchBar.value.trim().toLowerCase();
-            const creatorsContainer = document.getElementById('search-creators-results');
-            creatorsContainer.innerHTML = "";
-
-            globalCachedAllUsers.forEach(u => {
-                if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
-                const tickHtml = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                const adminHtml = (u.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-                
-                const currentFollowing = userDataRecord?.following || [];
-                const isFollowed = currentFollowing.includes(u.uid);
-                
-                const row = document.createElement('div');
-                row.className = "friend-item";
-                row.style.justifyContent = "space-between";
-                row.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:16px;">
-                        <img src="${u.photoURL}">
-                        <div class="info">
-                            <h4>${u.fullName} ${tickHtml} ${adminHtml}</h4>
-                            <p>@${u.username}</p>
-                        </div>
-                    </div>
-                    ${u.uid !== currentUser.uid ? `
-                        <button class="aesthetic-follow-btn ${isFollowed ? 'unfollow-mode' : ''}" onclick="event.stopPropagation(); toggleFollowState('${u.uid}', ${!isFollowed})">
-                            ${isFollowed ? 'Unfollow' : 'Follow'}
-                        </button>
-                    ` : ''}
-                `;
-                row.onclick = () => renderProfileCard(u, u.uid === currentUser.uid);
-                creatorsContainer.appendChild(row);
-            });
-        }
-
-        function renderExploreTimelineFeed() {
-            const feedContainer = document.getElementById('feed-posts-container');
-            feedContainer.innerHTML = "";
-            globalCachedFeedPosts.forEach(postItem => {
-                const post = postItem.data;
-                const card = document.createElement('div');
-                card.className = 'insta-post';
-                const verifiedTick = (post.authorUsername === 'yaseen' || post.verified) ? getVerifiedTextureBadgeMarkup() : "";
-                const adminHtml = (post.authorUsername === 'yaseen') ? getAdminBadgeMarkup() : "";
-
-                card.innerHTML = `
-                    <div class="post-header">
-                        <div class="post-author-info">
-                            <img src="${post.authorPhoto}">
-                            <h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4>
-                        </div>
-                    </div>
-                    <div class="post-body">
-                        <p>${post.text}</p>
-                        ${post.attachedFile ? `<img src="${post.attachedFile}">` : ''}
-                    </div>
-                `;
-                feedContainer.appendChild(card);
-            });
-        }
-
-        document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
-            const text = document.getElementById('feed-post-text').value.trim();
-            if (!text && !stagedFeedFileBase64) return;
-            
-            await addDoc(collection(db, "globalFeed"), {
-                authorName: userDataRecord.fullName,
-                authorUsername: userDataRecord.username,
-                authorPhoto: userDataRecord.photoURL,
-                text: text,
-                attachedFile: stagedFeedFileBase64,
-                verified: userDataRecord.verified || false,
-                timestamp: Date.now()
-            });
-            
-            document.getElementById('feed-post-text').value = "";
-            stagedFeedFileBase64 = "";
-            feedFilePreview.style.display = 'none';
-        });
-
-        function openChatWindow(friendData, elementDomNode) {
-            activeChatFriendData = friendData;
-            document.getElementById('no-chat-fallback').style.display = 'none';
-            document.getElementById('active-chat-window').style.display = 'flex';
-            dashboardContainer.classList.add('chat-active');
-            
-            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
-            if(elementDomNode) elementDomNode.classList.add('active');
-            
-            if(window.innerWidth <= 768) {
-                document.getElementById('app-sidebar-pane').style.display = 'none';
-                document.getElementById('app-chat-pane').style.display = 'flex';
-            }
-            
-            const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (friendData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-            document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml} ${adminHtml}`;
-
-            const roomKey = currentUser.uid < friendData.uid ? `${currentUser.uid}_${friendData.uid}` : `${friendData.uid}_${currentUser.uid}`;
-
-            if (unsubscribeChatListener) unsubscribeChatListener();
-            unsubscribeChatListener = onSnapshot(query(collection(db, "messages", roomKey, "records"), orderBy("timestamp", "asc")), function(snapshot) {
-                messagesBox.innerHTML = "";
-                snapshot.forEach(function(msgDoc) {
-                    const msg = msgDoc.data();
-                    const isSent = msg.senderId === currentUser.uid;
-                    
-                    if (!isSent && !msg.seen) {
-                        updateDoc(doc(db, "messages", roomKey, "records", msgDoc.id), { seen: true });
-                        dispatchClosedAlertPacket(friendData.fullName, msg.text);
-                    }
-
-                    const bubble = document.createElement('div');
-                    bubble.className = `msg ${isSent ? 'sent' : 'received'}`;
-                    
-                    let assetPayload = '';
-                    if (msg.file) assetPayload += `<img src="${msg.file}">`;
-                    if (msg.audio) assetPayload += `<audio src="${msg.audio}" controls></audio>`;
-
-                    bubble.innerHTML = `
-                        <p>${msg.text}</p>
-                        ${assetPayload}
-                        <div class="msg-meta-row">
-                            <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            ${isSent ? getReadReceiptMarkup(msg.seen) : ""}
-                        </div>
-                    `;
-                    messagesBox.appendChild(bubble);
-                });
-                messagesBox.scrollTop = messagesBox.scrollHeight;
-            });
-        }
-
-        async function sendCustomPayload(overrideText = null, voiceBase64 = null) {
-            const textValue = overrideText || messageInput.value.trim();
-            if (!textValue && !stagedChatFileBase64 && !voiceBase64) return;
-            
-            const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
-            
-            await addDoc(collection(db, "messages", roomKey, "records"), {
-                senderId: currentUser.uid,
-                text: textValue,
-                file: stagedChatFileBase64,
-                audio: voiceBase64,
-                timestamp: Date.now(),
-                seen: false
-            });
-            
-            if (!overrideText) messageInput.value = "";
-            stagedChatFileBase64 = "";
-            chatFileInput.value = "";
-        }
-
-        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
-        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
-
-        async function loadFriendsSidebarList() {
-            friendsListElement.innerHTML = "";
-            globalCachedAllUsers.forEach(fData => {
-                if (fData.uid === currentUser.uid) return;
-                const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                const adminHtml = (fData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-                const item = document.createElement('div');
-                item.className = 'friend-item';
-                if(activeChatFriendData && activeChatFriendData.uid === fData.uid) item.classList.add('active');
-                item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
-                item.onclick = () => openChatWindow(fData, item);
-                friendsListElement.appendChild(item);
-            });
-        }
-
-        toggleAuthModeBtn.addEventListener('click', function() {
-            isSignUpMode = !isSignUpMode;
-            primaryAuthBtn.innerText = isSignUpMode ? "Register Node" : "Sign In";
-        });
-
-        primaryAuthBtn.addEventListener('click', function() {
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            if (isSignUpMode) {
-                createUserWithEmailAndPassword(auth, email, password);
-            } else {
-                signInWithEmailAndPassword(auth, email, password);
-            }
-        });
-
-        document.getElementById('google-login-btn').addEventListener('click', () => signInWithPopup(auth, provider));
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                const snap = await getDoc(doc(db, "users", user.uid));
-                loadingScreen.style.display = 'none';
-                if (snap.exists()) {
-                    userDataRecord = snap.data();
-                    launchDashboard(userDataRecord);
-                } else {
-                    profileSetupContainer.style.display = 'block';
-                    loginContainer.style.display = 'none';
-                }
-            } else {
-                loadingScreen.style.display = 'none';
-                loginContainer.style.display = 'block';
-                dashboardContainer.style.display = 'none';
-            }
-        });
-
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('setup-username').value.trim().toLowerCase();
-            const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), following: [], friends: [] };
-            profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
-            await setDoc(doc(db, "users", currentUser.uid), profileData);
-            launchDashboard(profileData);
-        });
-
-        function launchDashboard(data) {
-            profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; 
-            dashboardContainer.style.display = 'flex';
-            
-            if (data.username === 'yaseen') {
-                document.getElementById('nav-btn-admin').style.display = 'inline-block';
-                document.getElementById('tab-btn-admin').style.display = 'inline-block';
-                document.getElementById('mobile-nav-btn-admin').style.display = 'inline-block';
-            }
-            
-            const tickHtml = (data.verified || data.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (data.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-            document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml} ${adminHtml}`;
-            document.getElementById('dash-display-name').innerText = data.fullName;
-            document.getElementById('dash-avatar').src = data.photoURL;
-
-            onSnapshot(collection(db, "users"), (uSnap) => {
-                globalCachedAllUsers = [];
-                uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); if (uDoc.id === currentUser.uid) userDataRecord = uDoc.data(); });
-                loadFriendsSidebarList();
-            });
-
-            onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => {
-                globalCachedFeedPosts = [];
-                snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() }));
-                renderExploreTimelineFeed();
+                triggerHubComprehensiveSearch();
             });
 
             switchTab('chats');
