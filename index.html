@@ -54,6 +54,7 @@
             max-width: 360px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            margin: 20px;
         }
 
         .app-logo-title {
@@ -70,7 +71,7 @@
             width: 100vw;
             height: 100vh;
             max-width: 1080px;
-            height: 90vh;
+            max-height: 90vh;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 28px;
@@ -89,6 +90,19 @@
             justify-content: space-between;
             padding: 0 28px;
             background: var(--bg-card);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .mobile-header {
+            display: none;
+            height: 60px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background: var(--bg-card);
+            flex-shrink: 0;
             z-index: 10;
         }
 
@@ -141,6 +155,7 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
+            cursor: pointer;
         }
 
         .tab-btn.active {
@@ -161,6 +176,7 @@
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
+            height: 100%;
         }
 
         .user-bar {
@@ -305,6 +321,7 @@
             flex-direction: column; 
             background: var(--bg-main); 
             min-width: 0; 
+            height: 100%;
         }
         
         .feed-area, .search-tab-area { 
@@ -378,41 +395,6 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.01); 
         }
         
-        .suggestions-dropdown-panel { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            border-radius: 14px; 
-            position: absolute; 
-            width: 100%; 
-            top: 60px; 
-            z-index: 40; 
-            max-height: 200px; 
-            overflow-y: auto; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-            display: none; 
-        }
-        
-        .suggestion-list-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            padding: 10px 16px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            border-bottom: 1px solid var(--bg-secondary); 
-        }
-        
-        .suggestion-list-item:hover { 
-            background: var(--bg-secondary); 
-        }
-        
-        .suggestion-list-item img { 
-            width: 28px; 
-            height: 28px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-        }
-        
         .search-section-title { 
             font-size: 12px; 
             font-weight: 800; 
@@ -432,6 +414,7 @@
             align-items: center; 
             gap: 14px; 
             background: var(--bg-card); 
+            flex-shrink: 0;
         }
         
         .chat-header h3 { 
@@ -454,8 +437,9 @@
             display: none; 
             background: none; 
             border: none; 
-            font-size: 18px; 
-            color: var(--text-color); 
+            font-size: 15px; 
+            font-weight: 700;
+            color: var(--accent-glow); 
             cursor: pointer; 
         }
 
@@ -476,27 +460,6 @@
             line-height: 1.5; 
             position: relative;
         }
-
-        .msg:hover .msg-delete-trigger-overlay {
-            display: flex;
-        }
-
-        .msg-delete-trigger-overlay {
-            position: absolute;
-            top: -12px;
-            right: 8px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 2px 6px;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--accent-rose);
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: none;
-            z-index: 5;
-        }
         
         .msg.sent { 
             background: var(--accent-purple); 
@@ -512,21 +475,6 @@
             border: 1px solid var(--border-color); 
         }
         
-        .msg img, .msg video { 
-            max-width: 100%; 
-            border-radius: 12px; 
-            margin-top: 6px; 
-            display: block; 
-            max-height: 220px; 
-            object-fit: cover; 
-        }
-        
-        .msg audio { 
-            display: block; 
-            margin-top: 6px; 
-            max-width: 100%; 
-        }
-        
         .msg-meta-row { 
             display: flex; 
             align-items: center; 
@@ -537,7 +485,6 @@
             opacity: 0.8; 
         }
 
-        /* Read Receipts Double Checks Layout Elements */
         .read-receipt-ticks {
             display: inline-flex;
             align-items: center;
@@ -554,16 +501,17 @@
             stroke-linejoin: round;
         }
         .read-receipt-ticks.seen {
-            color: #38bdf8; /* Double Blue Check */
+            color: #38bdf8;
         }
         .read-receipt-ticks.unseen {
-            color: #94a3b8; /* Single Gray Check */
+            color: #94a3b8;
         }
 
         .chat-input-wrapper { 
             padding: 20px; 
             background: var(--bg-card); 
             border-top: 1px solid var(--border-color); 
+            flex-shrink: 0;
         }
         
         .chat-input-container {
@@ -594,24 +542,8 @@
             align-items: center; 
             justify-content: center; 
             color: var(--text-muted); 
-            transition: color 0.2s; 
         }
         
-        .action-icon-btn:hover { 
-            color: var(--text-color); 
-        }
-        
-        .action-icon-btn.recording-active {
-            color: var(--accent-rose);
-            animation: pulseVoiceRecordingEffect 1.5s infinite;
-        }
-
-        @keyframes pulseVoiceRecordingEffect {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
-
         .action-icon-btn svg { 
             width: 22px; 
             height: 22px; 
@@ -712,126 +644,10 @@
             gap: 4px; 
         }
         
-        .post-media { 
-            width: 100%; 
-            max-height: 480px; 
-            object-fit: cover; 
-        }
-        
-        .post-media-wrap { 
-            position: relative; 
-            width: 100%; 
-            display: flex; 
-            justify-content: center; 
-        }
-        
         .post-body { 
             padding: 18px 20px; 
             font-size: 14px; 
             line-height: 1.6; 
-        }
-        
-        .post-body .author-name { 
-            font-weight: 700; 
-            margin-right: 8px; 
-            color: var(--accent-glow); 
-        }
-        
-        .post-actions-toolbar { 
-            display: flex; 
-            gap: 20px; 
-            padding: 0 4px 12px 4px; 
-            border-bottom: 1px solid var(--border-color); 
-        }
-        
-        .post-action-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            background: none; 
-            border: none; 
-            color: var(--text-color); 
-            font-size: 13px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: color 0.2s; 
-        }
-        
-        .post-action-item:hover { 
-            color: var(--accent-glow); 
-        }
-        
-        .post-action-item.liked { 
-            color: var(--accent-rose); 
-        }
-        
-        .post-action-item svg { 
-            width: 20px; 
-            height: 20px; 
-            fill: none; 
-            stroke: currentColor; 
-            stroke-width: 2; 
-        }
-        
-        .post-action-item.liked svg { 
-            fill: currentColor; 
-        }
-
-        .post-delete-icon-trigger { 
-            background: none; 
-            border: none; 
-            color: var(--text-muted); 
-            cursor: pointer; 
-            padding: 4px 8px; 
-            font-size: 13px; 
-            font-weight: 600; 
-            border-radius: 6px; 
-            transition: background 0.2s; 
-        }
-        
-        .post-delete-icon-trigger:hover { 
-            color: var(--accent-rose); 
-            background: #fff1f2; 
-        }
-
-        .post-comments-section { 
-            padding-top: 14px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px; 
-            max-height: 160px; 
-            overflow-y: auto; 
-        }
-        
-        .comment-row { 
-            font-size: 13px; 
-            line-height: 1.4; 
-            color: var(--text-color); 
-        }
-        
-        .comment-user { 
-            font-weight: 700; 
-            margin-right: 6px; 
-            color: var(--accent-purple); 
-        }
-        
-        .comment-input-row { 
-            display: flex; 
-            gap: 8px; 
-            margin-top: 14px; 
-            background: var(--bg-secondary); 
-            padding: 8px 14px; 
-            border-radius: 10px; 
-            border: 1px solid var(--border-color); 
-        }
-        
-        .comment-input-row input { 
-            flex: 1; 
-            background: transparent; 
-            border: none; 
-            color: var(--text-color); 
-            font-size: 13px; 
-            outline: none; 
         }
 
         .aesthetic-follow-btn {
@@ -844,24 +660,6 @@
             font-size: 12px; 
             font-weight: 600; 
             cursor: pointer; 
-            transition: all 0.2s ease;
-        }
-        
-        .aesthetic-follow-btn:hover { 
-            background: #f1f5f9; 
-            border-color: #94a3b8; 
-            color: var(--text-color); 
-        }
-        
-        .aesthetic-follow-btn.unfollow-btn { 
-            border-color: #fca5a5; 
-            color: var(--accent-rose); 
-            background: #fff5f5; 
-        }
-        
-        .aesthetic-follow-btn.unfollow-btn:hover { 
-            background: #fee2e2; 
-            border-color: #f87171; 
         }
 
         .verified-badge-texture-star {
@@ -906,11 +704,6 @@
             font-size: 24px; 
             color: var(--text-muted); 
             cursor: pointer; 
-            transition: color 0.2s; 
-        }
-        
-        .close-modal:hover { 
-            color: var(--text-color); 
         }
         
         .input-group { 
@@ -926,7 +719,7 @@
             color: var(--text-muted); 
         }
         
-        .input-group input, .input-group textarea, .input-group select { 
+        .input-group input { 
             width: 100%; 
             padding: 12px; 
             border: 1px solid var(--border-color); 
@@ -935,11 +728,6 @@
             background: var(--bg-secondary); 
             color: var(--text-color); 
             outline: none; 
-        }
-        
-        .input-group textarea { 
-            height: 60px; 
-            resize: none; 
         }
         
         .main-btn {
@@ -953,11 +741,7 @@
             font-weight: 700; 
             cursor: pointer; 
             box-shadow: 0 2px 4px rgba(2,132,199,0.2); 
-            transition: transform 0.1s, opacity 0.2s;
         }
-        
-        .main-btn:hover { opacity: 0.95; }
-        .main-btn:active { transform: scale(0.98); }
         
         .secondary-btn {
             width: 100%; 
@@ -970,12 +754,6 @@
             cursor: pointer; 
             margin-top: 8px; 
             font-weight: 600; 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        
-        .secondary-btn:hover { 
-            background: #f1f5f9; 
-            border-color: #94a3b8; 
         }
         
         .no-chat-selected { 
@@ -987,54 +765,6 @@
             font-size: 14px; 
         }
         
-        #status-viewer-modal .modal-content { 
-            max-width: 480px; 
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            padding: 30px; 
-            border-radius: 24px; 
-        }
-        
-        #status-media-container { 
-            width: 100%; 
-            min-height: 480px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            border-radius: 16px; 
-            overflow: hidden; 
-            background: #f1f5f9; 
-            position: relative;
-        }
-        
-        #status-viewer-img, #status-viewer-video { 
-            width: 100%; 
-            max-height: 70vh; 
-            object-fit: contain; 
-        }
-
-        .status-delete-overlay-btn {
-            position: absolute;
-            bottom: 16px;
-            right: 16px;
-            background: rgba(225, 29, 72, 0.9);
-            color: #ffffff;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: none;
-            transition: background 0.2s;
-        }
-
-        .status-delete-overlay-btn:hover {
-            background: rgba(225, 29, 72, 1);
-        }
-
         .profile-modal-hdr { 
             display: flex; 
             flex-direction: column; 
@@ -1073,24 +803,6 @@
             width: 100%; 
             border: 1px solid var(--border-color); 
         }
-        
-        .profile-posts-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 8px; 
-            max-height: 200px; 
-            overflow-y: auto; 
-            width: 100%; 
-            margin-top: 12px; 
-        }
-        
-        .profile-grid-item { 
-            width: 100%; 
-            aspect-ratio: 1; 
-            object-fit: cover; 
-            border-radius: 8px; 
-            border: 1px solid var(--border-color); 
-        }
 
         .admin-badge-indicator {
             background: var(--admin-glow);
@@ -1104,19 +816,28 @@
             margin-left: 6px;
         }
 
-        /* Responsive Breakpoints Engine Logic (PC vs Mobile View switching handles) */
+        /* Responsive Breakpoints Engine Logic */
         @media (max-width: 768px) {
             body { background: var(--bg-card); }
             .dashboard-layout { width: 100vw; height: 100vh; max-height: 100vh; border: none; border-radius: 0; }
             .app-navbar { display: none; }
+            .mobile-header { display: flex; }
             .mobile-bottom-tabs { display: flex; }
+            
             .sidebar, .chat-area, .feed-area, .search-tab-area {
-                position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none;
+                width: 100%; height: 100%; display: none;
             }
-            .sidebar { border-right: none; width: 100%; }
-            .dashboard-layout.chat-active .app-chat-pane { display: flex; z-index: 5; }
+            .sidebar { border-right: none; }
+            
+            /* Chat window state rules on mobile viewports */
+            .dashboard-layout.chat-active #app-sidebar-pane { display: none !important; }
+            .dashboard-layout.chat-active #app-chat-pane { display: flex !important; }
+            
             .back-arrow { display: block; }
             .msg { max-width: 80%; }
+            .search-split-layout { grid-template-columns: 1fr; gap: 16px; }
+            .search-column-panel { max-height: 40vh; }
+            .feed-area, .search-tab-area { padding: 16px; }
         }
     </style>
 </head>
@@ -1164,6 +885,11 @@
             </div>
         </div>
 
+        <div class="mobile-header">
+            <div class="nav-brand" onclick="switchTab('chats')">AuraHub Pro</div>
+            <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--accent-glow); font-weight: bold; font-size: 13px;">🔔 Alerts</button>
+        </div>
+
         <div class="main-content-area">
             <div class="sidebar" id="app-sidebar-pane">
                 <div class="user-bar">
@@ -1172,13 +898,9 @@
                         <h3 id="dash-username">@username</h3>
                         <p id="dash-display-name">Loading parameters...</p>
                     </div>
-                    <label for="status-file-input" class="action-icon-btn" title="Add to My Story" style="color: var(--accent-glow);">
-                        <svg viewBox="0 0 24 24" style="width:26px; height:26px;"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                    </label>
-                    <input type="file" id="status-file-input" accept="image/*,video/*" style="display:none;">
                 </div>
 
-                <div id="status-tray" class="story-tray"></div>
+                <div id="status-tray" class="story-tray" style="display:none;"></div>
                 
                 <div class="friends-list-container">
                     <div class="friends-list-heading">Direct Channels</div>
@@ -1189,30 +911,18 @@
             <div class="chat-area" id="app-chat-pane">
                 <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1; height: 100%;">
                     <div class="chat-header">
-                        <button class="back-arrow" onclick="exitChatToSidebar()">Back</button>
+                        <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
                         <div class="chat-header-meta">
                             <h3 id="chat-with-heading">Chat Terminal</h3>
                             <span id="chat-typing-indicator" class="typing-indicator-span">typing core transmission...</span>
                         </div>
-                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect Profile</button>
+                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect</button>
                     </div>
                     
                     <div id="messages-box" class="messages-box"></div>
                     
                     <div class="chat-input-wrapper">
                         <div class="chat-input-container">
-                            <label for="chat-image-input" class="action-icon-btn" title="Send Media File">
-                                <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-                            </label>
-                            <input type="file" id="chat-image-input" accept="image/*,video/*" style="display: none;">
-                            
-                            <button id="voice-memo-record-btn" class="action-icon-btn" title="Record Voice Memo">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-                                    <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-                                </svg>
-                            </button>
-
                             <input type="text" id="message-input" placeholder="Transmit packet data...">
                             <button id="send-msg-btn" class="send-txt-btn">Send</button>
                         </div>
@@ -1227,11 +937,9 @@
                 <div class="feed-composer">
                     <textarea id="feed-post-text" placeholder="Publish updates to the worldwide network matrix..."></textarea>
                     <div class="feed-composer-actions">
-                        <input type="file" id="feed-post-file" accept="image/*,video/*" style="display: none;">
-                        <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 14px;" onclick="document.getElementById('feed-post-file').click()">Add Asset</button>
+                        <div></div>
                         <button class="main-btn" style="width: auto; padding: 8px 16px;" id="submit-feed-post-btn">Publish Post</button>
                     </div>
-                    <div id="feed-file-preview-label" style="font-size: 12px; color: var(--accent-glow); margin-top: 6px; display: none;">Asset array payload staged.</div>
                 </div>
                 <div id="feed-posts-container" class="feed-posts-container"></div>
             </div>
@@ -1243,7 +951,6 @@
                         <button id="filter-sort-default" class="filter-toggle-btn active" onclick="toggleSearchSortFilter('default')">All Creators</button>
                         <button id="filter-sort-followed" class="filter-toggle-btn" onclick="toggleSearchSortFilter('most-followed')">🔥 Most Followed</button>
                     </div>
-                    <div class="suggestions-dropdown-panel" id="search-suggestions-overlay"></div>
                 </div>
                 
                 <div class="search-split-layout">
@@ -1269,31 +976,9 @@
                     
                     <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); text-align: left;">
                         <h4 style="margin-bottom: 8px; color: var(--text-color);">Interactive Command Console</h4>
-                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-                            Available commands: <br>
-                            <code>/verify [username]</code> - Grant a dynamic blue tick badge manually to any node.<br>
-                            <code>/verify-all</code> - Instantly apply the badge to every profile registered on the system.<br>
-                            <code>/unverify-all</code> - Strip the verification badge from all registered profiles.
-                        </p>
                         <div style="display: flex; gap: 12px;">
                             <input type="text" id="admin-command-input" placeholder="Execute core switch pipeline (e.g. /verify-all)..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none;">
                             <button class="main-btn" id="admin-command-submit-btn" style="width: auto; padding: 0 24px; background: var(--admin-glow); border-color: var(--admin-glow);">Run Script</button>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left;">
-                        <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
-                            <h4 style="margin-bottom: 8px;">Global Server Operations</h4>
-                            <button class="main-btn" style="background: var(--admin-glow); border-color: var(--admin-glow); margin-bottom: 8px;" onclick="alert('Database backup initiated.')">Backup Firestore Index Tables</button>
-                            <button class="secondary-btn" onclick="alert('Flushing client instances...')">Flush Node Caches</button>
-                        </div>
-                        <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
-                            <h4 style="margin-bottom: 8px;">Matrix Security Log</h4>
-                            <p style="font-family: monospace; font-size: 12px; color: var(--text-muted);">
-                                -> Auth status verified.<br>
-                                -> Auto-loop follower configurations: Force Enabled.<br>
-                                -> System integrity layout: Secure.
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -1317,7 +1002,6 @@
                 </div>
                 <h2 id="view-modal-name" style="display:flex; align-items:center; gap:6px;">Node Profile</h2>
                 <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700;">@username</p>
-                
                 <div class="profile-stat-row">
                     <div class="profile-stat-box">
                         <h5 id="profile-stat-followers">0</h5>
@@ -1329,23 +1013,7 @@
                     </div>
                 </div>
                 <div id="view-modal-description" class="profile-description-txt">No descriptive bio assigned yet.</div>
-
                 <button id="profile-action-follow-toggle-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--accent-glow); border-color: var(--accent-glow); color:#fff;"></button>
-            </div>
-            
-            <h4 style="text-align: left; font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Recent Node Posts</h4>
-            <div id="profile-posts-grid" class="profile-posts-grid"></div>
-        </div>
-    </div>
-
-    <div id="status-viewer-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeStatusViewer()">&times;</span>
-            <h3 id="status-author-name" style="text-align: left; margin-bottom: 12px;">Active Story Stream</h3>
-            <div id="status-media-container">
-                <img id="status-viewer-img" alt="Story Stream Content" style="display:none;">
-                <video id="status-viewer-video" controls autoplay style="display:none;"></video>
-                <button id="status-delete-action-btn" class="status-delete-overlay-btn" onclick="triggerActiveStatusDeletion()">Delete Story</button>
             </div>
         </div>
     </div>
@@ -1353,7 +1021,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
@@ -1376,21 +1044,14 @@
         const friendsListElement = document.getElementById('friends-list');
         const messagesBox = document.getElementById('messages-box');
         const messageInput = document.getElementById('message-input');
-        const chatTypingIndicator = document.getElementById('chat-typing-indicator');
-        const statusTray = document.getElementById('status-tray');
-        const statusFileInput = document.getElementById('status-file-input');
-        const chatImageInput = document.getElementById('chat-image-input');
-        const voiceMemoRecordBtn = document.getElementById('voice-memo-record-btn');
         const primaryAuthBtn = document.getElementById('email-primary-btn');
         const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
         const hubSearchBar = document.getElementById('hub-main-search-bar');
-        const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
 
         let currentUser = null, userDataRecord = null, activeChatFriendData = null;
-        let unsubscribeChatListener = null, unsubscribeTypingListener = null;
-        let activeStatusDatabase = {}, isSignUpMode = false, selectedFeedFileBase64 = "";
-        let globalCachedFeedPosts = [], globalCachedAllUsers = [], currentSearchSortMode = "default", viewingStatusNodeData = null;
-        let localAudioMediaRecorder = null, recordedVoiceChunks = [];
+        let unsubscribeChatListener = null;
+        let isSignUpMode = false;
+        let globalCachedFeedPosts = [], globalCachedAllUsers = [];
 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1400,7 +1061,6 @@
         `;
         const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
 
-        // Vector Path Read Receipts Engine Function (Double Checks injection)
         const getReadReceiptMarkup = (isSeen) => {
             if (isSeen) {
                 return `<span class="read-receipt-ticks seen" title="Seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>`;
@@ -1409,19 +1069,30 @@
             }
         };
 
-        // HTML5 Service Web Notification Engine
+        // Complete Operating Push Notification Manager Engine
         window.requestPushNotificationPerms = function() {
-            if (!("Notification" in window)) return;
+            if (!("Notification" in window)) {
+                alert("This device browser setup matrix does not support universal push alerts.");
+                return;
+            }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("AuraHub Engine Access Authorized", { body: "Universal Background Alerts Are Staged Mode.", icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=yaseen" });
+                    new Notification("AuraHub Engine Authorized", { 
+                        body: "Universal system core alerts have been activated completely.", 
+                        icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=yaseen" 
+                    });
+                } else {
+                    alert("Alert authorizations skipped or rejected.");
                 }
             });
         };
 
         function dispatchClosedAlertPacket(senderName, textContent) {
-            if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Transmitted packet payload assets.", tag: "chat-msg-node" });
+            if (Notification.permission === "granted") {
+                new Notification(`${senderName}`, { 
+                    body: textContent || "Transmitted node data asset payload standard transmission.", 
+                    tag: "chat-msg-node" 
+                });
             }
         }
 
@@ -1435,8 +1106,11 @@
             const tabButtons = ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'];
             tabButtons.forEach(b => { if(document.getElementById(b)) document.getElementById(b).classList.remove('active') });
 
-            // Universal layouts handling switching rows safely
-            chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
+            chatPane.style.display = 'none'; 
+            sidePane.style.display = 'none'; 
+            feedPane.style.display = 'none'; 
+            searchPane.style.display = 'none'; 
+            adminPane.style.display = 'none';
             dashboardContainer.classList.remove('chat-active');
 
             if (tabName === 'feed') {
@@ -1453,14 +1127,28 @@
                 if(document.getElementById('tab-btn-admin')) document.getElementById('tab-btn-admin').classList.add('active');
                 if(document.getElementById('nav-btn-admin')) document.getElementById('nav-btn-admin').classList.add('active');
             } else {
-                sidePane.style.display = 'flex'; chatPane.style.display = 'flex';
+                // Responsive view optimization handling rule mapping logic engine
+                if(window.innerWidth <= 768) {
+                    sidePane.style.display = 'flex';
+                    chatPane.style.display = 'none';
+                } else {
+                    sidePane.style.display = 'flex'; 
+                    chatPane.style.display = 'flex';
+                }
                 if(document.getElementById('tab-btn-chats')) document.getElementById('tab-btn-chats').classList.add('active');
                 if(document.getElementById('nav-btn-chats')) document.getElementById('nav-btn-chats').classList.add('active');
             }
         };
 
+        window.exitChatToSidebar = function() {
+            dashboardContainer.classList.remove('chat-active');
+            if(window.innerWidth <= 768) {
+                document.getElementById('app-chat-pane').style.display = 'none';
+                document.getElementById('app-sidebar-pane').style.display = 'flex';
+            }
+        };
+
         window.toggleSearchSortFilter = function(filterMode) {
-            currentSearchSortMode = filterMode;
             document.getElementById('filter-sort-default').classList.remove('active');
             document.getElementById('filter-sort-followed').classList.remove('active');
             if (filterMode === 'most-followed') document.getElementById('filter-sort-followed').classList.add('active');
@@ -1602,6 +1290,11 @@
             document.getElementById('active-chat-window').style.display = 'flex';
             dashboardContainer.classList.add('chat-active');
             
+            if(window.innerWidth <= 768) {
+                document.getElementById('app-sidebar-pane').style.display = 'none';
+                document.getElementById('app-chat-pane').style.display = 'flex';
+            }
+            
             const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (friendData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
             document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml} ${adminHtml}`;
@@ -1618,6 +1311,7 @@
                     
                     if (!isSent && !msg.seen) {
                         updateDoc(doc(db, "messages", roomKey, "records", msgId), { seen: true });
+                        dispatchClosedAlertPacket(friendData.fullName, msg.text);
                     }
 
                     const bubble = document.createElement('div');
@@ -1632,13 +1326,12 @@
                         </div>
                     `;
                     messagesBox.appendChild(bubble);
-                    if(!isSent && !msg.seen) dispatchClosedAlertPacket(friendData.fullName, msg.text);
                 });
                 messagesBox.scrollTop = messagesBox.scrollHeight;
             });
         }
 
-        async function sendCustomPayload(type, link) {
+        async function sendCustomPayload() {
             if (!activeChatFriendData || !messageInput.value.trim()) return;
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
             await addDoc(collection(db, "messages", roomKey, "records"), {
@@ -1650,9 +1343,8 @@
             messageInput.value = "";
         }
 
-        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload("text", null));
-        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload("text", null); });
-        window.exitChatToSidebar = function() { dashboardContainer.classList.remove('chat-active'); };
+        document.getElementById('send-msg-btn').addEventListener('click', sendCustomPayload);
+        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
 
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
@@ -1721,8 +1413,13 @@
         });
 
         function launchDashboard(data) {
-            profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; dashboardContainer.style.display = 'flex';
-            if (data.username === 'yaseen') document.getElementById('nav-btn-admin').style.display = 'inline-block';
+            profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; 
+            dashboardContainer.style.display = 'flex';
+            
+            if (data.username === 'yaseen') {
+                document.getElementById('nav-btn-admin').style.display = 'inline-block';
+                document.getElementById('tab-btn-admin').style.display = 'inline-block';
+            }
             
             const tickHtml = (data.verified || data.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (data.username === 'yaseen') ? getAdminBadgeMarkup() : "";
@@ -1741,9 +1438,16 @@
                 snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() }));
                 renderExploreTimelineFeed();
             });
+
+            // Run structural view allocation checks instantly on login setup
+            switchTab('chats');
         }
 
+        hubSearchBar.addEventListener('input', triggerHubComprehensiveSearch);
         window.triggerLogoutSession = () => signOut(auth).then(() => location.reload());
+        
+        // Listen for screen layout resize updates on-the-fly dynamically
+        window.addEventListener('resize', () => { switchTab('chats'); });
     </script>
 </body>
 </html>
