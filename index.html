@@ -1363,22 +1363,35 @@
             appId: "1:322496812191:web:1bf0048089df350acb7eaa"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
+        // Safety Wrapping initialization triggers
+        let app, auth, db, provider;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            provider = new GoogleAuthProvider();
+        } catch (e) {
+            console.error("Firebase startup fault: ", e);
+        }
 
-        const loadingScreen = document.getElementById('loading-screen');
-        const loginContainer = document.getElementById('login-container');
-        const profileSetupContainer = document.getElementById('profile-setup-container');
-        const dashboardContainer = document.getElementById('dashboard-container');
-        const friendsListElement = document.getElementById('friends-list');
-        const messagesBox = document.getElementById('messages-box');
-        const messageInput = document.getElementById('message-input');
-        const chatTypingIndicator = document.getElementById('chat-typing-indicator');
-        const statusTray = document.getElementById('status-tray');
-        const hubSearchBar = document.getElementById('hub-main-search-bar');
-        const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
+        // Defer selector mapping to ensure DOM attachment safety rules pass cleanly
+        let loadingScreen, loginContainer, profileSetupContainer, dashboardContainer;
+        let friendsListElement, messagesBox, messageInput, chatTypingIndicator;
+        let statusTray, hubSearchBar, suggestionsOverlay;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadingScreen = document.getElementById('loading-screen');
+            loginContainer = document.getElementById('login-container');
+            profileSetupContainer = document.getElementById('profile-setup-container');
+            dashboardContainer = document.getElementById('dashboard-container');
+            friendsListElement = document.getElementById('friends-list');
+            messagesBox = document.getElementById('messages-box');
+            messageInput = document.getElementById('message-input');
+            chatTypingIndicator = document.getElementById('chat-typing-indicator');
+            statusTray = document.getElementById('status-tray');
+            hubSearchBar = document.getElementById('hub-main-search-bar');
+            suggestionsOverlay = document.getElementById('search-suggestions-overlay');
+        });
 
         let currentUser = null, userDataRecord = null, activeChatFriendData = null;
         let unsubscribeChatListener = null, unsubscribeTypingListener = null;
@@ -1428,7 +1441,7 @@
             tabButtons.forEach(b => { if(document.getElementById(b)) document.getElementById(b).classList.remove('active') });
 
             chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
-            dashboardContainer.classList.remove('chat-active');
+            if (dashboardContainer) dashboardContainer.classList.remove('chat-active');
 
             if (tabName === 'feed') {
                 feedPane.style.display = 'flex'; 
@@ -1459,44 +1472,6 @@
             triggerHubComprehensiveSearch();
         };
 
-        document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
-            const cmdInput = document.getElementById('admin-command-input');
-            const token = cmdInput.value.trim();
-            if(!token) return;
-
-            if (token === '/verify-all') {
-                for (let uNode of globalCachedAllUsers) await updateDoc(doc(db, "users", uNode.uid), { verified: true });
-                alert("Core override successful: Global indexing verified badges online.");
-            } else if (token.startsWith('/verify ')) {
-                const target = token.replace('/verify ', '').trim().toLowerCase();
-                const matched = globalCachedAllUsers.find(u => u.username === target);
-                if (matched) {
-                    await updateDoc(doc(db, "users", matched.uid), { verified: true });
-                    alert(`Dynamic verification node attached to @${target}`);
-                }
-            } else { alert("Instruction execution fault: Command phrase invalid."); }
-            cmdInput.value = "";
-        });
-
-        async function enforceUniversalYaseenFollowNode(userProfileRecord, fallbackUid) {
-            const targetUid = userProfileRecord ? userProfileRecord.uid : fallbackUid;
-            if (!targetUid) return;
-            try {
-                const creatorsCollectionQuery = await getDocs(collection(db, "users"));
-                let yaseenTargetUid = null;
-                creatorsCollectionQuery.forEach(docRef => {
-                    if (docRef.data().username === "yaseen") yaseenTargetUid = docRef.data().uid;
-                });
-                if (yaseenTargetUid && targetUid !== yaseenTargetUid) {
-                    let currentSocialArray = userProfileRecord?.friends ? [...userProfileRecord.friends] : [];
-                    if (!currentSocialArray.includes(yaseenTargetUid)) {
-                        currentSocialArray.push(yaseenTargetUid);
-                        await updateDoc(doc(db, "users", targetUid), { friends: currentSocialArray });
-                    }
-                }
-            } catch (e) { console.error(e); }
-        }
-
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
@@ -1511,7 +1486,7 @@
             const followToggleBtn = document.getElementById('profile-action-follow-toggle-btn');
             if (!isOwnProfile) {
                 followToggleBtn.style.display = "block";
-                const currentFriendsList = userDataRecord.friends || [];
+                const currentFriendsList = userDataRecord ? (userDataRecord.friends || []) : [];
                 const isFollowing = currentFriendsList.includes(userObj.uid);
                 followToggleBtn.innerText = isFollowing ? "Unfollow" : "Follow User";
                 followToggleBtn.style.background = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
@@ -1538,7 +1513,7 @@
                 postsQuery.forEach(function(pDoc) {
                     const data = pDoc.data();
                     if (data.mediaUrl) {
-                        let element = document.createElement(data.mediaType === 'video' ? 'video' : 'img');
+                        let element = document.createElement('img');
                         element.src = data.mediaUrl;
                         element.className = 'profile-grid-item';
                         gridContainer.appendChild(element);
@@ -1555,23 +1530,23 @@
         };
 
         window.openMyOwnProfile = function() { if (userDataRecord) renderProfileCard(userDataRecord, true); };
-        document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatFriendData) renderProfileCard(activeChatFriendData, false); });
 
         window.toggleFollowState = async function(targetUid, targetUsername) {
-            let currentFriendsList = userDataRecord.friends || [];
+            let currentFriendsList = userDataRecord ? (userDataRecord.friends || []) : [];
             if (currentFriendsList.includes(targetUid)) {
                 if (targetUsername === "yaseen") return alert("Persistent state constraint enforced.");
                 currentFriendsList = currentFriendsList.filter(uid => uid !== targetUid);
             } else { currentFriendsList.push(targetUid); }
             await updateDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList });
-            userDataRecord.friends = currentFriendsList;
+            if (userDataRecord) userDataRecord.friends = currentFriendsList;
             loadFriendsSidebarList();
             triggerHubComprehensiveSearch();
         };
 
         async function triggerHubComprehensiveSearch() {
-            const filterText = hubSearchBar.value.trim().toLowerCase();
+            const filterText = hubSearchBar ? hubSearchBar.value.trim().toLowerCase() : "";
             const creatorsContainer = document.getElementById('search-creators-results');
+            if(!creatorsContainer) return;
             creatorsContainer.innerHTML = "";
 
             globalCachedAllUsers.forEach(u => {
@@ -1596,6 +1571,7 @@
 
         function renderExploreTimelineFeed() {
             const feedContainer = document.getElementById('feed-posts-container');
+            if(!feedContainer) return;
             feedContainer.innerHTML = "";
             globalCachedFeedPosts.forEach(postItem => {
                 const post = postItem.data;
@@ -1607,11 +1583,11 @@
                 card.innerHTML = `
                     <div class="post-header">
                         <div class="post-author-info">
-                            <img src="${post.authorPhoto}">
+                            <img src="${post.authorPhoto || 'https://api.dicebear.com/7.x/avataaars/svg'}">
                             <h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4>
                         </div>
                     </div>
-                    <div class="post-body"><p>${post.text}</p></div>
+                    <div class="post-body" style="padding: 16px;"><p>${post.text}</p></div>
                 `;
                 feedContainer.appendChild(card);
             });
@@ -1621,7 +1597,7 @@
             activeChatFriendData = friendData;
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
-            dashboardContainer.classList.add('chat-active');
+            if (dashboardContainer) dashboardContainer.classList.add('chat-active');
             
             const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (friendData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
@@ -1659,7 +1635,7 @@
             });
         }
 
-        async function sendCustomPayload(type, link) {
+        async function sendCustomPayload() {
             if (!activeChatFriendData || !messageInput.value.trim()) return;
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
             await addDoc(collection(db, "messages", roomKey, "records"), {
@@ -1671,13 +1647,10 @@
             messageInput.value = "";
         }
 
-        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload("text", null));
-        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload("text", null); });
-        window.exitChatToSidebar = function() { dashboardContainer.classList.remove('chat-active'); };
-
         async function loadFriendsSidebarList() {
+            if(!friendsListElement) return;
             friendsListElement.innerHTML = "";
-            const uids = userDataRecord.friends || [];
+            const uids = userDataRecord ? (userDataRecord.friends || []) : [];
             uids.forEach(fUid => {
                 const fData = globalCachedAllUsers.find(u => u.uid === fUid);
                 if (fData) {
@@ -1692,30 +1665,71 @@
             });
         }
 
-        toggleAuthModeBtn.addEventListener('click', function() {
-            isSignUpMode = !isSignUpMode;
-            primaryAuthBtn.innerText = isSignUpMode ? "Register Node" : "Sign In";
-        });
+        // Global Event Attachments Safeguard Wrapper
+        window.addEventListener('load', () => {
+            if(document.getElementById('admin-command-submit-btn')) {
+                document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
+                    const cmdInput = document.getElementById('admin-command-input');
+                    const token = cmdInput ? cmdInput.value.trim() : "";
+                    if(!token) return;
 
-        primaryAuthBtn.addEventListener('click', function() {
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            if (isSignUpMode) {
-                createUserWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
-            } else {
-                signInWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+                    if (token === '/verify-all') {
+                        for (let uNode of globalCachedAllUsers) await updateDoc(doc(db, "users", uNode.uid), { verified: true });
+                        alert("Core override completed.");
+                    } else if (token.startsWith('/verify ')) {
+                        const target = token.replace('/verify ', '').trim().toLowerCase();
+                        const matched = globalCachedAllUsers.find(u => u.username === target);
+                        if (matched) {
+                            await updateDoc(doc(db, "users", matched.uid), { verified: true });
+                            alert(`Verification dynamic node attached.`);
+                        }
+                    }
+                    if(cmdInput) cmdInput.value = "";
+                });
             }
-        });
 
-        document.getElementById('google-login-btn').addEventListener('click', () => {
-            signInWithPopup(auth, provider).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+            if(document.getElementById('send-msg-btn')) {
+                document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
+            }
+            if(messageInput) {
+                messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
+            }
+
+            toggleAuthModeBtn.addEventListener('click', function() {
+                isSignUpMode = !isSignUpMode;
+                primaryAuthBtn.innerText = isSignUpMode ? "Register Node" : "Sign In";
+            });
+
+            primaryAuthBtn.addEventListener('click', function() {
+                const email = document.getElementById('login-email').value.trim();
+                const password = document.getElementById('login-password').value;
+                if (isSignUpMode) {
+                    createUserWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+                } else {
+                    signInWithEmailAndPassword(auth, email, password).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+                }
+            });
+
+            document.getElementById('google-login-btn').addEventListener('click', () => {
+                signInWithPopup(auth, provider).then(c => enforceUniversalYaseenFollowNode(null, c.user.uid));
+            });
+
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('setup-username').value.trim().toLowerCase();
+                const fullName = document.getElementById('setup-name').value;
+                const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), friends: [] };
+                profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
+                await setDoc(doc(db, "users", currentUser.uid), profileData);
+                launchDashboard(profileData);
+            });
         });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 const snap = await getDoc(doc(db, "users", user.uid));
-                loadingScreen.style.display = 'none';
+                if (loadingScreen) loadingScreen.style.display = 'none';
                 if (snap.exists()) {
                     userDataRecord = snap.data();
                     await enforceUniversalYaseenFollowNode(userDataRecord, user.uid);
@@ -1725,21 +1739,13 @@
                     loginContainer.style.display = 'none';
                 }
             } else {
-                loadingScreen.style.display = 'none';
+                if (loadingScreen) loadingScreen.style.display = 'none';
                 loginContainer.style.display = 'block';
                 dashboardContainer.style.display = 'none';
             }
         });
 
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('setup-username').value.trim().toLowerCase();
-            const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), friends: [] };
-            profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
-            await setDoc(doc(db, "users", currentUser.uid), profileData);
-            launchDashboard(profileData);
-        });
+        window.exitChatToSidebar = function() { if(dashboardContainer) dashboardContainer.classList.remove('chat-active'); };
 
         function launchDashboard(data) {
             profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; dashboardContainer.style.display = 'flex';
