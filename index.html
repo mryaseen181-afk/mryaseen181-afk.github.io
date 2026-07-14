@@ -301,34 +301,10 @@
             background: var(--bg-card); 
             box-shadow: 0 4px 12px rgba(0,0,0,0.02); 
         }
-
-        .search-filter-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .filter-toggle-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .filter-toggle-btn.active {
-            background: var(--accent-glow);
-            color: #ffffff;
-            border-color: var(--accent-glow);
-        }
         
         .search-split-layout { 
             display: grid; 
-            grid-template-columns: 1fr 1fr; 
+            grid-template-columns: 1fr; 
             gap: 28px; 
             max-width: 800px; 
             width: 100%; 
@@ -673,31 +649,7 @@
             color: var(--text-muted); 
             cursor: pointer; 
         }
-        
-        .input-group { 
-            margin-bottom: 16px; 
-            text-align: left; 
-        }
-        
-        .input-group label { 
-            display: block; 
-            font-size: 13px; 
-            margin-bottom: 6px; 
-            font-weight: 600; 
-            color: var(--text-muted); 
-        }
-        
-        .input-group input { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid var(--border-color); 
-            border-radius: 12px; 
-            font-size: 14px; 
-            background: var(--bg-secondary); 
-            color: var(--text-color); 
-            outline: none; 
-        }
-        
+
         .main-btn {
             width: 100%; 
             padding: 14px; 
@@ -722,15 +674,6 @@
             cursor: pointer; 
             margin-top: 8px; 
             font-weight: 600; 
-        }
-        
-        .no-chat-selected { 
-            flex: 1; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            color: var(--text-muted); 
-            font-size: 14px; 
         }
         
         .profile-modal-hdr { 
@@ -772,18 +715,6 @@
             border: 1px solid var(--border-color); 
         }
 
-        .admin-badge-indicator {
-            background: var(--admin-glow);
-            color: #ffffff;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 2px 6px;
-            border-radius: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-left: 6px;
-        }
-
         @media (max-width: 768px) {
             body { background: var(--bg-card); }
             .dashboard-layout { width: 100vw; height: 100vh; max-height: 100vh; border: none; border-radius: 0; }
@@ -792,9 +723,13 @@
             .mobile-bottom-tabs { display: flex; }
             
             .sidebar, .chat-area, .feed-area, .search-tab-area {
-                width: 100%; height: 100%; display: none;
+                width: 100%; height: 100%; display: none !important;
             }
-            .sidebar { border-right: none; }
+            
+            /* Enhanced visibility rules explicitly managing display toggles */
+            .dashboard-layout[data-tab="chats"] #app-sidebar-pane { display: flex !important; }
+            .dashboard-layout[data-tab="feed"] #app-feed-pane { display: flex !important; }
+            .dashboard-layout[data-tab="search"] #app-search-pane { display: flex !important; }
             
             .dashboard-layout.chat-active #app-sidebar-pane { display: none !important; }
             .dashboard-layout.chat-active #app-chat-pane { display: flex !important; }
@@ -802,7 +737,7 @@
             .back-arrow { display: block; }
             .msg { max-width: 80%; }
             .search-split-layout { grid-template-columns: 1fr; gap: 16px; }
-            .search-column-panel { max-height: 40vh; }
+            .search-column-panel { max-height: 50vh; }
             .feed-area, .search-tab-area { padding: 16px; }
         }
     </style>
@@ -813,12 +748,8 @@
 
     <div id="login-container" class="form-container" style="display: none;">
         <div class="app-logo-title">AuraHub Pro</div>
-        <div class="input-group">
-            <input type="email" id="login-email" placeholder="Email Address">
-        </div>
-        <div class="input-group">
-            <input type="password" id="login-password" placeholder="Password">
-        </div>
+        <div class="input-group"><input type="email" id="login-email" placeholder="Email Address"></div>
+        <div class="input-group"><input type="password" id="login-password" placeholder="Password"></div>
         <button id="email-primary-btn" class="main-btn">Sign In</button>
         <button id="auth-toggle-mode-btn" class="secondary-btn">Create New Account</button>
         <div style="margin:16px 0; color:var(--text-muted); font-size:13px;">OR</div>
@@ -828,21 +759,16 @@
     <div id="profile-setup-container" class="form-container" style="display: none;">
         <div class="app-logo-title">Profile Matrix</div>
         <form id="profile-form">
-            <div class="input-group">
-                <input type="text" id="setup-username" placeholder="Username" required>
-            </div>
-            <div class="input-group">
-                <input type="text" id="setup-name" placeholder="Full Name" required>
-            </div>
+            <div class="input-group"><input type="text" id="setup-username" placeholder="Username" required></div>
+            <div class="input-group"><input type="text" id="setup-name" placeholder="Full Name" required></div>
             <button type="submit" class="main-btn">Complete Matrix Setup</button>
         </form>
     </div>
 
-    <div id="dashboard-container" class="dashboard-layout" style="display: none;">
+    <div id="dashboard-container" class="dashboard-layout" data-tab="chats" style="display: none;">
         <div class="app-navbar">
             <div class="nav-brand" onclick="switchTab('chats')">AuraHub Pro</div>
             <div class="nav-links">
-                <button id="nav-btn-admin" class="nav-item" onclick="switchTab('admin')" style="display: none; color: var(--admin-glow); font-weight: 800;">⚡ Admin Terminal</button>
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
                 <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
                 <button id="nav-btn-search" class="nav-item" onclick="switchTab('search')">Search Hub</button>
@@ -865,7 +791,6 @@
                         <p id="dash-display-name">Loading parameters...</p>
                     </div>
                 </div>
-
                 <div class="friends-list-container">
                     <div class="friends-list-heading">Direct Channels</div>
                     <div id="friends-list"></div>
@@ -876,9 +801,7 @@
                 <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1; height: 100%;">
                     <div class="chat-header">
                         <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
-                        <div class="chat-header-meta">
-                            <h3 id="chat-with-heading">Chat Terminal</h3>
-                        </div>
+                        <div class="chat-header-meta"><h3 id="chat-with-heading">Chat Terminal</h3></div>
                         <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect</button>
                     </div>
                     
@@ -900,14 +823,12 @@
                         </div>
                     </div>
                 </div>
-                <div id="no-chat-fallback" class="no-chat-selected">
-                    <p>Select a profile node to begin transmission</p>
-                </div>
+                <div id="no-chat-fallback" class="no-chat-selected"><p>Select a profile node to begin transmission</p></div>
             </div>
 
             <div class="feed-area" id="app-feed-pane">
                 <div class="feed-composer">
-                    <textarea id="feed-post-text" placeholder="Publish updates to the worldwide network matrix..."></textarea>
+                    <textarea id="feed-post-text" placeholder="Publish updates to the matrix..."></textarea>
                     <div class="feed-composer-actions">
                         <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 14px;" id="feed-file-trigger">Add Media File</button>
                         <input type="file" id="feed-file-input" accept="image/*" style="display: none;">
@@ -920,9 +841,8 @@
 
             <div class="search-tab-area" id="app-search-pane">
                 <div class="search-pane-header">
-                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Query creator index or dynamic keywords...">
+                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Query creator index...">
                 </div>
-                
                 <div class="search-split-layout">
                     <div class="search-column-panel">
                         <div class="search-section-title">Creator Index Nodes</div>
@@ -946,10 +866,9 @@
                 <div style="width:80px; height:80px; border-radius:50%; overflow:hidden; margin-bottom: 10px; border: 2px solid var(--accent-glow);">
                     <img id="view-modal-avatar" src="" style="width:100%; height:100%; object-fit:cover;" alt="Avatar">
                 </div>
-                <h2 id="view-modal-name" style="display:flex; align-items:center; gap:6px;">Node Profile</h2>
+                <h2 id="view-modal-name">Node Profile</h2>
                 <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700;">@username</p>
                 <div id="view-modal-description" class="profile-description-txt">No descriptive bio assigned yet.</div>
-                <button id="profile-action-follow-toggle-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--accent-glow); border-color: var(--accent-glow); color:#fff;"></button>
             </div>
         </div>
     </div>
@@ -1001,7 +920,6 @@
                 <path d="M8.5 12.25l2.25 2.25 5.25-5.5" stroke="#ffffff" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         `;
-        const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
 
         const getReadReceiptMarkup = (isSeen) => {
             return isSeen ? 
@@ -1011,57 +929,56 @@
 
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) {
-                alert("Alert notifications are not supported on this framework.");
+                alert("Alert notifications are not supported on this device ecosystem.");
                 return;
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("Matrix Engine Online", { body: "System event notices initialized." });
+                    new Notification("Matrix Engine Active", { body: "Real-time alerts are now enabled." });
                 }
             });
         };
 
         function dispatchClosedAlertPacket(senderName, textContent) {
             if (Notification.permission === "granted") {
-                new Notification(`${senderName}`, { body: textContent || "Data asset received.", tag: "chat" });
+                new Notification(`${senderName}`, { body: textContent || "Data asset payload transmitted.", tag: "chat" });
             }
         }
 
         window.switchTab = function(tabName) {
+            dashboardContainer.setAttribute('data-tab', tabName);
+            dashboardContainer.classList.remove('chat-active');
+
             const chatPane = document.getElementById('app-chat-pane');
             const feedPane = document.getElementById('app-feed-pane');
             const searchPane = document.getElementById('app-search-pane');
-            const adminPane = document.getElementById('app-admin-pane');
             const sidePane = document.getElementById('app-sidebar-pane');
             
-            ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search'].forEach(b => document.getElementById(b)?.classList.remove('active'));
+            ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search'].forEach(b => document.getElementById(b)?.classList.remove('active'));
 
-            chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
-            dashboardContainer.classList.remove('chat-active');
-
-            if (tabName === 'feed') {
-                feedPane.style.display = 'flex'; 
-                document.getElementById('tab-btn-feed')?.classList.add('active');
-            } else if (tabName === 'search') {
-                searchPane.style.display = 'flex'; 
-                document.getElementById('tab-btn-search')?.classList.add('active');
-                triggerHubComprehensiveSearch();
-            } else {
-                if(window.innerWidth <= 768) {
-                    sidePane.style.display = 'flex';
+            if (window.innerWidth > 768) {
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none';
+                
+                if (tabName === 'feed') {
+                    feedPane.style.display = 'flex';
+                    document.getElementById('nav-btn-feed')?.classList.add('active');
+                } else if (tabName === 'search') {
+                    searchPane.style.display = 'flex';
+                    document.getElementById('nav-btn-search')?.classList.add('active');
+                    triggerHubComprehensiveSearch();
                 } else {
                     sidePane.style.display = 'flex'; chatPane.style.display = 'flex';
+                    document.getElementById('nav-btn-chats')?.classList.add('active');
                 }
-                document.getElementById('tab-btn-chats')?.classList.add('active');
+            } else {
+                // Let CSS handle responsive presentation blocks cleanly via attribute selector overrides
+                document.getElementById(`tab-btn-${tabName}`)?.classList.add('active');
+                if (tabName === 'search') triggerHubComprehensiveSearch();
             }
         };
 
         window.exitChatToSidebar = function() {
             dashboardContainer.classList.remove('chat-active');
-            if(window.innerWidth <= 768) {
-                document.getElementById('app-chat-pane').style.display = 'none';
-                document.getElementById('app-sidebar-pane').style.display = 'flex';
-            }
         };
 
         document.getElementById('chat-file-trigger').addEventListener('click', () => chatFileInput.click());
@@ -1073,7 +990,7 @@
             const reader = new FileReader();
             reader.onload = (el) => {
                 stagedChatFileBase64 = el.target.result;
-                sendCustomPayload("[Image Attached]");
+                sendCustomPayload("[Asset Matrix Sent]");
             };
             reader.readAsDataURL(file);
         });
@@ -1089,7 +1006,6 @@
             reader.readAsDataURL(file);
         });
 
-        // Simulating functional runtime setup configurations for voice packets
         voiceMemoBtn.addEventListener('click', async () => {
             if (!mediaRecorder) {
                 try {
@@ -1100,7 +1016,7 @@
                         const blob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
                         const reader = new FileReader();
                         reader.onload = (el) => {
-                            sendCustomPayload("[Voice Note Attached]", el.target.result);
+                            sendCustomPayload("[Voice Note Matrix Sent]", el.target.result);
                         };
                         reader.readAsDataURL(blob);
                         audioChunks = [];
@@ -1108,7 +1024,7 @@
                     mediaRecorder.start();
                     voiceMemoBtn.classList.add('recording-active');
                 } catch (err) {
-                    alert("Media devices entry standard blocked.");
+                    alert("Audio input device access blocked.");
                 }
             } else {
                 mediaRecorder.stop();
@@ -1122,12 +1038,10 @@
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
-            
             document.getElementById('view-modal-avatar').src = userObj.photoURL;
-            document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml} ${adminHtml}`;
+            document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
-            document.getElementById('view-modal-description').innerText = userObj.description || "Active node instance.";
+            document.getElementById('view-modal-description').innerText = userObj.description || "Active Node.";
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
 
@@ -1202,11 +1116,6 @@
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
             dashboardContainer.classList.add('chat-active');
-            
-            if(window.innerWidth <= 768) {
-                document.getElementById('app-sidebar-pane').style.display = 'none';
-                document.getElementById('app-chat-pane').style.display = 'flex';
-            }
             
             const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml}`;
@@ -1353,7 +1262,7 @@
 
         hubSearchBar.addEventListener('input', triggerHubComprehensiveSearch);
         window.triggerLogoutSession = () => signOut(auth).then(() => location.reload());
-        window.addEventListener('resize', () => { switchTab('chats'); });
+        window.addEventListener('resize', () => { switchTab(dashboardContainer.getAttribute('data-tab')); });
     </script>
 </body>
 </html>
