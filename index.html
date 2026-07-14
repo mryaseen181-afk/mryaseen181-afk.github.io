@@ -141,6 +141,7 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
+            cursor: pointer;
         }
 
         .tab-btn.active {
@@ -1498,7 +1499,6 @@
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
-        // Restored Complete JavaScript Data Fetch Engine for Followers and dynamic matrix posts
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
@@ -1522,7 +1522,6 @@
                 };
             } else { followToggleBtn.style.display = "none"; }
 
-            // Dynamic Followers counter query extraction layer
             try {
                 const followerQuery = await getDocs(query(collection(db, "users"), where("friends", "array-contains", userObj.uid)));
                 document.getElementById('profile-stat-followers').innerText = followerQuery.size;
@@ -1530,7 +1529,6 @@
                 document.getElementById('profile-stat-followers').innerText = "0"; 
             }
 
-            // Post asset extraction grid framework
             const gridContainer = document.getElementById('profile-posts-grid');
             gridContainer.innerHTML = "";
             try {
