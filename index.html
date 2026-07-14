@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraHub Pro - Extended Edition</title>
+    <title>AuraHub Pro - Unified Edition</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -269,7 +269,7 @@
             color: var(--text-muted); 
         }
 
-        .chat-area, .feed-area, .search-tab-area, .camera-area, .myspace-area { 
+        .chat-area, .feed-area, .search-tab-area { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
@@ -277,7 +277,7 @@
             min-width: 0; 
         }
         
-        .feed-area, .search-tab-area, .myspace-area { 
+        .feed-area, .search-tab-area { 
             display: none; 
             overflow-y: auto; 
             padding: 28px; 
@@ -394,187 +394,6 @@
             border-bottom: 1px solid var(--border-color); 
         }
 
-        .camera-area { 
-            display: none; 
-            position: relative; 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; 
-            background: #000; 
-            padding: 0; 
-        }
-        
-        .camera-view-window { 
-            width: 100%; 
-            height: 100%; 
-            transform: scaleX(-1); 
-            position: absolute; 
-            top:0; 
-            left:0; 
-        }
-        
-        .camera-view-window video { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
-        
-        .camera-controls-overlay { 
-            position: absolute; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); 
-            padding: 30px 20px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 20px; 
-            z-index: 5; 
-        }
-        
-        .camera-shutter-box { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            width: 100%; 
-        }
-        
-        .camera-capture-ring { 
-            width: 76px; 
-            height: 72px; 
-            border-radius: 50%; 
-            border: 4px solid #ffffff; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            cursor: pointer; 
-            background: transparent; 
-            transition: transform 0.1s; 
-        }
-        
-        .camera-capture-ring:active { 
-            transform: scale(0.9); 
-        }
-        
-        .camera-capture-solid-dot { 
-            width: 54px; 
-            height: 54px; 
-            border-radius: 50%; 
-            background: #ffffff; 
-        }
-
-        .myspace-container { 
-            max-width: 800px; 
-            width: 100%; 
-            margin: 0 auto; 
-        }
-        
-        .myspace-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 20px; 
-            margin-top: 16px; 
-        }
-        
-        .space-item-card { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            border-radius: 20px; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
-            transition: transform 0.2s; 
-        }
-        
-        .space-item-card:hover { 
-            transform: translateY(-2px); 
-        }
-        
-        .myspace-img-card { 
-            width: 100%; 
-            aspect-ratio: 1; 
-            object-fit: cover; 
-            cursor: pointer; 
-        }
-        
-        .space-item-footer { 
-            padding: 12px; 
-            border-top: 1px solid var(--border-color); 
-            background: var(--bg-card); 
-            display: flex; 
-            gap: 8px; 
-        }
-
-        .studio-preview-box { 
-            width: 100%; 
-            aspect-ratio: 1; 
-            background: #000; 
-            border-radius: 16px; 
-            overflow: hidden; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            border: 1px solid var(--border-color); 
-            margin-bottom: 20px; 
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5); 
-        }
-        
-        .studio-target-image { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            transition: filter 0.3s ease; 
-        }
-        
-        .filter-swatch-strip { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 10px; 
-            margin-bottom: 20px; 
-        }
-        
-        .filter-swatch-btn { 
-            cursor: pointer; 
-            border: 3px solid transparent; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            background: var(--bg-secondary); 
-            text-align: center; 
-            padding: 4px; 
-            transition: all 0.2s; 
-        }
-        
-        .filter-swatch-btn.active { 
-            border-color: var(--accent-glow); 
-            background: rgba(2,132,199,0.05); 
-        }
-        
-        .filter-swatch-btn img { 
-            width: 100%; 
-            aspect-ratio: 1; 
-            object-fit: cover; 
-            border-radius: 8px; 
-        }
-        
-        .filter-swatch-btn span { 
-            font-size: 11px; 
-            font-weight: 700; 
-            display: block; 
-            margin-top: 4px; 
-            color: var(--text-muted); 
-        }
-
-        .f-noir { filter: grayscale(1) contrast(1.35) brightness(0.95); }
-        .f-cyan { filter: hue-rotate(180deg) saturate(1.6) contrast(1.1); }
-        .f-flare { filter: brightness(1.2) saturate(1.5) contrast(1.1); }
-        .f-sepia { filter: sepia(0.9) contrast(0.95); }
-        .f-warm { filter: sepia(0.35) saturate(1.4) contrast(1.05) hue-rotate(-10deg); }
-        .f-cool { filter: hue-rotate(35deg) saturate(1.2) brightness(0.95); }
-        .f-vintage { filter: contrast(0.8) brightness(1.1) sepia(0.3) saturate(1.3); }
-        .f-cosmic { filter: hue-rotate(110deg) saturate(1.8) contrast(1.15); }
-
         .chat-header { 
             height: 68px; 
             padding: 0 28px; 
@@ -622,6 +441,28 @@
             border-radius: 20px; 
             font-size: 14px; 
             line-height: 1.5; 
+            position: relative;
+        }
+
+        .msg:hover .msg-delete-trigger-overlay {
+            display: flex;
+        }
+
+        .msg-delete-trigger-overlay {
+            position: absolute;
+            top: -12px;
+            right: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent-rose);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: none;
+            z-index: 5;
         }
         
         .msg.sent { 
@@ -703,6 +544,17 @@
             color: var(--text-color); 
         }
         
+        .action-icon-btn.recording-active {
+            color: var(--accent-rose);
+            animation: pulseVoiceRecordingEffect 1.5s infinite;
+        }
+
+        @keyframes pulseVoiceRecordingEffect {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
         .action-icon-btn svg { 
             width: 22px; 
             height: 22px; 
@@ -955,7 +807,6 @@
             border-color: #f87171; 
         }
 
-        /* Enhanced High-Fidelity Verified Badge Graphics Setup */
         .verified-badge-texture-star {
             width: 18px; 
             height: 18px; 
@@ -1223,8 +1074,6 @@
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
                 <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
                 <button id="nav-btn-search" class="nav-item" onclick="switchTab('search')">Search Hub</button>
-                <button id="nav-btn-camera" class="nav-item" onclick="switchTab('camera')">Camera</button>
-                <button id="nav-btn-myspace" class="nav-item" onclick="switchTab('myspace')">My Space</button>
                 <button onclick="triggerLogoutSession()" class="nav-item" style="color: var(--accent-rose);">Logout</button>
             </div>
         </div>
@@ -1235,7 +1084,7 @@
                     <img id="dash-avatar" src="" onclick="openMyOwnProfile()" alt="Profile Avatar">
                     <div class="user-details" onclick="openMyOwnProfile()">
                         <h3 id="dash-username">@username</h3>
-                        <p id="dash-display-name">Loading matrix parameters...</p>
+                        <p id="dash-display-name">Loading parameters...</p>
                     </div>
                     <label for="status-file-input" class="action-icon-btn" title="Add to My Story" style="color: var(--accent-glow);">
                         <svg viewBox="0 0 24 24" style="width:26px; height:26px;"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
@@ -1266,18 +1115,25 @@
                     
                     <div class="chat-input-wrapper">
                         <div class="chat-input-container">
-                            <label for="chat-image-input" class="action-icon-btn">
+                            <label for="chat-image-input" class="action-icon-btn" title="Send Media File">
                                 <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                             </label>
                             <input type="file" id="chat-image-input" accept="image/*,video/*" style="display: none;">
                             
+                            <button id="voice-memo-record-btn" class="action-icon-btn" title="Record Voice Memo">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                                    <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                                </svg>
+                            </button>
+
                             <input type="text" id="message-input" placeholder="Transmit packet data...">
                             <button id="send-msg-btn" class="send-txt-btn">Send</button>
                         </div>
                     </div>
                 </div>
                 <div id="no-chat-fallback" class="no-chat-selected">
-                    <p>Select a verified user matrix node to begin transmission</p>
+                    <p>Select a profile node to begin transmission</p>
                 </div>
             </div>
 
@@ -1287,7 +1143,7 @@
                     <div class="feed-composer-actions">
                         <input type="file" id="feed-post-file" accept="image/*,video/*" style="display: none;">
                         <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 14px;" onclick="document.getElementById('feed-post-file').click()">Add Asset</button>
-                        <button class="main-btn" style="width: auto; padding: 8px 16px;" id="submit-feed-post-btn">Publish</button>
+                        <button class="main-btn" style="width: auto; padding: 8px 16px;" id="submit-feed-post-btn">Publish Post</button>
                     </div>
                     <div id="feed-file-preview-label" style="font-size: 12px; color: var(--accent-glow); margin-top: 6px; display: none;">Asset array payload staged.</div>
                 </div>
@@ -1315,64 +1171,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="camera-area" id="app-camera-pane">
-                <div class="camera-view-window">
-                    <video id="webcam-stream-preview" autoplay playsinline></video>
-                </div>
-                <div class="camera-controls-overlay">
-                    <div class="camera-shutter-box">
-                        <div class="camera-capture-ring" id="camera-snapshot-trigger-btn">
-                            <div class="camera-capture-solid-dot"></div>
-                        </div>
-                    </div>
-                </div>
-                <canvas id="camera-hidden-canvas" style="display:none;"></canvas>
-            </div>
-
-            <div class="myspace-area" id="app-myspace-pane">
-                <div class="myspace-container">
-                    <div class="search-section-title" style="border:none; margin:0;">Secure Local Space Storage</div>
-                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Encrypted asset storage vault linked directly to your active node.</p>
-                    <div id="myspace-vault-grid" class="myspace-grid"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="myspace-sharing-studio-modal" class="modal">
-        <div class="modal-content" style="max-width: 480px; width: 90%;">
-            <span class="close-modal" onclick="closeSpaceSharingStudio()">&times;</span>
-            <h2 style="margin-bottom: 4px;">Dynamic Studio Options</h2>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;">Render real-time spatial texture maps or dispatch globally</p>
-            
-            <div class="studio-preview-box">
-                <img id="studio-image-preview-target" class="studio-target-image" src="" alt="Studio Preview">
-            </div>
-
-            <div class="filter-swatch-strip">
-                <div class="filter-swatch-btn active" onclick="applyStudioFilterTexture('')" id="swatch-none">
-                    <img id="swatch-img-none" src="" alt="raw"><span>Raw Node</span>
-                </div>
-                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-noir')" id="swatch-f-noir">
-                    <img id="swatch-img-f-noir" src="" class="f-noir" alt="noir"><span>Noir Map</span>
-                </div>
-                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-cyan')" id="swatch-f-cyan">
-                    <img id="swatch-img-f-cyan" src="" class="f-cyan" alt="cyber"><span>Cyber Cyan</span>
-                </div>
-                <div class="filter-swatch-btn" onclick="applyStudioFilterTexture('f-flare')" id="swatch-f-flare">
-                    <img id="swatch-img-f-flare" src="" class="f-flare" alt="glow"><span>Glow Burst</span>
-                </div>
-            </div>
-            
-            <div class="input-group">
-                <label>Staged Text Descriptor</label>
-                <textarea id="studio-caption-input" placeholder="Configure localized context..."></textarea>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;">
-                <button class="main-btn" onclick="publishStudioPostToGlobalFeed()">Post Globally to Network Timeline</button>
-            </div>
         </div>
     </div>
 
@@ -1389,7 +1187,7 @@
                 <div class="profile-stat-row">
                     <div class="profile-stat-box">
                         <h5 id="profile-stat-followers">0</h5>
-                        <p>Linked Inbounds</p>
+                        <p>Followers</p>
                     </div>
                     <div class="profile-stat-box">
                         <h5 id="profile-stat-posts">0</h5>
@@ -1401,7 +1199,7 @@
                 <button id="profile-action-follow-toggle-btn" class="main-btn" style="display:none; margin-top:14px; background: var(--accent-glow); border-color: var(--accent-glow); color:#fff;"></button>
             </div>
             
-            <h4 style="text-align: left; font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Recent Node Dispatches</h4>
+            <h4 style="text-align: left; font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Recent Node Posts</h4>
             <div id="profile-posts-grid" class="profile-posts-grid"></div>
         </div>
     </div>
@@ -1448,11 +1246,11 @@
         const statusTray = document.getElementById('status-tray');
         const statusFileInput = document.getElementById('status-file-input');
         const chatImageInput = document.getElementById('chat-image-input');
+        const voiceMemoRecordBtn = document.getElementById('voice-memo-record-btn');
         const primaryAuthBtn = document.getElementById('email-primary-btn');
         const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
         const hubSearchBar = document.getElementById('hub-main-search-bar');
         const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
-        const videoElement = document.getElementById('webcam-stream-preview');
 
         let currentUser = null;
         let userDataRecord = null;
@@ -1464,13 +1262,12 @@
         let selectedFeedFileBase64 = "";
         let globalCachedFeedPosts = [];
         let globalCachedAllUsers = [];
-        let cameraActiveStream = null;
-        let studioSelectedImageBase64 = "";
-        let studioActiveFilterClass = "";
         let currentSearchSortMode = "default";
         let viewingStatusNodeData = null;
+        
+        let localAudioMediaRecorder = null;
+        let recordedVoiceChunks = [];
 
-        // Better Outer-Ribbon Verified Texture Graphic Generator Layout 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -1492,43 +1289,24 @@
             const chatPane = document.getElementById('app-chat-pane');
             const feedPane = document.getElementById('app-feed-pane');
             const searchPane = document.getElementById('app-search-pane');
-            const cameraPane = document.getElementById('app-camera-pane');
-            const myspacePane = document.getElementById('app-myspace-pane');
             const sidePane = document.getElementById('app-sidebar-pane');
             
             const btnChats = document.getElementById('nav-btn-chats');
             const btnFeed = document.getElementById('nav-btn-feed');
             const btnSearch = document.getElementById('nav-btn-search');
-            const btnCamera = document.getElementById('nav-btn-camera');
-            const btnSpace = document.getElementById('nav-btn-myspace');
 
             btnChats.classList.remove('active');
             btnFeed.classList.remove('active');
             btnSearch.classList.remove('active');
-            btnCamera.classList.remove('active');
-            btnSpace.classList.remove('active');
-
-            if (cameraActiveStream && tabName !== 'camera') {
-                cameraActiveStream.getTracks().forEach(function(track) {
-                    track.stop();
-                });
-                cameraActiveStream = null;
-            }
 
             if (tabName === 'feed') {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; searchPane.style.display = 'none'; cameraPane.style.display = 'none'; myspacePane.style.display = 'none';
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; searchPane.style.display = 'none';
                 feedPane.style.display = 'flex'; btnFeed.classList.add('active');
             } else if (tabName === 'search') {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; cameraPane.style.display = 'none'; myspacePane.style.display = 'none';
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none';
                 searchPane.style.display = 'flex'; btnSearch.classList.add('active'); triggerHubComprehensiveSearch();
-            } else if (tabName === 'camera') {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; myspacePane.style.display = 'none';
-                cameraPane.style.display = 'flex'; btnCamera.classList.add('active'); initWebcamMediaStreamLayer();
-            } else if (tabName === 'myspace') {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; cameraPane.style.display = 'none';
-                myspacePane.style.display = 'flex'; btnSpace.classList.add('active'); syncMySpaceVaultGalleryView();
             } else {
-                feedPane.style.display = 'none'; searchPane.style.display = 'none'; cameraPane.style.display = 'none'; myspacePane.style.display = 'none';
+                feedPane.style.display = 'none'; searchPane.style.display = 'none';
                 sidePane.style.display = 'flex'; chatPane.style.display = 'flex'; btnChats.classList.add('active');
             }
         };
@@ -1574,140 +1352,9 @@
                     }
                 }
             } catch (errorException) {
-                console.error("Auto-follow check error: ", errorException);
+                console.error("Auto-follow system layout error: ", errorException);
             }
         }
-
-        async function initWebcamMediaStreamLayer() {
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                try {
-                    cameraActiveStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                    videoElement.srcObject = cameraActiveStream;
-                } catch (err) { 
-                    alert("Camera integration blocked: " + err.message); 
-                }
-            }
-        }
-
-        document.getElementById('camera-snapshot-trigger-btn').addEventListener('click', async () => {
-            const canvas = document.getElementById('camera-hidden-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = videoElement.videoWidth || 640;
-            canvas.height = videoElement.videoHeight || 480;
-            
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            
-            const frozenBase64 = canvas.toDataURL('image/jpeg');
-            let currentVaultArray = userDataRecord.mySpaceVault || [];
-            currentVaultArray.unshift({
-                id: "snapshot_" + Date.now(),
-                imgUrl: frozenBase64,
-                timestamp: Date.now()
-            });
-
-            await updateDoc(doc(db, "users", currentUser.uid), { mySpaceVault: currentVaultArray });
-            userDataRecord.mySpaceVault = currentVaultArray;
-            alert("Snapshot securely recorded into local vault matrix.");
-            switchTab('myspace');
-        });
-
-        window.removeAssetFromMySpaceVault = async function(itemId) {
-            if (!confirm("Permanently delete this item from your private vault space?")) return;
-            let filteredArray = (userDataRecord.mySpaceVault || []).filter(item => item.id !== itemId);
-            await updateDoc(doc(db, "users", currentUser.uid), { mySpaceVault: filteredArray });
-            userDataRecord.mySpaceVault = filteredArray;
-            syncMySpaceVaultGalleryView();
-        };
-
-        function syncMySpaceVaultGalleryView() {
-            const grid = document.getElementById('myspace-vault-grid');
-            grid.innerHTML = "";
-            const assets = userDataRecord.mySpaceVault || [];
-            if (assets.length === 0) {
-                grid.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size:13px; text-align:center; margin-top:20px;">Private storage catalog is currently unpopulated.</p>`;
-                return;
-            }
-            assets.forEach(function(item) {
-                const wrapper = document.createElement('div');
-                wrapper.className = "space-item-card";
-                wrapper.innerHTML = `
-                    <img src="${item.imgUrl}" class="myspace-img-card" id="preview-img-${item.id}">
-                    <div class="space-item-footer">
-                        <button class="main-btn" style="padding:6px; font-size:11px;" id="share-btn-${item.id}">Studio</button>
-                        <button class="secondary-btn" style="padding:6px; font-size:11px; margin:0; border-color:var(--accent-rose); color:var(--accent-rose);" id="delete-btn-${item.id}">Delete</button>
-                    </div>
-                `;
-                
-                wrapper.querySelector(`#share-btn-${item.id}`).addEventListener('click', function() {
-                    openSpaceSharingStudio(item.imgUrl);
-                });
-                wrapper.querySelector(`#delete-btn-${item.id}`).addEventListener('click', function() {
-                    removeAssetFromMySpaceVault(item.id);
-                });
-                grid.appendChild(wrapper);
-            });
-        }
-
-        window.openSpaceSharingStudio = function(imgSrc) {
-            studioSelectedImageBase64 = imgSrc;
-            document.getElementById('studio-image-preview-target').src = imgSrc;
-            document.getElementById('swatch-img-none').src = imgSrc;
-            document.getElementById('swatch-img-f-noir').src = imgSrc;
-            document.getElementById('swatch-img-f-cyan').src = imgSrc;
-            document.getElementById('swatch-img-f-flare').src = imgSrc;
-            document.getElementById('studio-caption-input').value = "";
-            applyStudioFilterTexture('');
-            document.getElementById('myspace-sharing-studio-modal').style.display = 'flex';
-        };
-
-        window.closeSpaceSharingStudio = function() {
-            document.getElementById('myspace-sharing-studio-modal').style.display = 'none';
-        };
-
-        window.applyStudioFilterTexture = function(filterClass) {
-            studioActiveFilterClass = filterClass;
-            const imgTarget = document.getElementById('studio-image-preview-target');
-            imgTarget.className = "studio-target-image " + filterClass;
-            
-            document.querySelectorAll('.filter-swatch-btn').forEach(function(btn) {
-                btn.classList.remove('active');
-            });
-            const activeId = filterClass === '' ? 'swatch-none' : 'swatch-' + filterClass;
-            document.getElementById(activeId).classList.add('active');
-        };
-
-        window.publishStudioPostToGlobalFeed = async function() {
-            const caption = document.getElementById('studio-caption-input').value.trim();
-            await addDoc(collection(db, "globalFeed"), {
-                authorUid: currentUser.uid,
-                authorName: userDataRecord.fullName,
-                authorUsername: userDataRecord.username,
-                authorPhoto: userDataRecord.photoURL,
-                text: caption,
-                mediaUrl: studioSelectedImageBase64,
-                mediaType: 'image',
-                filterClass: studioActiveFilterClass,
-                likes: [],
-                comments: [],
-                timestamp: Date.now()
-            });
-
-            closeSpaceSharingStudio();
-            alert("Dispatched to system-wide network timeline!");
-            switchTab('feed');
-        };
-
-        window.triggerPostRemovalDeletion = async function(postId) {
-            if (!confirm("Permanently drop this network post document?")) return;
-            try {
-                await deleteDoc(doc(db, "globalFeed", postId));
-                alert("Post dropped successfully.");
-            } catch (err) { 
-                alert("Matrix execution error: " + err.message); 
-            }
-        };
 
         window.closeViewProfileModal = function() { 
             document.getElementById('view-profile-modal').style.display = 'none'; 
@@ -1726,7 +1373,7 @@
                 const currentFriendsList = userDataRecord.friends || [];
                 const isFollowing = currentFriendsList.includes(userObj.uid);
                 
-                followToggleBtn.innerText = isFollowing ? "Sever Link (Unfollow)" : "Establish Link (Follow)";
+                followToggleBtn.innerText = isFollowing ? "Unfollow" : "Follow User";
                 followToggleBtn.style.background = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
                 followToggleBtn.style.borderColor = isFollowing ? "var(--accent-rose)" : "var(--accent-glow)";
                 
@@ -1757,12 +1404,12 @@
                     if (data.mediaUrl) {
                         let element = document.createElement(data.mediaType === 'video' ? 'video' : 'img');
                         element.src = data.mediaUrl;
-                        element.className = 'profile-grid-item ' + (data.filterClass || '');
+                        element.className = 'profile-grid-item';
                         gridContainer.appendChild(element);
                     }
                 });
                 if (gridContainer.children.length === 0) {
-                    gridContainer.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size: 12px; margin-top:12px;">No uploaded spatial assets.</p>`;
+                    gridContainer.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size: 12px; margin-top:12px;">No network posts available.</p>`;
                 }
             } catch (pErr) { 
                 document.getElementById('profile-stat-posts').innerText = "0"; 
@@ -1783,14 +1430,14 @@
             let currentFriendsList = userDataRecord.friends || [];
             if (currentFriendsList.includes(targetUid)) {
                 if (targetUsername === "yaseen") {
-                    alert("System Override: Connection loop permanently bound. You cannot unfollow @yaseen.");
+                    alert("System Override: Connection bound loop persistent. Unfollowing @yaseen is prohibited.");
                     return;
                 }
                 currentFriendsList = currentFriendsList.filter(uid => uid !== targetUid);
-                alert("Connection severed with @" + targetUsername);
+                alert("Unfollowed @" + targetUsername);
             } else {
                 currentFriendsList.push(targetUid);
-                alert("Connection linked to @" + targetUsername);
+                alert("Following @" + targetUsername);
             }
             await updateDoc(doc(db, "users", currentUser.uid), { friends: currentFriendsList });
             userDataRecord.friends = currentFriendsList;
@@ -1891,8 +1538,8 @@
                 let btnHtml = "";
                 if (u.uid !== currentUser.uid) {
                     btnHtml = isFriend 
-                        ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Unlink</button>`
-                        : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Link Node</button>`;
+                        ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Unfollow</button>`
+                        : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${u.uid}', '${u.username}')">Follow</button>`;
                 }
 
                 const row = document.createElement('div');
@@ -1939,10 +1586,9 @@
                 if (post.mediaType === 'video') {
                     mediaBlock = `<div class="post-media-wrap"><video class="post-media" src="${post.mediaUrl}" controls></video></div>`;
                 } else {
-                    const filterClass = post.filterClass || "";
                     mediaBlock = `
                         <div class="post-media-wrap">
-                            <img class="post-media ${filterClass}" src="${post.mediaUrl}" alt="media">
+                            <img class="post-media" src="${post.mediaUrl}" alt="media">
                         </div>
                     `;
                 }
@@ -1956,8 +1602,8 @@
             let followActionHtml = "";
             if (post.authorUid !== currentUser.uid) {
                 followActionHtml = isFriend 
-                    ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Unlink</button>` 
-                    : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Link Node</button>`;
+                    ? `<button class="aesthetic-follow-btn unfollow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Unfollow</button>` 
+                    : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Follow</button>`;
             }
 
             const matchingUserObj = globalCachedAllUsers.find(u => u.uid === post.authorUid);
@@ -1965,7 +1611,7 @@
 
             let deleteUtilityButtonHtml = "";
             if (post.authorUid === currentUser.uid) {
-                deleteUtilityButtonHtml = `<button class="post-delete-icon-trigger" onclick="triggerPostRemovalDeletion('${postId}')">Drop Dispatch</button>`;
+                deleteUtilityButtonHtml = `<button class="post-delete-icon-trigger" onclick="triggerPostRemovalDeletion('${postId}')">Delete Post</button>`;
             }
 
             let commentsHtml = commentsArray.map(c => `
@@ -1997,7 +1643,7 @@
                     <div class="post-comments-section">${commentsHtml}</div>
                     
                     <div class="comment-input-row">
-                        <input type="text" id="comment-input-${postId}" placeholder="Write terminal comment...">
+                        <input type="text" id="comment-input-${postId}" placeholder="Write comment...">
                         <button class="send-txt-btn" id="comment-submit-${postId}">Post</button>
                     </div>
                 </div>
@@ -2039,7 +1685,7 @@
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
             if (!email || !password) { 
-                alert("Please fill all authorization form parameters."); 
+                alert("Please fill all configuration fields."); 
                 return; 
             }
 
@@ -2136,8 +1782,7 @@
                 fullName: fullName, 
                 description: "", 
                 verified: (username === "yaseen"), 
-                friends: [], 
-                mySpaceVault: [] 
+                friends: []
             };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
             
@@ -2175,11 +1820,10 @@
             onSnapshot(collection(db, "statuses"), function(snapshot) {
                 activeStatusDatabase = {};
                 const currentEpochTimestamp = Date.now();
-                const continuousExpirationWindow = 24 * 60 * 60 * 1000; // 24 Hours absolute metric delta
+                const continuousExpirationWindow = 24 * 60 * 60 * 1000; 
 
                 snapshot.forEach(function(documentNode) {
                     const storyPayload = documentNode.data();
-                    // 24 Hours Strict Expiring Threshold Filtration Logic
                     if (currentEpochTimestamp - storyPayload.timestamp < continuousExpirationWindow) {
                         activeStatusDatabase[documentNode.id] = storyPayload;
                     }
@@ -2212,22 +1856,22 @@
                     type: file.type.startsWith('video/') ? 'video' : 'image',
                     timestamp: Date.now()
                 });
-                alert("Story matrix updated! Automatically expires after 24 hours.");
+                alert("Story updated successfully! Automatically expires after 24 hours.");
             } catch (err) { 
-                alert("Staging system fault logic."); 
+                alert("Staging processing error."); 
             }
         });
 
         window.triggerActiveStatusDeletion = async function() {
             if (!viewingStatusNodeData) return;
-            if (!confirm("Are you sure you want to delete your active story node completely?")) return;
+            if (!confirm("Permanently drop your active story?")) return;
             
             try {
                 await deleteDoc(doc(db, "statuses", viewingStatusNodeData.uid));
-                alert("Story asset node dropped from live matrix registry.");
+                alert("Story asset removed.");
                 closeStatusViewer();
             } catch (error) {
-                alert("De-registration tracking fault: " + error.message);
+                alert("Registry fault: " + error.message);
             }
         };
 
@@ -2272,6 +1916,43 @@
             sendCustomPayload(file.type.startsWith('video/') ? 'video' : 'image', convertedBase64);
         });
 
+        voiceMemoRecordBtn.addEventListener('click', async function() {
+            if (!localAudioMediaRecorder) {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert("Audio device access layer is unsupported on this browser system.");
+                    return;
+                }
+                try {
+                    const captureAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    localAudioMediaRecorder = new MediaRecorder(captureAudioStream);
+                    recordedVoiceChunks = [];
+                    
+                    localAudioMediaRecorder.ondataavailable = function(event) {
+                        if (event.data.size > 0) {
+                            recordedVoiceChunks.push(event.data);
+                        }
+                    };
+
+                    localAudioMediaRecorder.onstop = async function() {
+                        const compiledAudioBlob = new Blob(recordedVoiceChunks, { type: 'audio/webm' });
+                        const rawAudioBase64String = await transformFileToBase64(compiledAudioBlob);
+                        sendCustomPayload("voice", rawAudioBase64String);
+                        
+                        captureAudioStream.getTracks().forEach(trackItem => trackItem.stop());
+                        localAudioMediaRecorder = null;
+                        voiceMemoRecordBtn.classList.remove('recording-active');
+                    };
+
+                    localAudioMediaRecorder.start();
+                    voiceMemoRecordBtn.classList.add('recording-active');
+                } catch (micHardwareError) {
+                    alert("Microphone integration interface failure: " + micHardwareError.message);
+                }
+            } else {
+                localAudioMediaRecorder.stop();
+            }
+        });
+
         async function sendCustomPayload(type, mediaLink) {
             if (!activeChatFriendData) return;
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
@@ -2284,6 +1965,18 @@
             });
             messageInput.value = "";
         }
+
+        window.executeChatMessageDeletionNode = async function(messageDocId) {
+            if (!confirm("Permanently delete this message from the database collection row?")) return;
+            if (!activeChatFriendData) return;
+            const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
+            
+            try {
+                await deleteDoc(doc(db, "messages", roomKey, "records", messageDocId));
+            } catch (err) {
+                console.error("Failed to delete target message: ", err);
+            }
+        };
 
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
@@ -2378,6 +2071,7 @@
                 messagesBox.innerHTML = "";
                 snapshot.forEach(function(msgDoc) {
                     const msg = msgDoc.data();
+                    const msgId = msgDoc.id;
                     const bubble = document.createElement('div');
                     const isSent = msg.senderId === currentUser.uid;
                     bubble.className = `msg ${isSent ? 'sent' : 'received'}`;
@@ -2387,11 +2081,19 @@
                         innerTemplate = `<img src="${msg.mediaUrl}" alt="chat media">`;
                     } else if (msg.type === "video") {
                         innerTemplate = `<video src="${msg.mediaUrl}" controls></video>`;
+                    } else if (msg.type === "voice") {
+                        innerTemplate = `<audio src="${msg.mediaUrl}" controls></audio>`;
                     } else { 
                         innerTemplate = `<p>${msg.text}</p>`; 
                     }
 
+                    let deleteOverlayMarkup = "";
+                    if (isSent) {
+                        deleteOverlayMarkup = `<div class="msg-delete-trigger-overlay" onclick="executeChatMessageDeletionNode('${msgId}')">Delete</div>`;
+                    }
+
                     bubble.innerHTML = `
+                        ${deleteOverlayMarkup}
                         ${innerTemplate}
                         <div class="msg-meta-row">
                             <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
