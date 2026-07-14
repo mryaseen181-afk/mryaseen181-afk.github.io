@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuraHub Pro - Matrix Unified Edition</title>
+    <title>AuraHub Pro - Complete Production Masterpiece</title>
     <style>
         :root {
             --bg-main: #f8fafc;
@@ -18,6 +18,10 @@
             --story-gradient: linear-gradient(135deg, #c084fc 0%, #6366f1 50%, #38bdf8 100%);
             --verified-color: #0095f6;
             --admin-glow: #10b981;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -36,13 +40,20 @@
             align-items: center;
             color: var(--text-color);
             overflow: hidden;
+            width: 100vw;
         }
 
         #loading-screen { 
             color: var(--text-muted); 
             font-size: 16px; 
-            font-weight: 500; 
-            letter-spacing: 1px; 
+            font-weight: 600; 
+            letter-spacing: 1.5px;
+            animation: pulseText 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
 
         .form-container {
@@ -51,16 +62,17 @@
             border: 1px solid var(--border-color);
             border-radius: 24px;
             width: 100%;
-            max-width: 360px;
+            max-width: 380px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            box-shadow: var(--shadow-lg);
             margin: 20px;
+            transition: var(--transition-smooth);
         }
 
         .app-logo-title {
-            font-size: 36px;
+            font-size: 38px;
             font-weight: 900;
-            letter-spacing: -1.5px;
+            letter-spacing: -1.75px;
             margin-bottom: 24px;
             background: var(--story-gradient);
             -webkit-background-clip: text;
@@ -70,8 +82,8 @@
         .dashboard-layout {
             width: 100vw;
             height: 100vh;
-            max-width: 1080px;
-            max-height: 90vh;
+            max-width: 1200px;
+            max-height: 92vh;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 28px;
@@ -79,16 +91,17 @@
             flex-direction: column;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-smooth);
         }
 
         .app-navbar {
-            height: 68px;
+            height: 72px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 28px;
+            padding: 0 32px;
             background: var(--bg-card);
             z-index: 10;
             flex-shrink: 0;
@@ -96,11 +109,11 @@
 
         .mobile-header {
             display: none;
-            height: 60px;
+            height: 64px;
             border-bottom: 1px solid var(--border-color);
             align-items: center;
             justify-content: space-between;
-            padding: 0 16px;
+            padding: 0 20px;
             background: var(--bg-card);
             flex-shrink: 0;
             z-index: 10;
@@ -108,15 +121,15 @@
 
         .nav-brand { 
             font-weight: 900; 
-            font-size: 24px; 
+            font-size: 26px; 
             cursor: pointer; 
-            letter-spacing: -1px; 
+            letter-spacing: -1.2px; 
             color: var(--text-color); 
         }
         
         .nav-links { 
             display: flex; 
-            gap: 20px; 
+            gap: 24px; 
             align-items: center; 
         }
         
@@ -127,20 +140,34 @@
             background: none; 
             border: none; 
             color: var(--text-muted); 
-            transition: color 0.2s; 
+            transition: var(--transition-smooth); 
+            position: relative;
+            padding: 6px 0;
         }
         
         .nav-item:hover, .nav-item.active { 
             color: var(--accent-glow); 
         }
 
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-glow);
+            border-radius: 2px;
+        }
+
         .mobile-bottom-tabs {
             display: none;
-            height: 64px;
+            height: 68px;
             border-top: 1px solid var(--border-color);
             background: var(--bg-card);
             flex-shrink: 0;
             z-index: 10;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.02);
         }
 
         .tab-btn {
@@ -148,7 +175,7 @@
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             display: flex;
             flex-direction: column;
@@ -156,6 +183,7 @@
             justify-content: center;
             gap: 4px;
             cursor: pointer;
+            transition: var(--transition-smooth);
         }
 
         .tab-btn.active {
@@ -167,33 +195,42 @@
             display: flex;
             overflow: hidden;
             position: relative;
+            width: 100%;
         }
 
         .sidebar {
-            width: 360px;
+            width: 380px;
             background: var(--bg-card);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
             height: 100%;
+            z-index: 5;
         }
 
         .user-bar {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 20px;
+            gap: 16px;
+            padding: 24px;
             border-bottom: 1px solid var(--border-color);
+            background: var(--bg-card);
         }
         
         .user-bar img { 
-            width: 54px; 
-            height: 54px; 
+            width: 56px; 
+            height: 56px; 
             border-radius: 50%; 
             object-fit: cover; 
             border: 2px solid var(--border-color); 
             cursor: pointer; 
+            transition: var(--transition-smooth);
+        }
+
+        .user-bar img:hover {
+            transform: scale(1.04);
+            border-color: var(--accent-glow);
         }
         
         .user-details { 
@@ -203,66 +240,75 @@
         }
         
         .user-details h3 { 
-            font-size: 14px; 
+            font-size: 15px; 
             font-weight: 700; 
             color: var(--text-color); 
             display: flex; 
             align-items: center; 
-            gap: 4px; 
+            gap: 6px; 
         }
         
         .user-details p { 
             color: var(--text-muted); 
-            font-size: 12px; 
+            font-size: 13px; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .friends-list-container { 
             flex: 1; 
             overflow-y: auto; 
+            padding: 12px 0;
         }
         
         .friends-list-heading { 
-            font-size: 11px; 
+            font-size: 12px; 
             font-weight: 800; 
             color: var(--text-muted); 
-            padding: 20px 20px 8px 20px; 
-            letter-spacing: 1px; 
+            padding: 16px 24px 8px 24px; 
+            letter-spacing: 1.2px; 
             text-transform: uppercase; 
         }
         
         .friend-item { 
             display: flex; 
             align-items: center; 
-            gap: 14px; 
-            padding: 12px 20px; 
+            gap: 16px; 
+            padding: 14px 24px; 
             cursor: pointer; 
-            border-radius: 14px; 
-            margin: 0 8px 4px 8px; 
-            transition: background 0.2s; 
+            border-radius: 16px; 
+            margin: 2px 12px; 
+            transition: var(--transition-smooth); 
         }
         
         .friend-item:hover { 
             background: var(--bg-secondary); 
         }
+
+        .friend-item.active {
+            background: #e0f2fe;
+        }
         
         .friend-item img { 
-            width: 44px; 
-            height: 44px; 
+            width: 48px; 
+            height: 48px; 
             border-radius: 50%; 
             object-fit: cover; 
+            background: var(--bg-secondary);
         }
         
         .friend-item .info h4 { 
-            font-size: 14px; 
+            font-size: 15px; 
             font-weight: 600; 
             color: var(--text-color); 
             display: flex; 
             align-items: center; 
-            gap: 4px; 
+            gap: 6px; 
         }
         
         .friend-item .info p { 
-            font-size: 12px; 
+            font-size: 13px; 
             color: var(--text-muted); 
         }
 
@@ -278,34 +324,40 @@
         .feed-area, .search-tab-area { 
             display: none; 
             overflow-y: auto; 
-            padding: 28px; 
+            padding: 32px; 
         }
         
         .search-pane-header { 
             max-width: 800px; 
             width: 100%; 
-            margin: 0 auto 24px auto; 
+            margin: 0 auto 32px auto; 
             position: relative; 
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
         
         .search-input-box { 
             width: 100%; 
-            padding: 16px 24px; 
-            border-radius: 20px; 
+            padding: 18px 28px; 
+            border-radius: 24px; 
             border: 1px solid var(--border-color); 
-            font-size: 15px; 
+            font-size: 16px; 
             outline: none; 
             background: var(--bg-card); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02); 
+            box-shadow: var(--shadow-sm); 
+            transition: var(--transition-smooth);
+        }
+
+        .search-input-box:focus {
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
         }
         
         .search-split-layout { 
             display: grid; 
             grid-template-columns: 1fr; 
-            gap: 28px; 
+            gap: 32px; 
             max-width: 800px; 
             width: 100%; 
             margin: 0 auto; 
@@ -313,79 +365,83 @@
         
         .search-column-panel { 
             background: var(--bg-card); 
-            padding: 24px; 
+            padding: 28px; 
             border-radius: 24px; 
             border: 1px solid var(--border-color); 
             height: fit-content; 
-            max-height: 68vh; 
-            overflow-y: auto; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.01); 
+            box-shadow: var(--shadow-sm); 
         }
         
         .search-section-title { 
-            font-size: 12px; 
+            font-size: 13px; 
             font-weight: 800; 
             text-transform: uppercase; 
             color: var(--text-muted); 
-            letter-spacing: 0.5px; 
-            margin-bottom: 16px; 
-            padding-bottom: 8px; 
+            letter-spacing: 0.75px; 
+            margin-bottom: 20px; 
+            padding-bottom: 10px; 
             border-bottom: 1px solid var(--border-color); 
         }
 
         .chat-header { 
-            height: 68px; 
-            padding: 0 28px; 
+            height: 72px; 
+            padding: 0 32px; 
             border-bottom: 1px solid var(--border-color); 
             display: flex; 
             align-items: center; 
-            gap: 14px; 
+            gap: 16px; 
             background: var(--bg-card); 
             flex-shrink: 0;
+            z-index: 4;
         }
         
         .chat-header h3 { 
-            font-size: 16px; 
+            font-size: 17px; 
             font-weight: 700; 
             color: var(--text-color); 
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         
         .back-arrow { 
             display: none; 
             background: none; 
             border: none; 
-            font-size: 15px; 
+            font-size: 16px; 
             font-weight: 700;
             color: var(--accent-glow); 
             cursor: pointer; 
+            align-items: center;
+            gap: 4px;
         }
 
         .messages-box { 
             flex: 1; 
             overflow-y: auto; 
-            padding: 24px; 
+            padding: 32px; 
             display: flex; 
             flex-direction: column; 
-            gap: 12px; 
+            gap: 16px; 
+            background: #f8fafc;
         }
         
         .msg { 
             max-width: 65%; 
-            padding: 12px 18px; 
-            border-radius: 20px; 
-            font-size: 14px; 
-            line-height: 1.5; 
+            padding: 14px 20px; 
+            border-radius: 22px; 
+            font-size: 15px; 
+            line-height: 1.55; 
             position: relative;
+            box-shadow: var(--shadow-sm);
+            word-wrap: break-word;
         }
         
         .msg.sent { 
             background: var(--accent-purple); 
             color: #fff; 
             align-self: flex-end; 
-            box-shadow: 0 4px 12px rgba(99,102,241,0.2); 
+            border-bottom-right-radius: 4px;
         }
         
         .msg.received { 
@@ -393,30 +449,43 @@
             color: var(--text-color); 
             align-self: flex-start; 
             border: 1px solid var(--border-color); 
+            border-bottom-left-radius: 4px;
         }
         
-        .msg img, .msg audio {
+        .msg img {
             max-width: 100%;
             display: block;
-            border-radius: 12px;
-            margin-top: 8px;
+            border-radius: 14px;
+            margin-top: 10px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .msg audio {
+            width: 240px;
+            display: block;
+            margin-top: 10px;
+            border-radius: 28px;
+        }
+
+        .msg.sent audio {
+            filter: invert(1) hue-rotate(180deg);
         }
 
         .msg-meta-row { 
             display: flex; 
             align-items: center; 
             justify-content: flex-end;
-            gap: 4px; 
-            margin-top: 6px; 
-            font-size: 10px; 
-            opacity: 0.8; 
+            gap: 6px; 
+            margin-top: 8px; 
+            font-size: 11px; 
+            opacity: 0.75; 
         }
 
         .read-receipt-ticks {
             display: inline-flex;
             align-items: center;
-            width: 15px;
-            height: 11px;
+            width: 16px;
+            height: 12px;
         }
         .read-receipt-ticks svg {
             width: 100%;
@@ -435,29 +504,30 @@
         }
 
         .chat-input-wrapper { 
-            padding: 20px; 
+            padding: 24px; 
             background: var(--bg-card); 
             border-top: 1px solid var(--border-color); 
             flex-shrink: 0;
+            z-index: 4;
         }
         
         .chat-input-container {
             background: var(--bg-secondary); 
             border: 1px solid var(--border-color); 
-            border-radius: 18px; 
-            padding: 10px 18px; 
+            border-radius: 24px; 
+            padding: 12px 24px; 
             display: flex; 
-            gap: 14px; 
+            gap: 16px; 
             align-items: center;
         }
         
         .chat-input-container input[type="text"] { 
             flex: 1; 
-            padding: 4px 0; 
+            padding: 6px 0; 
             background: transparent; 
             border: none; 
             color: var(--text-color); 
-            font-size: 14px; 
+            font-size: 15px; 
             outline: none; 
         }
         
@@ -469,21 +539,30 @@
             align-items: center; 
             justify-content: center; 
             color: var(--text-muted); 
+            transition: var(--transition-smooth);
+            padding: 4px;
+            border-radius: 50%;
+        }
+
+        .action-icon-btn:hover {
+            color: var(--text-color);
+            background: rgba(0,0,0,0.04);
         }
         
         .action-icon-btn.recording-active {
             color: var(--accent-rose);
-            animation: pulseVoice 1s infinite alternate;
+            background: rgba(225, 29, 72, 0.1);
+            animation: pulseVoice 1.2s infinite alternate ease-in-out;
         }
 
         @keyframes pulseVoice {
-            from { opacity: 0.5; }
-            to { opacity: 1; }
+            from { transform: scale(1); box-shadow: 0 0 0 0 rgba(225,29,72,0.4); }
+            to { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(225,29,72,0); }
         }
 
         .action-icon-btn svg { 
-            width: 22px; 
-            height: 22px; 
+            width: 24px; 
+            height: 24px; 
             fill: none; 
             stroke: currentColor; 
             stroke-width: 2; 
@@ -494,34 +573,46 @@
             border: none; 
             color: var(--accent-glow); 
             font-weight: 700; 
-            font-size: 14px; 
+            font-size: 15px; 
             cursor: pointer; 
+            transition: var(--transition-smooth);
+        }
+
+        .send-txt-btn:hover {
+            transform: translate(2px);
         }
 
         .feed-composer {
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
-            border-radius: 20px; 
-            padding: 24px; 
-            margin-bottom: 28px; 
-            max-width: 580px; 
+            border-radius: 24px; 
+            padding: 28px; 
+            margin-bottom: 32px; 
+            max-width: 600px; 
             width: 100%; 
             margin-left: auto; 
             margin-right: auto;
+            box-shadow: var(--shadow-sm);
         }
         
         .feed-composer textarea { 
             width: 100%; 
-            height: 75px; 
+            height: 90px; 
             background: var(--bg-secondary); 
             border: 1px solid var(--border-color); 
-            border-radius: 12px; 
-            padding: 14px; 
+            border-radius: 16px; 
+            padding: 16px; 
             color: var(--text-color); 
             outline: none; 
             resize: none; 
-            font-size: 14px; 
-            margin-bottom: 14px; 
+            font-size: 15px; 
+            margin-bottom: 16px; 
+            transition: var(--transition-smooth);
+        }
+
+        .feed-composer textarea:focus {
+            border-color: var(--accent-glow);
+            background: var(--bg-card);
         }
         
         .feed-composer-actions { 
@@ -533,8 +624,8 @@
         .feed-posts-container { 
             display: flex; 
             flex-direction: column; 
-            gap: 28px; 
-            max-width: 580px; 
+            gap: 32px; 
+            max-width: 600px; 
             width: 100%; 
             margin-left: auto; 
             margin-right: auto; 
@@ -543,76 +634,86 @@
         .insta-post { 
             background: var(--bg-card); 
             border: 1px solid var(--border-color); 
-            border-radius: 20px; 
+            border-radius: 24px; 
             display: flex; 
             flex-direction: column; 
             overflow: hidden; 
             position: relative; 
+            box-shadow: var(--shadow-sm);
         }
         
         .post-header { 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            padding: 16px; 
+            padding: 20px; 
             border-bottom: 1px solid var(--border-color); 
         }
         
         .post-author-info { 
             display: flex; 
             align-items: center; 
-            gap: 12px; 
+            gap: 14px; 
             cursor: pointer; 
         }
         
         .post-header img { 
-            width: 38px; 
-            height: 38px; 
+            width: 42px; 
+            height: 42px; 
             border-radius: 50%; 
             object-fit: cover; 
         }
         
         .post-header h4 { 
-            font-size: 14px; 
+            font-size: 15px; 
             font-weight: 700; 
             color: var(--text-color); 
             display: flex; 
             align-items: center; 
-            gap: 4px; 
+            gap: 6px; 
         }
         
         .post-body { 
-            padding: 18px 20px; 
-            font-size: 14px; 
-            line-height: 1.6; 
+            padding: 20px 24px; 
+            font-size: 15px; 
+            line-height: 1.65; 
         }
 
         .post-body img {
-            max-width: 100%;
+            width: 100%;
+            max-height: 450px;
             display: block;
-            border-radius: 12px;
-            margin-top: 10px;
+            border-radius: 16px;
+            margin-top: 14px;
+            object-fit: cover;
+            box-shadow: var(--shadow-md);
         }
 
         .aesthetic-follow-btn {
             background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
             border: 1px solid #cbd5e1;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm);
             color: #334155; 
-            padding: 7px 14px; 
-            border-radius: 10px; 
-            font-size: 12px; 
+            padding: 8px 16px; 
+            border-radius: 12px; 
+            font-size: 13px; 
             font-weight: 600; 
             cursor: pointer; 
+            transition: var(--transition-smooth);
+        }
+
+        .aesthetic-follow-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-color);
         }
 
         .verified-badge-texture-star {
-            width: 18px; 
-            height: 18px; 
+            width: 20px; 
+            height: 20px; 
             display: inline-block; 
             vertical-align: middle; 
             flex-shrink: 0;
-            filter: drop-shadow(0px 2px 4px rgba(0, 149, 246, 0.3));
+            filter: drop-shadow(0px 2px 4px rgba(0, 149, 246, 0.25));
         }
 
         .modal { 
@@ -622,97 +723,173 @@
             left: 0; 
             width: 100%; 
             height: 100%; 
-            background: rgba(15,23,42,0.4); 
-            backdrop-filter: blur(8px); 
+            background: rgba(15,23,42,0.3); 
+            backdrop-filter: blur(12px); 
             justify-content: center; 
             align-items: center; 
             z-index: 100; 
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .modal-content { 
             background: var(--bg-card); 
-            padding: 32px; 
-            border-radius: 28px; 
+            padding: 36px; 
+            border-radius: 32px; 
             border: 1px solid var(--border-color); 
-            width: 100%; 
-            max-width: 440px; 
+            width: 90%; 
+            max-width: 460px; 
             text-align: center; 
             position: relative; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+            box-shadow: var(--shadow-lg); 
         }
         
         .close-modal { 
             position: absolute; 
-            top: 16px; 
-            right: 20px; 
-            font-size: 24px; 
+            top: 20px; 
+            right: 24px; 
+            font-size: 26px; 
             color: var(--text-muted); 
             cursor: pointer; 
+            transition: var(--transition-smooth);
         }
 
-        .main-btn {
+        .close-modal:hover {
+            color: var(--text-color);
+        }
+        
+        .input-group { 
+            margin-bottom: 20px; 
+            text-align: left; 
+        }
+        
+        .input-group label { 
+            display: block; 
+            font-size: 14px; 
+            margin-bottom: 8px; 
+            font-weight: 600; 
+            color: var(--text-muted); 
+        }
+        
+        .input-group input { 
             width: 100%; 
             padding: 14px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 14px; 
+            font-size: 15px; 
+            background: var(--bg-secondary); 
+            color: var(--text-color); 
+            outline: none; 
+            transition: var(--transition-smooth);
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-glow);
+            background: var(--bg-card);
+        }
+        
+        .main-btn {
+            width: 100%; 
+            padding: 16px; 
             background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
             color: #fff; 
             border: 1px solid #0284c7; 
-            border-radius: 12px; 
-            font-size: 14px; 
+            border-radius: 14px; 
+            font-size: 15px; 
             font-weight: 700; 
             cursor: pointer; 
-            box-shadow: 0 2px 4px rgba(2,132,199,0.2); 
+            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2);
+            transition: var(--transition-smooth);
+        }
+
+        .main-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
         }
         
         .secondary-btn {
             width: 100%; 
-            padding: 14px; 
+            padding: 16px; 
             background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
             color: #334155; 
             border: 1px solid #cbd5e1; 
-            border-radius: 12px; 
-            font-size: 14px; 
+            border-radius: 14px; 
+            font-size: 15px; 
             cursor: pointer; 
-            margin-top: 8px; 
+            margin-top: 12px; 
             font-weight: 600; 
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+        }
+
+        .secondary-btn:hover {
+            background: #f1f5f9;
+        }
+        
+        .no-chat-selected { 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            color: var(--text-muted); 
+            font-size: 15px; 
+            font-weight: 500;
         }
         
         .profile-modal-hdr { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            margin-bottom: 20px; 
+            margin-bottom: 24px; 
             border-bottom: 1px solid var(--border-color); 
-            padding-bottom: 20px; 
+            padding-bottom: 24px; 
         }
         
         .profile-stat-row { 
             display: flex; 
-            gap: 28px; 
-            margin: 12px 0; 
+            gap: 36px; 
+            margin: 16px 0; 
         }
         
         .profile-stat-box h5 { 
-            font-size: 20px; 
-            font-weight: 700; 
+            font-size: 22px; 
+            font-weight: 800; 
             color: var(--text-color); 
         }
         
         .profile-stat-box p { 
-            font-size: 12px; 
+            font-size: 13px; 
             color: var(--text-muted); 
+            font-weight: 500;
         }
         
         .profile-description-txt { 
-            font-size: 14px; 
+            font-size: 15px; 
             color: var(--text-color); 
-            margin-top: 6px; 
-            line-height: 1.4; 
+            margin-top: 8px; 
+            line-height: 1.5; 
             font-style: italic; 
             background: var(--bg-secondary); 
-            padding: 10px 14px; 
-            border-radius: 12px; 
+            padding: 12px 18px; 
+            border-radius: 16px; 
             width: 100%; 
             border: 1px solid var(--border-color); 
+        }
+
+        .admin-badge-indicator {
+            background: var(--admin-glow);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
         }
 
         @media (max-width: 768px) {
@@ -726,7 +903,6 @@
                 width: 100%; height: 100%; display: none !important;
             }
             
-            /* Enhanced visibility rules explicitly managing display toggles */
             .dashboard-layout[data-tab="chats"] #app-sidebar-pane { display: flex !important; }
             .dashboard-layout[data-tab="feed"] #app-feed-pane { display: flex !important; }
             .dashboard-layout[data-tab="search"] #app-search-pane { display: flex !important; }
@@ -734,11 +910,11 @@
             .dashboard-layout.chat-active #app-sidebar-pane { display: none !important; }
             .dashboard-layout.chat-active #app-chat-pane { display: flex !important; }
             
-            .back-arrow { display: block; }
-            .msg { max-width: 80%; }
-            .search-split-layout { grid-template-columns: 1fr; gap: 16px; }
-            .search-column-panel { max-height: 50vh; }
-            .feed-area, .search-tab-area { padding: 16px; }
+            .back-arrow { display: inline-flex; }
+            .msg { max-width: 85%; }
+            .search-split-layout { grid-template-columns: 1fr; gap: 20px; }
+            .search-column-panel { max-height: 60vh; }
+            .feed-area, .search-tab-area { padding: 20px 16px; }
         }
     </style>
 </head>
@@ -752,7 +928,7 @@
         <div class="input-group"><input type="password" id="login-password" placeholder="Password"></div>
         <button id="email-primary-btn" class="main-btn">Sign In</button>
         <button id="auth-toggle-mode-btn" class="secondary-btn">Create New Account</button>
-        <div style="margin:16px 0; color:var(--text-muted); font-size:13px;">OR</div>
+        <div style="margin:16px 0; color:var(--text-muted); font-size:13px; font-weight:600;">OR</div>
         <button id="google-login-btn" class="secondary-btn" style="color: var(--accent-glow);">Log in with Google</button>
     </div>
 
@@ -834,14 +1010,14 @@
                         <input type="file" id="feed-file-input" accept="image/*" style="display: none;">
                         <button class="main-btn" style="width: auto; padding: 8px 16px;" id="submit-feed-post-btn">Publish Post</button>
                     </div>
-                    <div id="feed-file-preview" style="font-size: 12px; color: var(--accent-glow); margin-top: 8px; display: none;">Attachment ready.</div>
+                    <div id="feed-file-preview" style="font-size: 13px; color: var(--accent-glow); margin-top: 10px; display: none; font-weight: 600;">Attachment payload staged successfully.</div>
                 </div>
                 <div id="feed-posts-container" class="feed-posts-container"></div>
             </div>
 
             <div class="search-tab-area" id="app-search-pane">
                 <div class="search-pane-header">
-                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Query creator index...">
+                    <input type="text" class="search-input-box" id="hub-main-search-bar" placeholder="Query creator index or keywords...">
                 </div>
                 <div class="search-split-layout">
                     <div class="search-column-panel">
@@ -860,14 +1036,14 @@
     </div>
 
     <div id="view-profile-modal" class="modal">
-        <div class="modal-content" style="max-width: 460px;">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeViewProfileModal()">&times;</span>
             <div class="profile-modal-hdr">
-                <div style="width:80px; height:80px; border-radius:50%; overflow:hidden; margin-bottom: 10px; border: 2px solid var(--accent-glow);">
+                <div style="width:90px; height:90px; border-radius:50%; overflow:hidden; margin-bottom: 12px; border: 2.5px solid var(--accent-glow); box-shadow: var(--shadow-sm);">
                     <img id="view-modal-avatar" src="" style="width:100%; height:100%; object-fit:cover;" alt="Avatar">
                 </div>
                 <h2 id="view-modal-name">Node Profile</h2>
-                <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700;">@username</p>
+                <p id="view-modal-username" style="color:var(--accent-glow); font-weight:700; margin-top: 4px;">@username</p>
                 <div id="view-modal-description" class="profile-description-txt">No descriptive bio assigned yet.</div>
             </div>
         </div>
@@ -878,6 +1054,7 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // Core Platform Structural Identifiers
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
             authDomain: "commoftheworld.firebaseapp.com", 
@@ -887,11 +1064,13 @@
             appId: "1:322496812191:web:1bf0048089df350acb7eaa"
         };
 
+        // Initialize Structural Module Instances
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
+        // Standard DOM References Map
         const loadingScreen = document.getElementById('loading-screen');
         const loginContainer = document.getElementById('login-container');
         const profileSetupContainer = document.getElementById('profile-setup-container');
@@ -908,12 +1087,14 @@
         const feedFilePreview = document.getElementById('feed-file-preview');
         const voiceMemoBtn = document.getElementById('voice-memo-btn');
 
+        // Dynamic Framework Global State Matrices
         let currentUser = null, userDataRecord = null, activeChatFriendData = null;
         let unsubscribeChatListener = null;
         let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
         let globalCachedFeedPosts = [], globalCachedAllUsers = [];
         let stagedChatFileBase64 = "", stagedFeedFileBase64 = "";
 
+        // Core Architecture Static View Engine Subroutines
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2.25l1.826 1.135a1.5 1.5 0 001.385.16l2.072-.674a1.5 1.5 0 011.83 1.222l.374 2.148a1.5 1.5 0 00.75 1.127l1.91 1.025a1.5 1.5 0 01.698 2.094l-1.025 1.91a1.5 1.5 0 000 1.353l1.025 1.91a1.5 1.5 0 01-.699 2.094l-1.91 1.025a1.5 1.5 0 00-.749 1.127l-.374 2.148a1.5 1.5 0 01-1.83 1.222l-2.072-.674a1.5 1.5 0 00-1.385.16L12 21.75l-1.826-1.135a1.5 1.5 0 00-1.385-.16l-2.072.674a1.5 1.5 0 01-1.83-1.222l-.374-2.148a1.5 1.5 0 00-.75-1.127l-1.91-1.025a1.5 1.5 0 01-.698-2.094l1.025-1.91a1.5 1.5 0 000-1.353l-1.025-1.91a1.5 1.5 0 01.699-2.094l1.91-1.025a1.5 1.5 0 00.749-1.127l.374-2.148a1.5 1.5 0 011.83-1.222l2.072.674a1.5 1.5 0 001.385-.16L12 2.25z" fill="#0095f6"/>
@@ -927,24 +1108,32 @@
                 `<span class="read-receipt-ticks unseen"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>`;
         };
 
+        // HTML5 Service Web Notification Engine Implementation
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) {
-                alert("Alert notifications are not supported on this device ecosystem.");
+                alert("This client configuration architecture does not support push alert parameters.");
                 return;
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("Matrix Engine Active", { body: "Real-time alerts are now enabled." });
+                    new Notification("AuraHub Engine Authorized", { 
+                        body: "Universal service core background updates are active.",
+                        icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=AuraHub"
+                    });
                 }
             });
         };
 
         function dispatchClosedAlertPacket(senderName, textContent) {
-            if (Notification.permission === "granted") {
-                new Notification(`${senderName}`, { body: textContent || "Data asset payload transmitted.", tag: "chat" });
+            if (Notification.permission === "granted" && document.hidden) {
+                new Notification(`${senderName}`, { 
+                    body: textContent || "Data asset payload transmitted via matrix pipeline.", 
+                    tag: "aura-chat-alert" 
+                });
             }
         }
 
+        // Modular Navigation Core Pipeline Routine
         window.switchTab = function(tabName) {
             dashboardContainer.setAttribute('data-tab', tabName);
             dashboardContainer.classList.remove('chat-active');
@@ -954,10 +1143,16 @@
             const searchPane = document.getElementById('app-search-pane');
             const sidePane = document.getElementById('app-sidebar-pane');
             
-            ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search'].forEach(b => document.getElementById(b)?.classList.remove('active'));
+            ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search'].forEach(btnId => {
+                document.getElementById(btnId)?.classList.remove('active');
+            });
 
+            // Desktop UI layout view processing logic mapping engine parameters
             if (window.innerWidth > 768) {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none';
+                chatPane.style.display = 'none'; 
+                sidePane.style.display = 'none'; 
+                feedPane.style.display = 'none'; 
+                searchPane.style.display = 'none';
                 
                 if (tabName === 'feed') {
                     feedPane.style.display = 'flex';
@@ -967,11 +1162,12 @@
                     document.getElementById('nav-btn-search')?.classList.add('active');
                     triggerHubComprehensiveSearch();
                 } else {
-                    sidePane.style.display = 'flex'; chatPane.style.display = 'flex';
+                    sidePane.style.display = 'flex'; 
+                    chatPane.style.display = 'flex';
                     document.getElementById('nav-btn-chats')?.classList.add('active');
                 }
             } else {
-                // Let CSS handle responsive presentation blocks cleanly via attribute selector overrides
+                // Mobile dynamic selection layer fallback overrides logic tracking 
                 document.getElementById(`tab-btn-${tabName}`)?.classList.add('active');
                 if (tabName === 'search') triggerHubComprehensiveSearch();
             }
@@ -979,52 +1175,56 @@
 
         window.exitChatToSidebar = function() {
             dashboardContainer.classList.remove('chat-active');
+            // Explicitly clear selected list items upon close triggers
+            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
         };
 
+        // File/Media Capture Binding Elements Execution Setup
         document.getElementById('chat-file-trigger').addEventListener('click', () => chatFileInput.click());
         document.getElementById('feed-file-trigger').addEventListener('click', () => feedFileInput.click());
 
-        chatFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
+        chatFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = (el) => {
-                stagedChatFileBase64 = el.target.result;
-                sendCustomPayload("[Asset Matrix Sent]");
+            reader.onload = (uploadEvent) => {
+                stagedChatFileBase64 = uploadEvent.target.result;
+                sendCustomPayload("[Encrypted Image Payload]");
             };
             reader.readAsDataURL(file);
         });
 
-        feedFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
+        feedFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = (el) => {
-                stagedFeedFileBase64 = el.target.result;
+            reader.onload = (uploadEvent) => {
+                stagedFeedFileBase64 = uploadEvent.target.result;
                 feedFilePreview.style.display = 'block';
             };
             reader.readAsDataURL(file);
         });
 
+        // Asynchronous Audio Device Capturing Pipeline Setup
         voiceMemoBtn.addEventListener('click', async () => {
             if (!mediaRecorder) {
                 try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
+                    const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(mediaStream);
                     mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
                     mediaRecorder.onstop = () => {
-                        const blob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
                         const reader = new FileReader();
-                        reader.onload = (el) => {
-                            sendCustomPayload("[Voice Note Matrix Sent]", el.target.result);
+                        reader.onload = (fileBlobEvent) => {
+                            sendCustomPayload("[Voice Note Matrix Payload]", fileBlobEvent.target.result);
                         };
-                        reader.readAsDataURL(blob);
+                        reader.readAsDataURL(audioBlob);
                         audioChunks = [];
                     };
                     mediaRecorder.start();
                     voiceMemoBtn.classList.add('recording-active');
                 } catch (err) {
-                    alert("Audio input device access blocked.");
+                    alert("Audio input device configuration error or permission failure.");
                 }
             } else {
                 mediaRecorder.stop();
@@ -1036,48 +1236,52 @@
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
-        window.renderProfileCard = async function(userObj, isOwnProfile = false) {
+        window.renderProfileCard = async function(userObj) {
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             document.getElementById('view-modal-avatar').src = userObj.photoURL;
             document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
-            document.getElementById('view-modal-description').innerText = userObj.description || "Active Node.";
+            document.getElementById('view-modal-description').innerText = userObj.description || "Active node verified instance.";
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
 
+        // Multi-tier Dynamic Database Query Filters Matrix Controls Subroutine
         async function triggerHubComprehensiveSearch() {
-            const filterText = hubSearchBar.value.trim().toLowerCase();
+            const searchString = hubSearchBar.value.trim().toLowerCase();
             const creatorsContainer = document.getElementById('search-creators-results');
             creatorsContainer.innerHTML = "";
 
-            globalCachedAllUsers.forEach(u => {
-                if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
-                const tickHtml = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+            globalCachedAllUsers.forEach(userNode => {
+                if (searchString && !userNode.username.includes(searchString) && !userNode.fullName.toLowerCase().includes(searchString)) return;
+                const tickHtml = (userNode.verified || userNode.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 
-                const row = document.createElement('div');
-                row.className = "friend-item";
-                row.innerHTML = `
-                    <img src="${u.photoURL}">
+                const cardRow = document.createElement('div');
+                cardRow.className = "friend-item";
+                cardRow.style.margin = "4px 0";
+                cardRow.innerHTML = `
+                    <img src="${userNode.photoURL}">
                     <div class="info" style="flex:1;">
-                        <h4>${u.fullName} ${tickHtml}</h4>
-                        <p>@${u.username}</p>
+                        <h4>${userNode.fullName} ${tickHtml}</h4>
+                        <p>@${userNode.username}</p>
                     </div>
                 `;
-                row.onclick = () => renderProfileCard(u, u.uid === currentUser.uid);
-                creatorsContainer.appendChild(row);
+                cardRow.onclick = () => renderProfileCard(userNode);
+                creatorsContainer.appendChild(cardRow);
             });
         }
 
+        // Real-time Global Matrix Timeline Feed Parsing Assembly Routine
         function renderExploreTimelineFeed() {
             const feedContainer = document.getElementById('feed-posts-container');
             feedContainer.innerHTML = "";
+            
             globalCachedFeedPosts.forEach(postItem => {
                 const post = postItem.data;
-                const card = document.createElement('div');
-                card.className = 'insta-post';
+                const postElement = document.createElement('div');
+                postElement.className = 'insta-post';
                 const verifiedTick = (post.authorUsername === 'yaseen' || post.verified) ? getVerifiedTextureBadgeMarkup() : "";
 
-                card.innerHTML = `
+                postElement.innerHTML = `
                     <div class="post-header">
                         <div class="post-author-info">
                             <img src="${post.authorPhoto}">
@@ -1089,33 +1293,41 @@
                         ${post.attachedFile ? `<img src="${post.attachedFile}">` : ''}
                     </div>
                 `;
-                feedContainer.appendChild(card);
+                feedContainer.appendChild(postElement);
             });
         }
 
         document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
-            const text = document.getElementById('feed-post-text').value.trim();
-            if (!text && !stagedFeedFileBase64) return;
+            const rawText = document.getElementById('feed-post-text').value.trim();
+            if (!rawText && !stagedFeedFileBase64) return;
             
-            await addDoc(collection(db, "globalFeed"), {
-                authorName: userDataRecord.fullName,
-                authorUsername: userDataRecord.username,
-                authorPhoto: userDataRecord.photoURL,
-                text: text,
-                attachedFile: stagedFeedFileBase64,
-                timestamp: Date.now()
-            });
-            
-            document.getElementById('feed-post-text').value = "";
-            stagedFeedFileBase64 = "";
-            feedFilePreview.style.display = 'none';
+            try {
+                await addDoc(collection(db, "globalFeed"), {
+                    authorName: userDataRecord.fullName,
+                    authorUsername: userDataRecord.username,
+                    authorPhoto: userDataRecord.photoURL,
+                    text: rawText,
+                    attachedFile: stagedFeedFileBase64,
+                    timestamp: Date.now()
+                });
+                
+                document.getElementById('feed-post-text').value = "";
+                stagedFeedFileBase64 = "";
+                feedFilePreview.style.display = 'none';
+            } catch (error) {
+                console.error("Matrix delivery fail pipeline error details:", error);
+            }
         });
 
-        function openChatWindow(friendData) {
+        // Real-time Isolated Message Pipeline Execution Routing
+        function openChatWindow(friendData, selectedItemElement) {
             activeChatFriendData = friendData;
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
             dashboardContainer.classList.add('chat-active');
+            
+            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
+            if(selectedItemElement) selectedItemElement.classList.add('active');
             
             const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml}`;
@@ -1161,18 +1373,22 @@
             
             const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
             
-            await addDoc(collection(db, "messages", roomKey, "records"), {
-                senderId: currentUser.uid,
-                text: textValue,
-                file: stagedChatFileBase64,
-                audio: voiceBase64,
-                timestamp: Date.now(),
-                seen: false
-            });
-            
-            if (!overrideText) messageInput.value = "";
-            stagedChatFileBase64 = "";
-            chatFileInput.value = "";
+            try {
+                await addDoc(collection(db, "messages", roomKey, "records"), {
+                    senderId: currentUser.uid,
+                    text: textValue,
+                    file: stagedChatFileBase64,
+                    audio: voiceBase64,
+                    timestamp: Date.now(),
+                    seen: false
+                });
+                
+                if (!overrideText) messageInput.value = "";
+                stagedChatFileBase64 = "";
+                chatFileInput.value = "";
+            } catch (err) {
+                console.error("Data tracking stream synchronization terminal error:", err);
+            }
         }
 
         document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
@@ -1185,8 +1401,9 @@
                 const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 const item = document.createElement('div');
                 item.className = 'friend-item';
+                if(activeChatFriendData && activeChatFriendData.uid === fData.uid) item.classList.add('active');
                 item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml}</h4><p>@${fData.username}</p></div>`;
-                item.onclick = () => openChatWindow(fData);
+                item.onclick = () => openChatWindow(fData, item);
                 friendsListElement.appendChild(item);
             });
         }
@@ -1194,19 +1411,24 @@
         toggleAuthModeBtn.addEventListener('click', function() {
             isSignUpMode = !isSignUpMode;
             primaryAuthBtn.innerText = isSignUpMode ? "Register Node" : "Sign In";
+            toggleAuthModeBtn.innerText = isSignUpMode ? "Already Registered? Sign In" : "Create New Account";
         });
 
         primaryAuthBtn.addEventListener('click', function() {
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
+            if (!email || !password) return alert("Verify core input fields parameters configuration.");
+            
             if (isSignUpMode) {
-                createUserWithEmailAndPassword(auth, email, password);
+                createUserWithEmailAndPassword(auth, email, password).catch(e => alert(e.message));
             } else {
-                signInWithEmailAndPassword(auth, email, password);
+                signInWithEmailAndPassword(auth, email, password).catch(e => alert(e.message));
             }
         });
 
-        document.getElementById('google-login-btn').addEventListener('click', () => signInWithPopup(auth, provider));
+        document.getElementById('google-login-btn').addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(e => alert(e.message));
+        });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -1224,6 +1446,7 @@
                 loadingScreen.style.display = 'none';
                 loginContainer.style.display = 'block';
                 dashboardContainer.style.display = 'none';
+                profileSetupContainer.style.display = 'none';
             }
         });
 
@@ -1231,14 +1454,19 @@
             e.preventDefault();
             const username = document.getElementById('setup-username').value.trim().toLowerCase();
             const fullName = document.getElementById('setup-name').value;
+            if(!username || !fullName) return;
+            
             const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen") };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
+            
             await setDoc(doc(db, "users", currentUser.uid), profileData);
+            userDataRecord = profileData;
             launchDashboard(profileData);
         });
 
         function launchDashboard(data) {
-            profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; 
+            profileSetupContainer.style.display = 'none'; 
+            loginContainer.style.display = 'none'; 
             dashboardContainer.style.display = 'flex';
             
             document.getElementById('dash-username').innerText = `@${data.username}`;
@@ -1247,7 +1475,10 @@
 
             onSnapshot(collection(db, "users"), (uSnap) => {
                 globalCachedAllUsers = [];
-                uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); if (uDoc.id === currentUser.uid) userDataRecord = uDoc.data(); });
+                uSnap.forEach(uDoc => { 
+                    globalCachedAllUsers.push(uDoc.data()); 
+                    if (uDoc.id === currentUser.uid) userDataRecord = uDoc.data(); 
+                });
                 loadFriendsSidebarList();
             });
 
@@ -1257,7 +1488,7 @@
                 renderExploreTimelineFeed();
             });
 
-            switchTab('chats');
+            switchTab(dashboardContainer.getAttribute('data-tab') || 'chats');
         }
 
         hubSearchBar.addEventListener('input', triggerHubComprehensiveSearch);
