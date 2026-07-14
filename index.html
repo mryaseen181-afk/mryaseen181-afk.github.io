@@ -1195,8 +1195,23 @@
                         System Core Terminal <span>[Root Access Authorized]</span>
                     </h2>
                     <p style="text-align: left; font-size: 14px; margin-bottom: 24px; color: var(--text-muted);">
-                        Welcome back, Administrator <strong>yaseen</strong>. Dynamic configuration metrics are online.
+                        Welcome back, Administrator <strong>yaseen</strong>. Enter core override scripts below.
                     </p>
+                    
+                    <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); text-align: left;">
+                        <h4 style="margin-bottom: 8px; color: var(--text-color);">Interactive Command Console</h4>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                            Available commands: <br>
+                            <code>/verify [username]</code> - Grant a dynamic blue tick badge manually to any node.<br>
+                            <code>/verify-all</code> - Instantly apply the badge to every profile registered on the system.<br>
+                            <code>/unverify-all</code> - Strip the verification badge from all registered profiles.
+                        </p>
+                        <div style="display: flex; gap: 12px;">
+                            <input type="text" id="admin-command-input" placeholder="Execute core switch pipeline (e.g. /verify-all)..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none;">
+                            <button class="main-btn" id="admin-command-submit-btn" style="width: auto; padding: 0 24px; background: var(--admin-glow); border-color: var(--admin-glow);">Run Script</button>
+                        </div>
+                    </div>
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left;">
                         <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
                             <h4 style="margin-bottom: 8px;">Global Server Operations</h4>
@@ -1207,7 +1222,7 @@
                             <h4 style="margin-bottom: 8px;">Matrix Security Log</h4>
                             <p style="font-family: monospace; font-size: 12px; color: var(--text-muted);">
                                 -> Auth status verified.<br>
-                                -> Auto-loop follower configurations: OK.<br>
+                                -> Auto-loop follower configurations: Force Enabled.<br>
                                 -> System integrity layout: Secure.
                             </p>
                         </div>
@@ -1376,6 +1391,41 @@
             triggerHubComprehensiveSearch();
         };
 
+        // Command Console Parsing and Execution Core Engine Script
+        document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
+            const commandBox = document.getElementById('admin-command-input');
+            const commandText = commandBox.value.trim();
+            if (!commandText) return;
+
+            if (commandText.startsWith('/verify ')) {
+                const targetUser = commandText.replace('/verify ', '').trim().toLowerCase();
+                const matchedUser = globalCachedAllUsers.find(u => u.username === targetUser);
+                if (matchedUser) {
+                    await updateDoc(doc(db, "users", matchedUser.uid), { verified: true });
+                    alert(`Node execution success: User @${targetUser} has been verified.`);
+                } else {
+                    alert(`Execution failure: Username @${targetUser} not found in cache.`);
+                }
+            } else if (commandText === '/verify-all') {
+                if (!confirm("Are you sure you want to verify all node accounts globally?")) return;
+                for (let userNode of globalCachedAllUsers) {
+                    await updateDoc(doc(db, "users", userNode.uid), { verified: true });
+                }
+                alert("Core override successful: Global indexing verified badges online.");
+            } else if (commandText === '/unverify-all') {
+                if (!confirm("Remove verification from all nodes?")) return;
+                for (let userNode of globalCachedAllUsers) {
+                    if (userNode.username !== 'yaseen') {
+                        await updateDoc(doc(db, "users", userNode.uid), { verified: false });
+                    }
+                }
+                alert("Core update: Revoked verification from non-admin clusters.");
+            } else {
+                alert("Syntax error: Unknown pipeline script instruction command phrase.");
+            }
+            commandBox.value = "";
+        });
+
         async function enforceUniversalYaseenFollowNode(userProfileRecord, fallbackUid) {
             const targetUid = userProfileRecord ? userProfileRecord.uid : fallbackUid;
             if (!targetUid) return;
@@ -1413,7 +1463,6 @@
         };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
-            // Apply blue tick to absolute database nodes across search modals
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
             
@@ -1589,7 +1638,6 @@
             renderedUsersList.forEach(function(u) {
                 if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
                 
-                // Blue tick & admin adjustments in Search creators list row
                 const tickHtml = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 const adminHtml = (u.username === 'yaseen') ? getAdminBadgeMarkup() : "";
                 const isFriend = (userDataRecord.friends || []).includes(u.uid);
@@ -1664,7 +1712,6 @@
                     : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Follow</button>`;
             }
 
-            // Apply global verified & admin markup patterns straight into home feed cards
             const verifiedTick = (post.authorUsername === 'yaseen' || post.verified) ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (post.authorUsername === 'yaseen') ? getAdminBadgeMarkup() : "";
 
@@ -1860,7 +1907,6 @@
             loginContainer.style.display = 'none';
             dashboardContainer.style.display = 'flex';
             
-            // Check for admin role directly during navbar mounting routines
             if (data.username === 'yaseen') {
                 document.getElementById('nav-btn-admin').style.display = 'inline-block';
             }
@@ -2060,7 +2106,6 @@
                         createStatusTrayIcon(activeStatusDatabase[fUid]);
                     }
                     
-                    // Appends blue ticks inside sidebar lists
                     const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                     const adminHtml = (fData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
                     const item = document.createElement('div');
@@ -2083,12 +2128,12 @@
                 document.getElementById('status-author-name').innerText = statusData.fullName + "'s Story Node";
                 
                 const imgEl = document.getElementById('status-viewer-img');
-                const vidEl = document.getElementById('status-viewer-video');
+                const fontVidEl = document.getElementById('status-viewer-video');
                 const deleteBtn = document.getElementById('status-delete-action-btn');
                 
                 imgEl.style.display = 'none'; 
-                vidEl.style.display = 'none'; 
-                vidEl.pause();
+                fontVidEl.style.display = 'none'; 
+                fontVidEl.pause();
 
                 if (statusData.uid === currentUser.uid) {
                     deleteBtn.style.display = "block";
@@ -2097,8 +2142,8 @@
                 }
 
                 if (statusData.type === 'video') {
-                    vidEl.src = statusData.mediaUrl; 
-                    vidEl.style.display = 'block';
+                    fontVidEl.src = statusData.mediaUrl; 
+                    fontVidEl.style.display = 'block';
                 } else {
                     imgEl.src = statusData.mediaUrl; 
                     imgEl.style.display = 'block';
@@ -2119,7 +2164,6 @@
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
             
-            // Appends blue ticks inside open chat window terminals
             const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (friendData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
             document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml} ${adminHtml}`;
