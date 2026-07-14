@@ -17,6 +17,7 @@
             --accent-rose: #e11d48;
             --story-gradient: linear-gradient(135deg, #c084fc 0%, #6366f1 50%, #38bdf8 100%);
             --verified-color: #0095f6;
+            --admin-glow: #10b981;
         }
 
         * {
@@ -408,6 +409,9 @@
             font-size: 16px; 
             font-weight: 700; 
             color: var(--text-color); 
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
         .typing-indicator-span { 
@@ -1034,6 +1038,18 @@
             border-radius: 8px; 
             border: 1px solid var(--border-color); 
         }
+
+        .admin-badge-indicator {
+            background: var(--admin-glow);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 6px;
+        }
     </style>
 </head>
 <body>
@@ -1071,6 +1087,7 @@
         <div class="app-navbar">
             <div class="nav-brand" onclick="switchTab('chats')">AuraHub Pro</div>
             <div class="nav-links">
+                <button id="nav-btn-admin" class="nav-item" onclick="switchTab('admin')" style="display: none; color: var(--admin-glow); font-weight: 800;">⚡ Admin Terminal</button>
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
                 <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
                 <button id="nav-btn-search" class="nav-item" onclick="switchTab('search')">Search Hub</button>
@@ -1171,6 +1188,33 @@
                     </div>
                 </div>
             </div>
+
+            <div class="feed-area" id="app-admin-pane" style="display: none; padding: 28px; width: 100%; overflow-y: auto;">
+                <div class="feed-composer" style="max-width: 800px; border-color: var(--admin-glow);">
+                    <h2 style="color: var(--admin-glow); margin-bottom: 16px; text-align: left; display: flex; align-items: center; gap: 8px;">
+                        System Core Terminal <span>[Root Access Authorized]</span>
+                    </h2>
+                    <p style="text-align: left; font-size: 14px; margin-bottom: 24px; color: var(--text-muted);">
+                        Welcome back, Administrator <strong>yaseen</strong>. Dynamic configuration metrics are online.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left;">
+                        <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+                            <h4 style="margin-bottom: 8px;">Global Server Operations</h4>
+                            <button class="main-btn" style="background: var(--admin-glow); border-color: var(--admin-glow); margin-bottom: 8px;" onclick="alert('Database backup initiated.')">Backup Firestore Index Tables</button>
+                            <button class="secondary-btn" onclick="alert('Flushing client instances...')">Flush Node Caches</button>
+                        </div>
+                        <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+                            <h4 style="margin-bottom: 8px;">Matrix Security Log</h4>
+                            <p style="font-family: monospace; font-size: 12px; color: var(--text-muted);">
+                                -> Auth status verified.<br>
+                                -> Auto-loop follower configurations: OK.<br>
+                                -> System integrity layout: Secure.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -1285,28 +1329,36 @@
             </svg>
         `;
 
+        const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
+
         window.switchTab = function(tabName) {
             const chatPane = document.getElementById('app-chat-pane');
             const feedPane = document.getElementById('app-feed-pane');
             const searchPane = document.getElementById('app-search-pane');
+            const adminPane = document.getElementById('app-admin-pane');
             const sidePane = document.getElementById('app-sidebar-pane');
             
             const btnChats = document.getElementById('nav-btn-chats');
             const btnFeed = document.getElementById('nav-btn-feed');
             const btnSearch = document.getElementById('nav-btn-search');
+            const btnAdmin = document.getElementById('nav-btn-admin');
 
             btnChats.classList.remove('active');
             btnFeed.classList.remove('active');
             btnSearch.classList.remove('active');
+            btnAdmin.classList.remove('active');
 
             if (tabName === 'feed') {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; searchPane.style.display = 'none';
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
                 feedPane.style.display = 'flex'; btnFeed.classList.add('active');
             } else if (tabName === 'search') {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none';
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; adminPane.style.display = 'none';
                 searchPane.style.display = 'flex'; btnSearch.classList.add('active'); triggerHubComprehensiveSearch();
+            } else if (tabName === 'admin') {
+                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none';
+                adminPane.style.display = 'block'; btnAdmin.classList.add('active');
             } else {
-                feedPane.style.display = 'none'; searchPane.style.display = 'none';
+                feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
                 sidePane.style.display = 'flex'; chatPane.style.display = 'flex'; btnChats.classList.add('active');
             }
         };
@@ -1361,9 +1413,12 @@
         };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
-            const tickHtml = userObj.verified ? getVerifiedTextureBadgeMarkup() : "";
+            // Apply blue tick to absolute database nodes across search modals
+            const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+            const adminHtml = (userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
+            
             document.getElementById('view-modal-avatar').src = userObj.photoURL;
-            document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml}`;
+            document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml} ${adminHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
             document.getElementById('view-modal-description').innerText = userObj.description || "No bio parameters configured.";
             
@@ -1533,7 +1588,10 @@
 
             renderedUsersList.forEach(function(u) {
                 if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
-                const tickHtml = u.verified ? getVerifiedTextureBadgeMarkup() : "";
+                
+                // Blue tick & admin adjustments in Search creators list row
+                const tickHtml = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+                const adminHtml = (u.username === 'yaseen') ? getAdminBadgeMarkup() : "";
                 const isFriend = (userDataRecord.friends || []).includes(u.uid);
                 let btnHtml = "";
                 if (u.uid !== currentUser.uid) {
@@ -1549,7 +1607,7 @@
                 row.innerHTML = `
                     <img src="${u.photoURL}" style="width:34px; height:34px;" alt="avatar">
                     <div class="info" style="flex:1;">
-                        <h4 style="display:flex; align-items:center; gap:4px; font-size:13px;">${u.fullName} ${tickHtml}</h4>
+                        <h4 style="display:flex; align-items:center; gap:4px; font-size:13px;">${u.fullName} ${tickHtml} ${adminHtml}</h4>
                         <p style="font-size:11px;">@${u.username}</p>
                     </div>
                     ${btnHtml}
@@ -1606,8 +1664,9 @@
                     : `<button class="aesthetic-follow-btn" onclick="toggleFollowState('${post.authorUid}', '${post.authorUsername}')">Follow</button>`;
             }
 
-            const matchingUserObj = globalCachedAllUsers.find(u => u.uid === post.authorUid);
-            const verifiedTick = (matchingUserObj && matchingUserObj.verified) ? getVerifiedTextureBadgeMarkup() : "";
+            // Apply global verified & admin markup patterns straight into home feed cards
+            const verifiedTick = (post.authorUsername === 'yaseen' || post.verified) ? getVerifiedTextureBadgeMarkup() : "";
+            const adminHtml = (post.authorUsername === 'yaseen') ? getAdminBadgeMarkup() : "";
 
             let deleteUtilityButtonHtml = "";
             if (post.authorUid === currentUser.uid) {
@@ -1622,7 +1681,7 @@
                 <div class="post-header">
                     <div class="post-author-info" id="post-author-hdr-${postId}">
                         <img src="${post.authorPhoto}" alt="author">
-                        <h4 style="display:flex; align-items:center; gap:4px;">${post.authorName} (@${post.authorUsername}) ${verifiedTick}</h4>
+                        <h4 style="display:flex; align-items:center; gap:4px;">${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4>
                     </div>
                     <div style="display:flex; align-items:center; gap:10px;">
                         ${deleteUtilityButtonHtml}
@@ -1801,10 +1860,17 @@
             loginContainer.style.display = 'none';
             dashboardContainer.style.display = 'flex';
             
-            const tickHtml = data.verified ? getVerifiedTextureBadgeMarkup() : "";
+            // Check for admin role directly during navbar mounting routines
+            if (data.username === 'yaseen') {
+                document.getElementById('nav-btn-admin').style.display = 'inline-block';
+            }
+
+            const tickHtml = (data.verified || data.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+            const adminHtml = (data.username === 'yaseen') ? getAdminBadgeMarkup() : "";
+
             document.getElementById('dash-avatar').src = data.photoURL;
             document.getElementById('dash-display-name').innerText = data.fullName;
-            document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml}`;
+            document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml} ${adminHtml}`;
             
             onSnapshot(collection(db, "users"), function(uSnap) {
                 globalCachedAllUsers = [];
@@ -1993,10 +2059,13 @@
                     if (activeStatusDatabase[fUid]) {
                         createStatusTrayIcon(activeStatusDatabase[fUid]);
                     }
-                    const tickHtml = fData.verified ? getVerifiedTextureBadgeMarkup() : "";
+                    
+                    // Appends blue ticks inside sidebar lists
+                    const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+                    const adminHtml = (fData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
                     const item = document.createElement('div');
                     item.className = 'friend-item';
-                    item.innerHTML = `<img src="${fData.photoURL}" alt="avatar"><div class="info"><h4 style="display:flex; align-items:center; gap:4px;">${fData.fullName} ${tickHtml}</h4><p>@${fData.username}</p></div>`;
+                    item.innerHTML = `<img src="${fData.photoURL}" alt="avatar"><div class="info"><h4 style="display:flex; align-items:center; gap:4px;">${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
                     item.addEventListener('click', function() {
                         openChatWindow(fData);
                     });
@@ -2050,8 +2119,10 @@
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
             
-            const tickHtml = friendData.verified ? getVerifiedTextureBadgeMarkup() : "";
-            document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml}`;
+            // Appends blue ticks inside open chat window terminals
+            const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+            const adminHtml = (friendData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
+            document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml} ${adminHtml}`;
             dashboardContainer.classList.add('chat-active');
 
             const roomKey = currentUser.uid < friendData.uid ? `${currentUser.uid}_${friendData.uid}` : `${friendData.uid}_${currentUser.uid}`;
