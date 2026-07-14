@@ -537,7 +537,6 @@
             opacity: 0.8; 
         }
 
-        /* Read Receipts Double Checks Layout Elements */
         .read-receipt-ticks {
             display: inline-flex;
             align-items: center;
@@ -554,10 +553,10 @@
             stroke-linejoin: round;
         }
         .read-receipt-ticks.seen {
-            color: #38bdf8; /* Double Blue Check */
+            color: #38bdf8; 
         }
         .read-receipt-ticks.unseen {
-            color: #94a3b8; /* Single Gray Check */
+            color: #94a3b8; 
         }
 
         .chat-input-wrapper { 
@@ -1104,7 +1103,6 @@
             margin-left: 6px;
         }
 
-        /* Responsive Breakpoints Engine Logic (PC vs Mobile View switching handles) */
         @media (max-width: 768px) {
             body { background: var(--bg-card); }
             .dashboard-layout { width: 100vw; height: 100vh; max-height: 100vh; border: none; border-radius: 0; }
@@ -1378,11 +1376,6 @@
         const messageInput = document.getElementById('message-input');
         const chatTypingIndicator = document.getElementById('chat-typing-indicator');
         const statusTray = document.getElementById('status-tray');
-        const statusFileInput = document.getElementById('status-file-input');
-        const chatImageInput = document.getElementById('chat-image-input');
-        const voiceMemoRecordBtn = document.getElementById('voice-memo-record-btn');
-        const primaryAuthBtn = document.getElementById('email-primary-btn');
-        const toggleAuthModeBtn = document.getElementById('auth-toggle-mode-btn');
         const hubSearchBar = document.getElementById('hub-main-search-bar');
         const suggestionsOverlay = document.getElementById('search-suggestions-overlay');
 
@@ -1400,7 +1393,6 @@
         `;
         const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
 
-        // Vector Path Read Receipts Engine Function (Double Checks injection)
         const getReadReceiptMarkup = (isSeen) => {
             if (isSeen) {
                 return `<span class="read-receipt-ticks seen" title="Seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>`;
@@ -1409,19 +1401,18 @@
             }
         };
 
-        // HTML5 Service Web Notification Engine
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) return;
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("AuraHub Engine Access Authorized", { body: "Universal Background Alerts Are Staged Mode.", icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=yaseen" });
+                    new Notification("AuraHub Engine", { body: "Universal Background Alerts Active.", icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=yaseen" });
                 }
             });
         };
 
         function dispatchClosedAlertPacket(senderName, textContent) {
             if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Transmitted packet payload assets.", tag: "chat-msg-node" });
+                new Notification(`${senderName}`, { body: textContent || "Sent an asset payload.", tag: "chat-msg" });
             }
         }
 
@@ -1435,7 +1426,6 @@
             const tabButtons = ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'];
             tabButtons.forEach(b => { if(document.getElementById(b)) document.getElementById(b).classList.remove('active') });
 
-            // Universal layouts handling switching rows safely
             chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
             dashboardContainer.classList.remove('chat-active');
 
@@ -1508,6 +1498,7 @@
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
+        // Restored Complete JavaScript Data Fetch Engine for Followers and dynamic matrix posts
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
@@ -1530,6 +1521,38 @@
                     if (updatedUserSnap.exists()) renderProfileCard(updatedUserSnap.data(), false);
                 };
             } else { followToggleBtn.style.display = "none"; }
+
+            // Dynamic Followers counter query extraction layer
+            try {
+                const followerQuery = await getDocs(query(collection(db, "users"), where("friends", "array-contains", userObj.uid)));
+                document.getElementById('profile-stat-followers').innerText = followerQuery.size;
+            } catch (fErr) { 
+                document.getElementById('profile-stat-followers').innerText = "0"; 
+            }
+
+            // Post asset extraction grid framework
+            const gridContainer = document.getElementById('profile-posts-grid');
+            gridContainer.innerHTML = "";
+            try {
+                const postsQuery = await getDocs(query(collection(db, "globalFeed"), where("authorUid", "==", userObj.uid)));
+                document.getElementById('profile-stat-posts').innerText = postsQuery.size;
+                
+                postsQuery.forEach(function(pDoc) {
+                    const data = pDoc.data();
+                    if (data.mediaUrl) {
+                        let element = document.createElement(data.mediaType === 'video' ? 'video' : 'img');
+                        element.src = data.mediaUrl;
+                        element.className = 'profile-grid-item';
+                        gridContainer.appendChild(element);
+                    }
+                });
+                if (gridContainer.children.length === 0) {
+                    gridContainer.innerHTML = `<p style="grid-column: span 3; color: var(--text-muted); font-size: 12px; margin-top:12px;">No network posts available.</p>`;
+                }
+            } catch (pErr) { 
+                document.getElementById('profile-stat-posts').innerText = "0"; 
+            }
+
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
 
