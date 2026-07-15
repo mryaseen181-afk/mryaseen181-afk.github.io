@@ -357,7 +357,7 @@
         }
 
         .sidebar-footer-trademark {
-            padding: 12px 32px;
+            padding: 12px 24px;
             border-top: 1px solid var(--border-color);
             font-size: 11px;
             color: var(--text-muted);
@@ -365,6 +365,21 @@
             letter-spacing: 0.5px;
             text-align: center;
             background: var(--bg-card);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .enquiry-link-text {
+            color: var(--accent-glow);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition-smooth);
+        }
+
+        .enquiry-link-text:hover {
+            text-decoration: underline;
+            color: var(--text-color);
         }
 
         .chat-area, .feed-area, .search-tab-area { 
@@ -527,7 +542,6 @@
             color: var(--text-muted) !important;
         }
 
-        /* High-Definition Double Checkmarks Read Receipts */
         .double-check-receipt {
             display: inline-flex;
             align-items: center;
@@ -1048,7 +1062,8 @@
                 </div>
 
                 <div class="sidebar-footer-trademark">
-                    &copy; 2026 Convofy Labs&trade;. All Rights Reserved.
+                    <div>&copy; 2026 Convofy Labs&trade;. All Rights Reserved.</div>
+                    <div>Enquiries: <a href="mailto:mryaseen181@gmail.com" class="enquiry-link-text">mryaseen181@gmail.com</a></div>
                 </div>
             </div>
 
@@ -1239,7 +1254,6 @@
 
         const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
 
-        // Render Dynamic Svg Vector Path Read Receipts Engine (Double Checkmark Injection Logic)
         const getReadReceiptMarkup = (isSeen) => {
             if (isSeen) {
                 return `<span class="double-check-receipt read-delivered" title="Seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>`;
@@ -1287,10 +1301,34 @@
             alert(`Link copied: Redirect payload staged for @${authorName}.`);
         }
 
-        function dispatchClosedAlertPacket(senderName, textContent) {
-            if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Operational data transmission received.", tag: "chat" });
+        function openRelationshipExplorer(title, userUidList) {
+            const modal = document.getElementById('relationship-explorer-modal');
+            document.getElementById('relationship-explorer-title').innerText = title;
+            const container = document.getElementById('relationship-explorer-list');
+            container.innerHTML = "";
+
+            if(userUidList.length === 0) {
+                container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center;">No accounts mapped.</p>`;
+            } else {
+                userUidList.forEach(uid => {
+                    const match = globalCachedAllUsers.find(u => u.uid === uid);
+                    if(match) {
+                        const row = document.createElement('div');
+                        row.className = "friend-item";
+                        row.style.margin = "0";
+                        row.style.padding = "8px 12px";
+                        row.innerHTML = `
+                            <img src="${match.photoURL}" style="width:32px; height:32px;">
+                            <div class="info">
+                                <h4 style="font-size:13px;">${match.fullName}</h4>
+                                <p style="font-size:11px;">@${match.username}</p>
+                            </div>
+                        `;
+                        container.appendChild(row);
+                    }
+                });
             }
+            modal.style.display = 'flex';
         }
 
         storyFileInput.addEventListener('change', (e) => {
@@ -1430,36 +1468,6 @@
         });
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
-
-        function openRelationshipExplorer(title, userUidList) {
-            const modal = document.getElementById('relationship-explorer-modal');
-            document.getElementById('relationship-explorer-title').innerText = title;
-            const container = document.getElementById('relationship-explorer-list');
-            container.innerHTML = "";
-
-            if(userUidList.length === 0) {
-                container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center;">No accounts mapped.</p>`;
-            } else {
-                userUidList.forEach(uid => {
-                    const match = globalCachedAllUsers.find(u => u.uid === uid);
-                    if(match) {
-                        const row = document.createElement('div');
-                        row.className = "friend-item";
-                        row.style.margin = "0";
-                        row.style.padding = "8px 12px";
-                        row.innerHTML = `
-                            <img src="${match.photoURL}" style="width:32px; height:32px;">
-                            <div class="info">
-                                <h4 style="font-size:13px;">${match.fullName}</h4>
-                                <p style="font-size:11px;">@${match.username}</p>
-                            </div>
-                        `;
-                        container.appendChild(row);
-                    }
-                });
-            }
-            modal.style.display = 'flex';
-        }
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
