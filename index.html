@@ -387,7 +387,7 @@
         
         .search-column-panel { 
             background: var(--bg-card); 
-            padding: 28px; 
+            padding: 24px; 
             border-radius: 24px; 
             border: 1px solid var(--border-color); 
             height: fit-content; 
@@ -454,18 +454,21 @@
             line-height: 1.55; 
             position: relative;
             box-shadow: var(--shadow-sm);
+            color: #000000 !important; /* Forces Text Inside Chat To Render Pure Black */
+        }
+
+        .msg p {
+            color: #000000 !important;
         }
         
         .msg.sent { 
-            background: var(--accent-purple); 
-            color: #fff; 
+            background: #e0e7ff; /* Modern Light Indigo Tint for High-contrast Black Text */
             align-self: flex-end; 
             border-bottom-right-radius: 4px;
         }
         
         .msg.received { 
             background: #f1f5f9; 
-            color: var(--text-color); 
             align-self: flex-start; 
             border-bottom-left-radius: 4px;
         }
@@ -481,10 +484,6 @@
             width: 240px;
         }
 
-        .msg.sent audio {
-            filter: invert(1) hue-rotate(180deg);
-        }
-
         .msg-meta-row { 
             display: flex; 
             align-items: center; 
@@ -493,6 +492,7 @@
             margin-top: 8px; 
             font-size: 11px; 
             opacity: 0.75; 
+            color: var(--text-muted) !important;
         }
 
         .chat-input-wrapper { 
@@ -505,7 +505,7 @@
         .chat-input-container {
             background: var(--bg-secondary); 
             border: 1px solid var(--border-color); 
-            border-radius: 30px; 
+            border-radius: 24px; 
             padding: 12px 24px; 
             display: flex; 
             gap: 16px; 
@@ -793,10 +793,21 @@
         
         .profile-stat-row { 
             display: flex; 
-            gap: 40px; 
+            gap: 30px; 
             margin: 16px 0; 
         }
         
+        .profile-stat-box {
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 12px;
+            transition: var(--transition-smooth);
+        }
+
+        .profile-stat-box:hover {
+            background: var(--bg-secondary);
+        }
+
         .profile-stat-box h5 { 
             font-size: 20px; 
             font-weight: 700; 
@@ -810,7 +821,7 @@
 
         .profile-posts-grid-container {
             width: 100%;
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
             text-align: left;
             margin-top: 12px;
@@ -946,7 +957,7 @@
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
                 <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
                 <button id="nav-btn-search" class="nav-item" onclick="switchTab('search')">Search Hub</button>
-                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--accent-glow); font-weight: bold;">🔔 Setup Alerts</button>
+                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--text-color); font-weight: bold;">🔔 Setup Alerts</button>
                 <button onclick="triggerLogoutSession()" class="nav-item" style="color: var(--accent-rose);">Logout</button>
             </div>
         </div>
@@ -955,7 +966,7 @@
             <div class="app-logo-title" style="margin:0; font-size: 30px;">Convofy</div>
             <div style="display: flex; gap: 8px;">
                 <button id="mobile-nav-btn-admin" class="nav-item" onclick="switchTab('admin')" style="display: none; color: var(--admin-glow); font-weight: 800;">⚡</button>
-                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--accent-glow); font-weight: bold; font-size: 13px;">🔔 Alerts</button>
+                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--text-color); font-weight: bold; font-size: 13px;">🔔 Alerts</button>
             </div>
         </div>
 
@@ -1007,7 +1018,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="no-chat-fallback" class="no-chat-selected"><p>Select a direct channel parameter node to begin transmission</p></div>
+                <div id="no-chat-fallback" class="no-chat-selected"><p>Select a channel link node index parameters to begin transmission</p></div>
             </div>
 
             <div class="feed-area" id="app-feed-pane">
@@ -1050,8 +1061,9 @@
                         <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
                             Extended fun scripts:<br>
                             <code>/verify [username]</code> | <code>/unverify [username]</code><br>
-                            <code>/force-follow-yaseen</code> - Forces all system user nodes to immediately follow @yaseen.<br>
-                            <code>/grant-admin [username]</code> - Simulate attaching administrative metadata indicators to any handle.
+                            <code>/force-follow-yaseen</code> | <code>/grant-admin [username]</code><br>
+                            <code>/clear-feed</code> - Empty all global timeline posts cache simulation views.<br>
+                            <code>/alert-all [message]</code> - Force an instant push alert delivery package execution to all nodes.
                         </p>
                         <div style="display: flex; gap: 12px;">
                             <input type="text" id="admin-command-input" placeholder="Execute core shift switch directive phrase..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none;">
@@ -1076,6 +1088,14 @@
         </div>
     </div>
 
+    <div id="relationship-explorer-modal" class="modal" style="z-index: 110;">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close-modal" onclick="document.getElementById('relationship-explorer-modal').style.display='none'">&times;</span>
+            <h3 id="relationship-explorer-title" style="margin-bottom: 16px; text-transform: capitalize;">Connections</h3>
+            <div id="relationship-explorer-list" style="max-height: 250px; overflow-y: auto; text-align: left; display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+    </div>
+
     <div id="view-profile-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeViewProfileModal()">&times;</span>
@@ -1087,13 +1107,17 @@
                 <p id="view-modal-username" style="color:var(--text-muted); font-weight:700;">@username</p>
                 
                 <div class="profile-stat-row">
-                    <div class="profile-stat-box">
+                    <div class="profile-stat-box" id="stat-trigger-followers">
                         <h5 id="profile-stat-followers">0</h5>
                         <p>Followers</p>
                     </div>
-                    <div class="profile-stat-box">
+                    <div class="profile-stat-box" id="stat-trigger-following">
+                        <h5 id="profile-stat-following">0</h5>
+                        <p>Following</p>
+                    </div>
+                    <div class="profile-stat-box" style="cursor: default; background: transparent;">
                         <h5 id="profile-stat-posts">0</h5>
-                        <p>Matrix Posts</p>
+                        <p>Posts</p>
                     </div>
                 </div>
                 
@@ -1108,7 +1132,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
@@ -1198,12 +1222,12 @@
         }
 
         function sharePostAlert(authorName) {
-            alert(`Link generated: Sharing broadcast content parameters posted by @${authorName} to outward networks.`);
+            alert(`Link copied: Redirect payload staged for @${authorName}.`);
         }
 
         function dispatchClosedAlertPacket(senderName, textContent) {
-            if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Data operational package packet received.", tag: "chat" });
+            if (Notification.permission === "granted") {
+                new Notification(`${senderName}`, { body: textContent || "Incoming operational package packet received.", tag: "chat" });
             }
         }
 
@@ -1232,16 +1256,12 @@
         function renderStoryTrayElements() {
             const tray = document.getElementById('story-tray');
             tray.innerHTML = "";
-            
-            // Filter system loops selecting fresh entry streams published inside a 24hr cycle
             const activeStreams = globalCachedStories.filter(s => Date.now() - s.timestamp < 86400000);
-            
             if(activeStreams.length === 0) {
                 tray.style.display = 'none';
                 return;
             }
             tray.style.display = 'flex';
-
             activeStreams.forEach(story => {
                 const item = document.createElement('div');
                 item.className = "story-item";
@@ -1337,7 +1357,7 @@
                     mediaRecorder.start();
                     voiceMemoBtn.classList.add('recording-active');
                 } catch (err) {
-                    alert("Handshake mic device capture block exception.");
+                    alert("Audio input parameter exception error.");
                 }
             } else {
                 mediaRecorder.stop();
@@ -1349,6 +1369,37 @@
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
+        // View Lists of Followers / Following Accounts in Sub-Overlay Layout View
+        function openRelationshipExplorer(title, userUidList) {
+            const modal = document.getElementById('relationship-explorer-modal');
+            document.getElementById('relationship-explorer-title').innerText = title;
+            const container = document.getElementById('relationship-explorer-list');
+            container.innerHTML = "";
+
+            if(userUidList.length === 0) {
+                container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center;">No accounts mapped.</p>`;
+            } else {
+                userUidList.forEach(uid => {
+                    const match = globalCachedAllUsers.find(u => u.uid === uid);
+                    if(match) {
+                        const row = document.createElement('div');
+                        row.className = "friend-item";
+                        row.style.margin = "0";
+                        row.style.padding = "8px 12px";
+                        row.innerHTML = `
+                            <img src="${match.photoURL}" style="width:32px; height:32px;">
+                            <div class="info">
+                                <h4 style="font-size:13px;">${match.fullName}</h4>
+                                <p style="font-size:11px;">@${match.username}</p>
+                            </div>
+                        `;
+                        container.appendChild(row);
+                    }
+                });
+            }
+            modal.style.display = 'flex';
+        }
+
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (userObj.adminAttached || userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
@@ -1357,8 +1408,14 @@
             document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml} ${adminHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
             
-            const totalFollowers = globalCachedAllUsers.filter(u => u.following && u.following.includes(userObj.uid)).length;
-            document.getElementById('profile-stat-followers').innerText = totalFollowers;
+            const followersUidList = globalCachedAllUsers.filter(u => u.following && u.following.includes(userObj.uid)).map(u => u.uid);
+            const followingUidList = userObj.following || [];
+
+            document.getElementById('profile-stat-followers').innerText = followersUidList.length;
+            document.getElementById('profile-stat-following').innerText = followingUidList.length;
+            
+            document.getElementById('stat-trigger-followers').onclick = () => openRelationshipExplorer("followers Index", followersUidList);
+            document.getElementById('stat-trigger-following').onclick = () => openRelationshipExplorer("following Index", followingUidList);
             
             const nodePosts = globalCachedFeedPosts.filter(p => p.data.authorUsername === userObj.username);
             document.getElementById('profile-stat-posts').innerText = nodePosts.length;
@@ -1401,24 +1458,20 @@
         async function toggleFollowState(targetUid, stateFlag) {
             if (!currentUser || !userDataRecord) return;
             let currentFollowing = userDataRecord.following || [];
-            
             if (stateFlag) {
                 if (!currentFollowing.includes(targetUid)) currentFollowing.push(targetUid);
             } else {
                 currentFollowing = currentFollowing.filter(id => id !== targetUid);
             }
-            
             await updateDoc(doc(db, "users", currentUser.uid), { following: currentFollowing });
             userDataRecord.following = currentFollowing;
-            
             const updatedSnap = await getDoc(doc(db, "users", targetUid));
             if (updatedSnap.exists()) renderProfileCard(updatedSnap.data(), false);
-            
             triggerHubComprehensiveSearch();
             loadFriendsSidebarList();
         }
 
-        // Extended Administrative Core Command Switches Module
+        // Expanded Administrative Core Override Terminal Commands Processor Suite
         document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
             if (userDataRecord.username !== 'yaseen') return;
             const cmdInput = document.getElementById('admin-command-input');
@@ -1436,13 +1489,34 @@
                         }
                     }
                 }
-                alert("Forced algorithmic interaction state complete: Everyone is now following @yaseen.");
+                alert("Algorithmic injection complete: All accounts forced to follow @yaseen.");
+            } else if (statement === '/clear-feed') {
+                const postsQuery = await getDocs(collection(db, "globalFeed"));
+                postsQuery.forEach(async (d) => {
+                    await deleteDoc(doc(db, "globalFeed", d.id));
+                });
+                alert("Timeline collection successfully flushed.");
+            } else if (statement.startsWith('/alert-all ')) {
+                const alertTxt = statement.replace('/alert-all ', '').trim();
+                globalCachedAllUsers.forEach(u => {
+                    if(Notification.permission === "granted") {
+                        new Notification("System Core Broadcast", { body: alertTxt });
+                    }
+                });
             } else if (statement.startsWith('/grant-admin ')) {
                 const targetNode = statement.replace('/grant-admin ', '').trim().toLowerCase();
                 const found = globalCachedAllUsers.find(u => u.username === targetNode);
                 if (found) {
                     await updateDoc(doc(db, "users", found.uid), { adminAttached: true });
-                    alert(`Administrative matrix tag flag attached to @${targetNode}`);
+                    alert(`Administrative metadata indicators attached to @${targetNode}`);
+                }
+            } else if (statement.startsWith('/verify crystalline ')) {
+                // Dynamic verification script alternative trigger hook
+                const targetNode = statement.replace('/verify crystalline ', '').trim().toLowerCase();
+                const found = globalCachedAllUsers.find(u => u.username === targetNode);
+                if (found) {
+                    await updateDoc(doc(db, "users", found.uid), { verified: true });
+                    alert(`High priority verify attached to @${targetNode}`);
                 }
             } else if (statement.startsWith('/verify ')) {
                 const targetNode = statement.replace('/verify ', '').trim().toLowerCase();
@@ -1504,6 +1578,7 @@
                 });
             }
 
+            // Leaderboard Array Configuration Injected With Dynamic Badges Mappings
             const leaderboardContainer = document.getElementById('leaderboard-ranking-list');
             leaderboardContainer.innerHTML = "";
             
@@ -1513,13 +1588,16 @@
             }).sort((a, b) => b.followerCount - a.followerCount);
 
             mappedLeaderboard.slice(0, 5).forEach((item, index) => {
+                const badgeMarkupStr = (item.profile.verified || item.profile.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 const row = document.createElement('div');
                 row.className = "leaderboard-row";
                 row.innerHTML = `
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span class="leaderboard-rank">#${index + 1}</span>
                         <img src="${item.profile.photoURL}" style="width:28px; height:28px; border-radius:50%;">
-                        <span style="font-size:13px; font-weight:600;">@${item.profile.username}</span>
+                        <span style="font-size:13px; font-weight:600; display:flex; align-items:center; gap:4px;">
+                            @${item.profile.username} ${badgeMarkupStr}
+                        </span>
                     </div>
                     <span style="font-size:13px; font-weight:700; color:var(--text-color);">${item.followerCount} followers</span>
                 `;
@@ -1542,7 +1620,6 @@
                 const postComments = post.comments || [];
                 const isLikedByMe = currentUser ? postLikes.includes(currentUser.uid) : false;
 
-                // Dynamic Injection for Inline Comments Matrix Array Loops
                 let commentsHtmlMarkupStr = "";
                 postComments.forEach(c => {
                     commentsHtmlMarkupStr += `<div class="comment-item-row"><strong>@${c.author}</strong> ${c.text}</div>`;
@@ -1580,7 +1657,6 @@
                     </div>
                 `;
 
-                // Attaching asynchronous micro-interaction routing listeners explicitly
                 card.querySelector(`#like-trigger-${postId}`).addEventListener('click', () => togglePostLike(postId, postLikes));
                 card.querySelector(`#share-trigger-${postId}`).addEventListener('click', () => sharePostAlert(post.authorUsername));
                 card.querySelector(`#cmt-submit-${postId}`).addEventListener('click', () => {
