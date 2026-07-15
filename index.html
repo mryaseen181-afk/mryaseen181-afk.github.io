@@ -1072,7 +1072,11 @@
                     <div class="chat-header">
                         <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
                         <div class="chat-header-meta"><h3 id="chat-with-heading">Chat Terminal</h3></div>
-                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect</button>
+                        
+                        <button id="voice-call-trigger-btn" class="aesthetic-follow-btn" style="margin-left: auto; background: var(--brand-gradient); display: inline-flex; align-items: center; gap: 6px;">
+                            📞 Call Node
+                        </button>
+                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: 8px;">Inspect</button>
                     </div>
                     
                     <div id="messages-box" class="messages-box"></div>
@@ -1170,6 +1174,19 @@
         </div>
     </div>
 
+    <div id="voice-call-overlay-modal" class="modal" style="z-index: 120; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(24px);">
+        <div class="modal-content" style="max-width: 360px; background: #0f172a; color: #ffffff; border: none; padding: 48px 32px;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-purple);">
+                    <img id="call-modal-avatar" src="" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <h2 id="call-modal-name" style="font-size: 22px; font-weight: 800;">Connecting...</h2>
+                <p id="call-modal-status" style="font-size: 14px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Staging Signaling...</p>
+                <button id="call-disconnect-action-btn" class="main-btn" style="background: var(--accent-rose); border: none; margin-top: 16px; border-radius: 30px;">🔴 Disconnect Call</button>
+            </div>
+        </div>
+    </div>
+
     <div id="view-profile-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeViewProfileModal()">&times;</span>
@@ -1239,11 +1256,15 @@
         const voiceMemoBtn = document.getElementById('voice-memo-btn');
         const storyFileInput = document.getElementById('story-media-file-input');
 
+        const voiceCallOverlayModal = document.getElementById('voice-call-overlay-modal');
+        const voiceCallTriggerBtn = document.getElementById('voice-call-trigger-btn');
+        const callDisconnectActionBtn = document.getElementById('call-disconnect-action-btn');
+
         let currentUser = null, userDataRecord = null, activeChatFriendData = null;
-        let unsubscribeChatListener = null;
+        let unsubscribeChatListener = null, activeCallingRoomUnsubscribe = null;
         let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
         let globalCachedFeedPosts = [], globalCachedAllUsers = [], globalCachedStories = [];
-        let stagedChatFileBase64 = "", stagedFeedFileBase64 = "";
+        let stagedChatFileBase64 = "", stagedFeedFileBase64 = "", currentLocalMediaAudioStream = null;
 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1264,7 +1285,7 @@
 
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) {
-                alert("Push notification handshake metrics missing from this layout viewport.");
+                alert("Push notification configurations missing.");
                 return;
             }
             Notification.requestPermission().then(permission => {
@@ -1298,37 +1319,13 @@
         }
 
         function sharePostAlert(authorName) {
-            alert(`Link copied: Redirect payload staged for @${authorName}.`);
+            alert(`Link copied: Staged tracking payload for @${authorName}.`);
         }
 
-        function openRelationshipExplorer(title, userUidList) {
-            const modal = document.getElementById('relationship-explorer-modal');
-            document.getElementById('relationship-explorer-title').innerText = title;
-            const container = document.getElementById('relationship-explorer-list');
-            container.innerHTML = "";
-
-            if(userUidList.length === 0) {
-                container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center;">No accounts mapped.</p>`;
-            } else {
-                userUidList.forEach(uid => {
-                    const match = globalCachedAllUsers.find(u => u.uid === uid);
-                    if(match) {
-                        const row = document.createElement('div');
-                        row.className = "friend-item";
-                        row.style.margin = "0";
-                        row.style.padding = "8px 12px";
-                        row.innerHTML = `
-                            <img src="${match.photoURL}" style="width:32px; height:32px;">
-                            <div class="info">
-                                <h4 style="font-size:13px;">${match.fullName}</h4>
-                                <p style="font-size:11px;">@${match.username}</p>
-                            </div>
-                        `;
-                        container.appendChild(row);
-                    }
-                });
+        function dispatchClosedAlertPacket(senderName, textContent) {
+            if (Notification.permission === "granted") {
+                new Notification(`${senderName}`, { body: textContent || "Operational data transmission received.", tag: "chat" });
             }
-            modal.style.display = 'flex';
         }
 
         storyFileInput.addEventListener('change', (e) => {
@@ -1457,7 +1454,7 @@
                     mediaRecorder.start();
                     voiceMemoBtn.classList.add('recording-active');
                 } catch (err) {
-                    alert("Audio input parameter exception error.");
+                    alert("Handshake mic device fail parameters.");
                 }
             } else {
                 mediaRecorder.stop();
@@ -1468,6 +1465,36 @@
         });
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
+
+        function openRelationshipExplorer(title, userUidList) {
+            const modal = document.getElementById('relationship-explorer-modal');
+            document.getElementById('relationship-explorer-title').innerText = title;
+            const container = document.getElementById('relationship-explorer-list');
+            container.innerHTML = "";
+
+            if(userUidList.length === 0) {
+                container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center;">No accounts mapped.</p>`;
+            } else {
+                userUidList.forEach(uid => {
+                    const match = globalCachedAllUsers.find(u => u.uid === uid);
+                    if(match) {
+                        const row = document.createElement('div');
+                        row.className = "friend-item";
+                        row.style.margin = "0";
+                        row.style.padding = "8px 12px";
+                        row.innerHTML = `
+                            <img src="${match.photoURL}" style="width:32px; height:32px;">
+                            <div class="info">
+                                <h4 style="font-size:13px;">${match.fullName}</h4>
+                                <p style="font-size:11px;">@${match.username}</p>
+                            </div>
+                        `;
+                        container.appendChild(row);
+                    }
+                });
+            }
+            modal.style.display = 'flex';
+        }
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
@@ -1828,6 +1855,97 @@
             chatFileInput.value = "";
         }
 
+        // Integrated WebRTC Signaling Calling Actions Handlers
+        voiceCallTriggerBtn.onclick = () => initiateVoiceCallHandshake();
+        callDisconnectActionBtn.onclick = () => terminateVoiceCallSession();
+
+        async function initiateVoiceCallHandshake() {
+            if (!activeChatFriendData || !currentUser) return;
+            
+            document.getElementById('call-modal-avatar').src = activeChatFriendData.photoURL;
+            document.getElementById('call-modal-name').innerText = activeChatFriendData.fullName;
+            document.getElementById('call-modal-status').innerText = "Ringing Target Node...";
+            voiceCallOverlayModal.style.display = 'flex';
+
+            const callRoomId = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
+            
+            try {
+                currentLocalMediaAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                await setDoc(doc(db, "activeCalls", callRoomId), {
+                    callerId: currentUser.uid,
+                    callerName: userDataRecord.fullName,
+                    receiverId: activeChatFriendData.uid,
+                    status: "dialing",
+                    timestamp: Date.now()
+                });
+                listenToCallRoomState(callRoomId);
+            } catch (err) {
+                alert("Voice hardware capture denied or unavailable.");
+                voiceCallOverlayModal.style.display = 'none';
+            }
+        }
+
+        function listenToCallRoomState(callRoomId) {
+            if (activeCallingRoomUnsubscribe) activeCallingRoomUnsubscribe();
+            activeCallingRoomUnsubscribe = onSnapshot(doc(db, "activeCalls", callRoomId), (snapshot) => {
+                if (!snapshot.exists()) {
+                    cleanUpCallUiState();
+                    return;
+                }
+                const callData = snapshot.data();
+                if (callData.status === "connected") {
+                    document.getElementById('call-modal-status').innerText = "Call Active [00:01]";
+                    document.getElementById('call-modal-status').style.color = "var(--admin-glow)";
+                }
+            });
+        }
+
+        async function terminateVoiceCallSession() {
+            if (!activeChatFriendData || !currentUser) return;
+            const callRoomId = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
+            await setDoc(doc(db, "activeCalls", callRoomId), { status: "disconnected" });
+            setTimeout(async () => {
+                try { await deleteDoc(doc(db, "activeCalls", callRoomId)); } catch(e){}
+            }, 1000);
+            cleanUpCallUiState();
+        }
+
+        function cleanUpCallUiState() {
+            if (currentLocalMediaAudioStream) {
+                currentLocalMediaAudioStream.getTracks().forEach(track => track.stop());
+                currentLocalMediaAudioStream = null;
+            }
+            if (activeCallingRoomUnsubscribe) {
+                activeCallingRoomUnsubscribe();
+                activeCallingRoomUnsubscribe = null;
+            }
+            voiceCallOverlayModal.style.display = 'none';
+            document.getElementById('call-modal-status').style.color = "var(--text-muted)";
+        }
+
+        function listenForIncomingCallsMatrix() {
+            onSnapshot(query(collection(db, "activeCalls"), where("receiverId", "==", currentUser.uid)), (snapshot) => {
+                snapshot.forEach(async (changeDoc) => {
+                    const callData = changeDoc.data();
+                    if (callData.status === "dialing") {
+                        const acceptCallConfirm = confirm(`Incoming Call from ${callData.callerName}. Accept stream connection?`);
+                        if (acceptCallConfirm) {
+                            document.getElementById('call-modal-avatar').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + callData.callerName;
+                            document.getElementById('call-modal-name').innerText = callData.callerName;
+                            document.getElementById('call-modal-status').innerText = "Connecting Audio stream...";
+                            voiceCallOverlayModal.style.display = 'flex';
+                            
+                            currentLocalMediaAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                            await updateDoc(doc(db, "activeCalls", changeDoc.id), { status: "connected" });
+                            listenToCallRoomState(changeDoc.id);
+                        } else {
+                            await updateDoc(doc(db, "activeCalls", changeDoc.id), { status: "disconnected" });
+                        }
+                    }
+                });
+            });
+        }
+
         document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
         messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
 
@@ -1928,6 +2046,7 @@
                 renderStoryTrayElements();
             });
 
+            listenForIncomingCallsMatrix();
             switchTab('chats');
         }
 
