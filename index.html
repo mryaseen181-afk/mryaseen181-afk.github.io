@@ -329,6 +329,7 @@
             transition: var(--transition-smooth); 
             border-radius: 30px;
             margin: 2px 12px;
+            position: relative;
         }
         
         .friend-item:hover, .friend-item.active { 
@@ -354,6 +355,31 @@
         .friend-item .info p { 
             font-size: 13px; 
             color: var(--text-muted); 
+        }
+
+        .delete-group-sidebar-trigger {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--accent-rose);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: none;
+            transition: var(--transition-smooth);
+        }
+
+        .friend-item:hover .delete-group-sidebar-trigger {
+            display: block;
+        }
+
+        .delete-group-sidebar-trigger:hover {
+            background: rgba(244, 63, 94, 0.1);
         }
 
         .sidebar-footer-trademark {
@@ -518,6 +544,27 @@
             background: #f1f5f9; 
             align-self: flex-start; 
             border-bottom-left-radius: 4px;
+        }
+
+        .msg:hover .msg-delete-overlay-btn {
+            display: flex;
+        }
+
+        .msg-delete-overlay-btn {
+            position: absolute;
+            top: -10px;
+            right: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent-rose);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            display: none;
+            z-index: 10;
         }
         
         .msg img, .msg audio {
@@ -1109,9 +1156,6 @@
                         <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
                         <div class="chat-header-meta"><h3 id="chat-with-heading">Chat Terminal</h3></div>
                         
-                        <button id="group-avatar-change-btn" class="small-action-pill-btn" style="margin-left: auto; display: none;">Edit Logo</button>
-                        <input type="file" id="group-avatar-file-input" accept="image/*" style="display: none;">
-
                         <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect</button>
                     </div>
                     
@@ -1301,9 +1345,6 @@
         const groupMembersSelectionBox = document.getElementById('group-members-selection-box');
         const groupSubmitActionBtn = document.getElementById('group-submit-action-btn');
         const groupNameInput = document.getElementById('group-name-input');
-        
-        const groupAvatarChangeBtn = document.getElementById('group-avatar-change-btn');
-        const groupAvatarFileInput = document.getElementById('group-avatar-file-input');
 
         let currentUser = null, userDataRecord = null, activeChatChannelData = null;
         let unsubscribeChatListener = null;
@@ -1367,10 +1408,34 @@
             alert(`Link parameters generated: Shared content payload matching @${authorName}.`);
         }
 
-        function dispatchClosedAlertPacket(senderName, textContent) {
-            if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Operational matrix block stream package received.", tag: "chat" });
+        function openRelationshipExplorer(title, userUidList) {
+            const modal = document.getElementById('relationship-explorer-modal');
+            document.getElementById('relationship-explorer-title').innerText = title;
+            const container = document.getElementById('relationship-explorer-list');
+            container.innerHTML = "";
+
+            if(userUidList.length === 0) {
+                container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center;">No accounts mapped.</p>`;
+            } else {
+                userUidList.forEach(uid => {
+                    const match = globalCachedAllUsers.find(u => u.uid === uid);
+                    if(match) {
+                        const row = document.createElement('div');
+                        row.className = "friend-item";
+                        row.style.margin = "0";
+                        row.style.padding = "8px 12px";
+                        row.innerHTML = `
+                            <img src="${match.photoURL}" style="width:32px; height:32px;">
+                            <div class="info">
+                                <h4 style="font-size:13px;">${match.fullName}</h4>
+                                <p style="font-size:11px;">@${match.username}</p>
+                            </div>
+                        `;
+                        container.appendChild(row);
+                    }
+                });
             }
+            modal.style.display = 'flex';
         }
 
         sidebarMakeGroupBtn.onclick = () => {
@@ -1402,7 +1467,6 @@
                 isGroup: true,
                 members: memberUidsList,
                 createdBy: currentUser.uid,
-                customAvatar: "", 
                 timestamp: Date.now()
             });
 
@@ -1410,211 +1474,36 @@
             groupCreationModal.style.display = 'none';
         };
 
-        groupAvatarChangeBtn.onclick = () => groupAvatarFileInput.click();
-        groupAvatarFileInput.onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file || !activeChatChannelData || !activeChatChannelData.isGroup) return;
-            const reader = new FileReader();
-            reader.onload = async (el) => {
-                await updateDoc(doc(db, "groups", activeChatChannelData.id), {
-                    customAvatar: el.target.result
-                });
-                alert("Group profile logo matrix updated successfully.");
-            };
-            reader.readAsDataURL(file);
-        };
-
-        storyFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async (el) => {
-                await addDoc(collection(db, "stories"), {
-                    uid: currentUser.uid,
-                    username: userDataRecord.username,
-                    avatar: userDataRecord.photoURL,
-                    media: el.target.result,
-                    timestamp: Date.now()
-                });
-                alert("Story asset appended to global network stream tray successfully.");
-            };
-            reader.readAsDataURL(file);
-        });
-
-        function launchStoryViewer(mediaSourceStr) {
-            document.getElementById('story-viewer-img').src = mediaSourceStr;
-            document.getElementById('story-viewer-modal').style.display = 'flex';
-        }
-
-        function renderStoryTrayElements() {
-            const tray = document.getElementById('story-tray');
-            tray.innerHTML = "";
-            const activeStreams = globalCachedStories.filter(s => Date.now() - s.timestamp < 86400000);
-            if(activeStreams.length === 0) {
-                tray.style.display = 'none';
-                return;
-            }
-            tray.style.display = 'flex';
-            activeStreams.forEach(story => {
-                const item = document.createElement('div');
-                item.className = "story-item";
-                item.innerHTML = `
-                    <div class="story-avatar-wrap"><img src="${story.avatar}"></div>
-                    <span>@${story.username}</span>
-                `;
-                item.onclick = () => launchStoryViewer(story.media);
-                tray.appendChild(item);
-            });
-        }
-
-        window.switchTab = function(tabName) {
-            dashboardContainer.setAttribute('data-tab', tabName);
-            dashboardContainer.classList.remove('chat-active');
-
-            const chatPane = document.getElementById('app-chat-pane');
-            const feedPane = document.getElementById('app-feed-pane');
-            const searchPane = document.getElementById('app-search-pane');
-            const adminPane = document.getElementById('app-admin-pane');
-            const sidePane = document.getElementById('app-sidebar-pane');
+        window.deleteGroupChannel = async function(groupId, event) {
+            if(event) event.stopPropagation();
+            if(!confirm("Are you sure you want to permanently delete this group room channel?")) return;
             
-            ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'].forEach(b => document.getElementById(b)?.classList.remove('active'));
-
-            chatPane.style.display = 'none'; 
-            sidePane.style.display = 'none'; 
-            feedPane.style.display = 'none'; 
-            searchPane.style.display = 'none'; 
-            adminPane.style.display = 'none';
-
-            if (window.innerWidth > 768) {
-                if (tabName === 'feed') {
-                    feedPane.style.display = 'flex';
-                    document.getElementById('nav-btn-feed')?.classList.add('active');
-                    document.getElementById('tab-btn-feed')?.classList.add('active');
-                } else if (tabName === 'search') {
-                    searchPane.style.display = 'flex';
-                    document.getElementById('nav-btn-search')?.classList.add('active');
-                    document.getElementById('tab-btn-search')?.classList.add('active');
-                    triggerHubComprehensiveSearch();
-                } else if (tabName === 'admin') {
-                    adminPane.style.display = 'block';
-                    document.getElementById('nav-btn-admin')?.classList.add('active');
-                    document.getElementById('tab-btn-admin')?.classList.add('active');
-                } else {
-                    sidePane.style.display = 'flex'; 
-                    chatPane.style.display = 'flex';
-                    document.getElementById('nav-btn-chats')?.classList.add('active');
-                    document.getElementById('tab-btn-chats')?.classList.add('active');
+            try {
+                await deleteDoc(doc(db, "groups", groupId));
+                alert("Group channel destroyed.");
+                if(activeChatChannelData && activeChatChannelData.id === groupId) {
+                    document.getElementById('active-chat-window').style.display = 'none';
+                    document.getElementById('no-chat-fallback').style.display = 'flex';
+                    activeChatChannelData = null;
                 }
-            } else {
-                document.getElementById(`tab-btn-${tabName}`)?.classList.add('active');
-                document.getElementById(`nav-btn-${tabName}`)?.classList.add('active');
-                
-                if (tabName === 'feed') {
-                    feedPane.style.display = 'flex';
-                } else if (tabName === 'search') {
-                    searchPane.style.display = 'flex';
-                    triggerHubComprehensiveSearch();
-                } else if (tabName === 'admin') {
-                    adminPane.style.display = 'block';
-                } else {
-                    sidePane.style.display = 'flex';
-                }
+            } catch(e) {
+                console.error(e);
             }
         };
 
-        window.exitChatToSidebar = function() {
-            dashboardContainer.classList.remove('chat-active');
-            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
-            if(window.innerWidth <= 768) {
-                document.getElementById('app-chat-pane').style.display = 'none';
-                document.getElementById('app-sidebar-pane').style.display = 'flex';
+        window.deleteChatMessageRecord = async function(msgId) {
+            if(!confirm("Delete this message?")) return;
+            if(!activeChatChannelData) return;
+
+            const roomKey = activeChatChannelData.isGroup ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
+            const docRef = activeChatChannelData.isGroup ? doc(db, "groups", roomKey, "messages", msgId) : doc(db, "messages", roomKey, "records", msgId);
+
+            try {
+                await deleteDoc(docRef);
+            } catch(e) {
+                console.error(e);
             }
         };
-
-        document.getElementById('chat-file-trigger').addEventListener('click', () => chatFileInput.click());
-        document.getElementById('feed-file-trigger').addEventListener('click', () => feedFileInput.click());
-
-        chatFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (el) => {
-                stagedChatFileBase64 = el.target.result;
-                sendCustomPayload("[Payload Transmitted]");
-            };
-            reader.readAsDataURL(file);
-        });
-
-        feedFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (el) => {
-                stagedFeedFileBase64 = el.target.result;
-                feedFilePreview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        });
-
-        voiceMemoBtn.addEventListener('click', async () => {
-            if (!mediaRecorder) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
-                    mediaRecorder.onstop = () => {
-                        const blob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
-                        const reader = new FileReader();
-                        reader.onload = (el) => {
-                            sendCustomPayload("[Audio Broadcast Payload Attached]", el.target.result);
-                        };
-                        reader.readAsDataURL(blob);
-                        audioChunks = [];
-                    };
-                    mediaRecorder.start();
-                    voiceMemoBtn.classList.add('recording-active');
-                } catch (err) {
-                    alert("Media streaming components connection exception error.");
-                }
-            } else {
-                mediaRecorder.stop();
-                mediaRecorder.stream.getTracks().forEach(track => track.stop());
-                mediaRecorder = null;
-                voiceMemoBtn.classList.remove('recording-active');
-            }
-        });
-
-        window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
-
-        function openRelationshipExplorer(title, userUidList) {
-            const modal = document.getElementById('relationship-explorer-modal');
-            document.getElementById('relationship-explorer-title').innerText = title;
-            const container = document.getElementById('relationship-explorer-list');
-            container.innerHTML = "";
-
-            if(userUidList.length === 0) {
-                container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center;">No accounts mapped.</p>`;
-            } else {
-                userUidList.forEach(uid => {
-                    const match = globalCachedAllUsers.find(u => u.uid === uid);
-                    if(match) {
-                        const row = document.createElement('div');
-                        row.className = "friend-item";
-                        row.style.margin = "0";
-                        row.style.padding = "8px 12px";
-                        row.innerHTML = `
-                            <img src="${match.photoURL}" style="width:32px; height:32px;">
-                            <div class="info">
-                                <h4 style="font-size:13px;">${match.fullName}</h4>
-                                <p style="font-size:11px;">@${match.username}</p>
-                            </div>
-                        `;
-                        container.appendChild(row);
-                    }
-                });
-            }
-            modal.style.display = 'flex';
-        }
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             if (userObj.isGroup) return; 
@@ -1915,10 +1804,8 @@
             if (channelData.isGroup) {
                 document.getElementById('chat-with-heading').innerHTML = `👥 ${channelData.groupName}`;
                 headerInspectBtn.style.display = "none";
-                groupAvatarChangeBtn.style.display = "block"; 
             } else {
                 headerInspectBtn.style.display = "block";
-                groupAvatarChangeBtn.style.display = "none"; 
                 const tickHtml = (channelData.verified || channelData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 const adminHtml = (channelData.username === 'yaseen' || channelData.adminAttached) ? getAdminBadgeMarkup() : "";
                 document.getElementById('chat-with-heading').innerHTML = `${channelData.fullName} ${tickHtml} ${adminHtml}`;
@@ -1933,9 +1820,10 @@
                 snapshot.forEach(function(msgDoc) {
                     const msg = msgDoc.data();
                     const isSent = msg.senderId === currentUser.uid;
+                    const msgId = msgDoc.id;
                     
                     if (!channelData.isGroup && !isSent && !msg.seen) {
-                        updateDoc(doc(db, "messages", roomKey, "records", msgDoc.id), { seen: true });
+                        updateDoc(doc(db, "messages", roomKey, "records", msgId), { seen: true });
                         dispatchClosedAlertPacket(channelData.fullName, msg.text);
                     }
 
@@ -1957,6 +1845,7 @@
                         ${senderLabelStr}
                         <p>${msg.text}</p>
                         ${assetPayload}
+                        <button class="msg-delete-overlay-btn" onclick="deleteChatMessageRecord('${msgId}')">Delete</button>
                         <div class="msg-meta-row">${metaRowHtml}</div>
                     `;
                     messagesBox.appendChild(bubble);
@@ -1993,9 +1882,6 @@
             chatFileInput.value = "";
         }
 
-        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
-        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
-
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
 
@@ -2003,15 +1889,10 @@
                 const item = document.createElement('div');
                 item.className = 'friend-item';
                 if(activeChatChannelData && activeChatChannelData.isGroup && activeChatChannelData.id === gRoom.id) item.classList.add('active');
-                
-                let avatarLayout = `<div style="width:44px; height:44px; border-radius:50%; background:var(--brand-gradient); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:18px;">G</div>`;
-                if (gRoom.customAvatar) {
-                    avatarLayout = `<img src="${gRoom.customAvatar}" style="width:44px; height:44px; border-radius:50%; object-fit:cover;">`;
-                }
-
                 item.innerHTML = `
-                    ${avatarLayout}
+                    <div style="width:44px; height:44px; border-radius:50%; background:var(--brand-gradient); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:18px;">G</div>
                     <div class="info"><h4>${gRoom.groupName}</h4><p>${gRoom.members.length} participants</p></div>
+                    <button class="delete-group-sidebar-trigger" onclick="deleteGroupChannel('${gRoom.id}', event)">Delete</button>
                 `;
                 item.onclick = () => openChatWindow(gRoom, item);
                 friendsListElement.appendChild(item);
