@@ -201,7 +201,7 @@
         .user-bar {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
             padding: 24px 32px;
             border-bottom: 1px solid var(--border-color);
         }
@@ -288,6 +288,8 @@
             flex: 1; 
             overflow-y: auto; 
             padding: 16px 0;
+            display: flex;
+            flex-direction: column;
         }
         
         .friends-list-heading { 
@@ -297,6 +299,25 @@
             padding: 0 32px 12px 32px; 
             letter-spacing: 1.5px; 
             text-transform: uppercase; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .small-action-pill-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .small-action-pill-btn:hover {
+            background: var(--border-color);
         }
         
         .friend-item { 
@@ -333,6 +354,17 @@
         .friend-item .info p { 
             font-size: 13px; 
             color: var(--text-muted); 
+        }
+
+        .sidebar-footer-trademark {
+            padding: 12px 32px;
+            border-top: 1px solid var(--border-color);
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-align: center;
+            background: var(--bg-card);
         }
 
         .chat-area, .feed-area, .search-tab-area { 
@@ -454,7 +486,7 @@
             line-height: 1.55; 
             position: relative;
             box-shadow: var(--shadow-sm);
-            color: #000000 !important; /* Forces Text Inside Chat To Render Pure Black */
+            color: #000000 !important;
         }
 
         .msg p {
@@ -462,7 +494,7 @@
         }
         
         .msg.sent { 
-            background: #e0e7ff; /* Modern Light Indigo Tint for High-contrast Black Text */
+            background: #e0e7ff; 
             align-self: flex-end; 
             border-bottom-right-radius: 4px;
         }
@@ -493,6 +525,27 @@
             font-size: 11px; 
             opacity: 0.75; 
             color: var(--text-muted) !important;
+        }
+
+        /* High-Definition Double Checkmarks Read Receipts */
+        .double-check-receipt {
+            display: inline-flex;
+            align-items: center;
+            width: 16px;
+            height: 12px;
+            color: #94a3b8;
+        }
+        .double-check-receipt.read-delivered {
+            color: #3b82f6;
+        }
+        .double-check-receipt svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .chat-input-wrapper { 
@@ -987,8 +1040,15 @@
                 <div id="story-tray" class="story-tray"></div>
 
                 <div class="friends-list-container">
-                    <div class="friends-list-heading">Direct Channels</div>
+                    <div class="friends-list-heading">
+                        <span>Direct Channels</span>
+                        <button class="small-action-pill-btn" onclick="alert('Contact Index Nodes Synced.')">Contacts</button>
+                    </div>
                     <div id="friends-list"></div>
+                </div>
+
+                <div class="sidebar-footer-trademark">
+                    &copy; 2026 Convofy Labs&trade;. All Rights Reserved.
                 </div>
             </div>
 
@@ -1062,8 +1122,7 @@
                             Extended fun scripts:<br>
                             <code>/verify [username]</code> | <code>/unverify [username]</code><br>
                             <code>/force-follow-yaseen</code> | <code>/grant-admin [username]</code><br>
-                            <code>/clear-feed</code> - Empty all global timeline posts cache simulation views.<br>
-                            <code>/alert-all [message]</code> - Force an instant push alert delivery package execution to all nodes.
+                            <code>/clear-feed</code> | <code>/alert-all [message]</code>
                         </p>
                         <div style="display: flex; gap: 12px;">
                             <input type="text" id="admin-command-input" placeholder="Execute core shift switch directive phrase..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none;">
@@ -1180,10 +1239,13 @@
 
         const getAdminBadgeMarkup = () => `<span class="admin-badge-indicator">Admin</span>`;
 
+        // Render Dynamic Svg Vector Path Read Receipts Engine (Double Checkmark Injection Logic)
         const getReadReceiptMarkup = (isSeen) => {
-            return isSeen ? 
-                `<span class="read-receipt-ticks seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>` : 
-                `<span class="read-receipt-ticks unseen"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>`;
+            if (isSeen) {
+                return `<span class="double-check-receipt read-delivered" title="Seen"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>`;
+            } else {
+                return `<span class="double-check-receipt" title="Delivered"><svg viewBox="0 0 24 24"><path d="M2 12l5 5L20 4M7 17l5 5L22 8"/></svg></span>`;
+            }
         };
 
         window.requestPushNotificationPerms = function() {
@@ -1193,7 +1255,7 @@
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("Convofy Framework Connected", { body: "Real-time background notices active." });
+                    new Notification("Convofy Interface Armed", { body: "Real-time background notices active." });
                 }
             });
         };
@@ -1226,8 +1288,8 @@
         }
 
         function dispatchClosedAlertPacket(senderName, textContent) {
-            if (Notification.permission === "granted") {
-                new Notification(`${senderName}`, { body: textContent || "Incoming operational package packet received.", tag: "chat" });
+            if (Notification.permission === "granted" && document.hidden) {
+                new Notification(`${senderName}`, { body: textContent || "Operational data transmission received.", tag: "chat" });
             }
         }
 
@@ -1369,7 +1431,6 @@
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
-        // View Lists of Followers / Following Accounts in Sub-Overlay Layout View
         function openRelationshipExplorer(title, userUidList) {
             const modal = document.getElementById('relationship-explorer-modal');
             document.getElementById('relationship-explorer-title').innerText = title;
@@ -1471,7 +1532,6 @@
             loadFriendsSidebarList();
         }
 
-        // Expanded Administrative Core Override Terminal Commands Processor Suite
         document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
             if (userDataRecord.username !== 'yaseen') return;
             const cmdInput = document.getElementById('admin-command-input');
@@ -1511,7 +1571,6 @@
                     alert(`Administrative metadata indicators attached to @${targetNode}`);
                 }
             } else if (statement.startsWith('/verify crystalline ')) {
-                // Dynamic verification script alternative trigger hook
                 const targetNode = statement.replace('/verify crystalline ', '').trim().toLowerCase();
                 const found = globalCachedAllUsers.find(u => u.username === targetNode);
                 if (found) {
@@ -1578,7 +1637,6 @@
                 });
             }
 
-            // Leaderboard Array Configuration Injected With Dynamic Badges Mappings
             const leaderboardContainer = document.getElementById('leaderboard-ranking-list');
             leaderboardContainer.innerHTML = "";
             
