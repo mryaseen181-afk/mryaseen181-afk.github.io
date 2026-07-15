@@ -1108,6 +1108,10 @@
                     <div class="chat-header">
                         <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
                         <div class="chat-header-meta"><h3 id="chat-with-heading">Chat Terminal</h3></div>
+                        
+                        <button id="group-avatar-change-btn" class="small-action-pill-btn" style="margin-left: auto; display: none;">Edit Logo</button>
+                        <input type="file" id="group-avatar-file-input" accept="image/*" style="display: none;">
+
                         <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect</button>
                     </div>
                     
@@ -1297,6 +1301,9 @@
         const groupMembersSelectionBox = document.getElementById('group-members-selection-box');
         const groupSubmitActionBtn = document.getElementById('group-submit-action-btn');
         const groupNameInput = document.getElementById('group-name-input');
+        
+        const groupAvatarChangeBtn = document.getElementById('group-avatar-change-btn');
+        const groupAvatarFileInput = document.getElementById('group-avatar-file-input');
 
         let currentUser = null, userDataRecord = null, activeChatChannelData = null;
         let unsubscribeChatListener = null;
@@ -1323,7 +1330,7 @@
 
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) {
-                alert("Push notification structures are missing from this client instance.");
+                alert("Push notification structures are missing from this layout viewport.");
                 return;
             }
             Notification.requestPermission().then(permission => {
@@ -1395,11 +1402,26 @@
                 isGroup: true,
                 members: memberUidsList,
                 createdBy: currentUser.uid,
+                customAvatar: "", 
                 timestamp: Date.now()
             });
 
             groupNameInput.value = "";
             groupCreationModal.style.display = 'none';
+        };
+
+        groupAvatarChangeBtn.onclick = () => groupAvatarFileInput.click();
+        groupAvatarFileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file || !activeChatChannelData || !activeChatChannelData.isGroup) return;
+            const reader = new FileReader();
+            reader.onload = async (el) => {
+                await updateDoc(doc(db, "groups", activeChatChannelData.id), {
+                    customAvatar: el.target.result
+                });
+                alert("Group profile logo matrix updated successfully.");
+            };
+            reader.readAsDataURL(file);
         };
 
         storyFileInput.addEventListener('change', (e) => {
@@ -1457,32 +1479,56 @@
             
             ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'].forEach(b => document.getElementById(b)?.classList.remove('active'));
 
+            chatPane.style.display = 'none'; 
+            sidePane.style.display = 'none'; 
+            feedPane.style.display = 'none'; 
+            searchPane.style.display = 'none'; 
+            adminPane.style.display = 'none';
+
             if (window.innerWidth > 768) {
-                chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
-                
                 if (tabName === 'feed') {
                     feedPane.style.display = 'flex';
                     document.getElementById('nav-btn-feed')?.classList.add('active');
+                    document.getElementById('tab-btn-feed')?.classList.add('active');
                 } else if (tabName === 'search') {
                     searchPane.style.display = 'flex';
                     document.getElementById('nav-btn-search')?.classList.add('active');
+                    document.getElementById('tab-btn-search')?.classList.add('active');
                     triggerHubComprehensiveSearch();
                 } else if (tabName === 'admin') {
                     adminPane.style.display = 'block';
                     document.getElementById('nav-btn-admin')?.classList.add('active');
+                    document.getElementById('tab-btn-admin')?.classList.add('active');
                 } else {
-                    sidePane.style.display = 'flex'; chatPane.style.display = 'flex';
+                    sidePane.style.display = 'flex'; 
+                    chatPane.style.display = 'flex';
                     document.getElementById('nav-btn-chats')?.classList.add('active');
+                    document.getElementById('tab-btn-chats')?.classList.add('active');
                 }
             } else {
                 document.getElementById(`tab-btn-${tabName}`)?.classList.add('active');
-                if (tabName === 'search') triggerHubComprehensiveSearch();
+                document.getElementById(`nav-btn-${tabName}`)?.classList.add('active');
+                
+                if (tabName === 'feed') {
+                    feedPane.style.display = 'flex';
+                } else if (tabName === 'search') {
+                    searchPane.style.display = 'flex';
+                    triggerHubComprehensiveSearch();
+                } else if (tabName === 'admin') {
+                    adminPane.style.display = 'block';
+                } else {
+                    sidePane.style.display = 'flex';
+                }
             }
         };
 
         window.exitChatToSidebar = function() {
             dashboardContainer.classList.remove('chat-active');
             document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
+            if(window.innerWidth <= 768) {
+                document.getElementById('app-chat-pane').style.display = 'none';
+                document.getElementById('app-sidebar-pane').style.display = 'flex';
+            }
         };
 
         document.getElementById('chat-file-trigger').addEventListener('click', () => chatFileInput.click());
@@ -1571,7 +1617,7 @@
         }
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
-            if (userObj.isGroup) return; // Terminate card routing triggers matching static channels group sets
+            if (userObj.isGroup) return; 
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (userObj.adminAttached || userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
             
@@ -1869,8 +1915,10 @@
             if (channelData.isGroup) {
                 document.getElementById('chat-with-heading').innerHTML = `👥 ${channelData.groupName}`;
                 headerInspectBtn.style.display = "none";
+                groupAvatarChangeBtn.style.display = "block"; 
             } else {
                 headerInspectBtn.style.display = "block";
+                groupAvatarChangeBtn.style.display = "none"; 
                 const tickHtml = (channelData.verified || channelData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 const adminHtml = (channelData.username === 'yaseen' || channelData.adminAttached) ? getAdminBadgeMarkup() : "";
                 document.getElementById('chat-with-heading').innerHTML = `${channelData.fullName} ${tickHtml} ${adminHtml}`;
@@ -1903,7 +1951,6 @@
                         metaRowHtml += getReadReceiptMarkup(msg.seen);
                     }
 
-                    // Render auxiliary sender signatures inside multi-node group chats
                     const senderLabelStr = (channelData.isGroup && !isSent) ? `<p style="font-size:11px; font-weight:700; color:var(--accent-glow); margin-bottom:4px;">@${msg.senderUsername || 'node'}</p>` : "";
 
                     bubble.innerHTML = `
@@ -1923,7 +1970,7 @@
             if (!textValue && !stagedChatFileBase64 && !voiceBase64) return;
             
             const isGroupMode = activeChatChannelData.isGroup || false;
-            const roomKey = isGroupMode ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`);
+            const roomKey = isGroupMode ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
             
             const payloadObject = {
                 senderId: currentUser.uid,
@@ -1946,23 +1993,30 @@
             chatFileInput.value = "";
         }
 
+        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
+        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
+
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
 
-            // Section 1: Groups Node Iteration Render Logic
             globalCachedGroupRooms.forEach(gRoom => {
                 const item = document.createElement('div');
                 item.className = 'friend-item';
                 if(activeChatChannelData && activeChatChannelData.isGroup && activeChatChannelData.id === gRoom.id) item.classList.add('active');
+                
+                let avatarLayout = `<div style="width:44px; height:44px; border-radius:50%; background:var(--brand-gradient); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:18px;">G</div>`;
+                if (gRoom.customAvatar) {
+                    avatarLayout = `<img src="${gRoom.customAvatar}" style="width:44px; height:44px; border-radius:50%; object-fit:cover;">`;
+                }
+
                 item.innerHTML = `
-                    <div style="width:44px; height:44px; border-radius:50%; background:var(--brand-gradient); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:18px;">G</div>
+                    ${avatarLayout}
                     <div class="info"><h4>${gRoom.groupName}</h4><p>${gRoom.members.length} participants</p></div>
                 `;
                 item.onclick = () => openChatWindow(gRoom, item);
                 friendsListElement.appendChild(item);
             });
 
-            // Section 2: Direct Creators Node Iteration Render Logic
             globalCachedAllUsers.forEach(fData => {
                 if (fData.uid === currentUser.uid) return;
                 const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
@@ -1971,7 +2025,7 @@
                 item.className = 'friend-item';
                 if(activeChatChannelData && !activeChatChannelData.isGroup && activeChatChannelData.uid === fData.uid) item.classList.add('active');
                 item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
-                item.onclick = () => { activeChatFriendData = fData; openChatWindow(fData, item); };
+                item.onclick = () => { activeChatChannelData = fData; openChatWindow(fData, item); };
                 friendsListElement.appendChild(item);
             });
         }
