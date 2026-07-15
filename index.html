@@ -931,6 +931,15 @@
             margin-left: 8px;
         }
 
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-align: left;
+        }
+
         .input-group input {
             width: 100%;
             padding: 14px 20px;
@@ -940,6 +949,30 @@
             outline: none;
             background: var(--bg-secondary);
             color: var(--text-color);
+        }
+
+        .checkbox-list-container {
+            max-height: 160px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: left;
+            background: var(--bg-secondary);
+        }
+
+        .checkbox-item-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .checkbox-item-row input {
+            width: auto;
+            cursor: pointer;
         }
 
         .main-btn {
@@ -1056,7 +1089,10 @@
                 <div class="friends-list-container">
                     <div class="friends-list-heading">
                         <span>Direct Channels</span>
-                        <button class="small-action-pill-btn" onclick="alert('Contact Index Nodes Synced.')">Contacts</button>
+                        <div style="display:flex; gap:6px;">
+                            <button class="small-action-pill-btn" id="sidebar-make-group-btn">＋ Group</button>
+                            <button class="small-action-pill-btn" onclick="alert('Contact Index Nodes Synced.')">Contacts</button>
+                        </div>
                     </div>
                     <div id="friends-list"></div>
                 </div>
@@ -1072,11 +1108,7 @@
                     <div class="chat-header">
                         <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
                         <div class="chat-header-meta"><h3 id="chat-with-heading">Chat Terminal</h3></div>
-                        
-                        <button id="voice-call-trigger-btn" class="aesthetic-follow-btn" style="margin-left: auto; background: var(--brand-gradient); display: inline-flex; align-items: center; gap: 6px;">
-                            📞 Call Node
-                        </button>
-                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: 8px;">Inspect</button>
+                        <button id="view-friend-profile-header-btn" class="aesthetic-follow-btn" style="margin-left: auto;">Inspect</button>
                     </div>
                     
                     <div id="messages-box" class="messages-box"></div>
@@ -1174,16 +1206,19 @@
         </div>
     </div>
 
-    <div id="voice-call-overlay-modal" class="modal" style="z-index: 120; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(24px);">
-        <div class="modal-content" style="max-width: 360px; background: #0f172a; color: #ffffff; border: none; padding: 48px 32px;">
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
-                <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-purple);">
-                    <img id="call-modal-avatar" src="" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <h2 id="call-modal-name" style="font-size: 22px; font-weight: 800;">Connecting...</h2>
-                <p id="call-modal-status" style="font-size: 14px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Staging Signaling...</p>
-                <button id="call-disconnect-action-btn" class="main-btn" style="background: var(--accent-rose); border: none; margin-top: 16px; border-radius: 30px;">🔴 Disconnect Call</button>
+    <div id="group-creation-modal" class="modal" style="z-index: 105;">
+        <div class="modal-content" style="max-width: 420px;">
+            <span class="close-modal" id="close-group-modal-btn">&times;</span>
+            <h3 style="margin-bottom: 20px;">Create Channel Room Group</h3>
+            <div class="input-group">
+                <label>Group Title Name</label>
+                <input type="text" id="group-name-input" placeholder="e.g. Core Operators Team Matrix">
             </div>
+            <div class="input-group">
+                <label>Select Initial Channel Node Members</label>
+                <div id="group-members-selection-box" class="checkbox-list-container"></div>
+            </div>
+            <button id="group-submit-action-btn" class="main-btn" style="margin-top: 10px;">Initialize Group Room</button>
         </div>
     </div>
 
@@ -1256,15 +1291,18 @@
         const voiceMemoBtn = document.getElementById('voice-memo-btn');
         const storyFileInput = document.getElementById('story-media-file-input');
 
-        const voiceCallOverlayModal = document.getElementById('voice-call-overlay-modal');
-        const voiceCallTriggerBtn = document.getElementById('voice-call-trigger-btn');
-        const callDisconnectActionBtn = document.getElementById('call-disconnect-action-btn');
+        const groupCreationModal = document.getElementById('group-creation-modal');
+        const sidebarMakeGroupBtn = document.getElementById('sidebar-make-group-btn');
+        const closeGroupModalBtn = document.getElementById('close-group-modal-btn');
+        const groupMembersSelectionBox = document.getElementById('group-members-selection-box');
+        const groupSubmitActionBtn = document.getElementById('group-submit-action-btn');
+        const groupNameInput = document.getElementById('group-name-input');
 
-        let currentUser = null, userDataRecord = null, activeChatFriendData = null;
-        let unsubscribeChatListener = null, activeCallingRoomUnsubscribe = null;
+        let currentUser = null, userDataRecord = null, activeChatChannelData = null;
+        let unsubscribeChatListener = null;
         let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
-        let globalCachedFeedPosts = [], globalCachedAllUsers = [], globalCachedStories = [];
-        let stagedChatFileBase64 = "", stagedFeedFileBase64 = "", currentLocalMediaAudioStream = null;
+        let globalCachedFeedPosts = [], globalCachedAllUsers = [], globalCachedStories = [], globalCachedGroupRooms = [];
+        let stagedChatFileBase64 = "", stagedFeedFileBase64 = "";
 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1285,12 +1323,12 @@
 
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) {
-                alert("Push notification configurations missing.");
+                alert("Push notification structures are missing from this client instance.");
                 return;
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("Convofy Interface Armed", { body: "Real-time background notices active." });
+                    new Notification("Convofy System Armed", { body: "Real-time system data alerts activated completely." });
                 }
             });
         };
@@ -1319,14 +1357,50 @@
         }
 
         function sharePostAlert(authorName) {
-            alert(`Link copied: Staged tracking payload for @${authorName}.`);
+            alert(`Link parameters generated: Shared content payload matching @${authorName}.`);
         }
 
         function dispatchClosedAlertPacket(senderName, textContent) {
-            if (Notification.permission === "granted") {
-                new Notification(`${senderName}`, { body: textContent || "Operational data transmission received.", tag: "chat" });
+            if (Notification.permission === "granted" && document.hidden) {
+                new Notification(`${senderName}`, { body: textContent || "Operational matrix block stream package received.", tag: "chat" });
             }
         }
+
+        sidebarMakeGroupBtn.onclick = () => {
+            groupMembersSelectionBox.innerHTML = "";
+            globalCachedAllUsers.forEach(u => {
+                if (u.uid === currentUser.uid) return;
+                const row = document.createElement('label');
+                row.className = "checkbox-item-row";
+                row.innerHTML = `<input type="checkbox" value="${u.uid}"> <span>@${u.username} (${u.fullName})</span>`;
+                groupMembersSelectionBox.appendChild(row);
+            });
+            groupCreationModal.style.display = 'flex';
+        };
+
+        closeGroupModalBtn.onclick = () => { groupCreationModal.style.display = 'none'; };
+
+        groupSubmitActionBtn.onclick = async () => {
+            const title = groupNameInput.value.trim();
+            if (!title) return alert("Provide group title identifier label parameter.");
+            
+            const selectedCheckboxes = groupMembersSelectionBox.querySelectorAll('input[type="checkbox"]:checked');
+            const memberUidsList = [currentUser.uid];
+            selectedCheckboxes.forEach(cb => memberUidsList.push(cb.value));
+
+            if (memberUidsList.length < 2) return alert("Select at least one auxiliary node member.");
+
+            await addDoc(collection(db, "groups"), {
+                groupName: title,
+                isGroup: true,
+                members: memberUidsList,
+                createdBy: currentUser.uid,
+                timestamp: Date.now()
+            });
+
+            groupNameInput.value = "";
+            groupCreationModal.style.display = 'none';
+        };
 
         storyFileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -1454,7 +1528,7 @@
                     mediaRecorder.start();
                     voiceMemoBtn.classList.add('recording-active');
                 } catch (err) {
-                    alert("Handshake mic device fail parameters.");
+                    alert("Media streaming components connection exception error.");
                 }
             } else {
                 mediaRecorder.stop();
@@ -1497,6 +1571,7 @@
         }
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
+            if (userObj.isGroup) return; // Terminate card routing triggers matching static channels group sets
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (userObj.adminAttached || userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
             
@@ -1605,13 +1680,6 @@
                     await updateDoc(doc(db, "users", found.uid), { adminAttached: true });
                     alert(`Administrative metadata indicators attached to @${targetNode}`);
                 }
-            } else if (statement.startsWith('/verify crystalline ')) {
-                const targetNode = statement.replace('/verify crystalline ', '').trim().toLowerCase();
-                const found = globalCachedAllUsers.find(u => u.username === targetNode);
-                if (found) {
-                    await updateDoc(doc(db, "users", found.uid), { verified: true });
-                    alert(`High priority verify attached to @${targetNode}`);
-                }
             } else if (statement.startsWith('/verify ')) {
                 const targetNode = statement.replace('/verify ', '').trim().toLowerCase();
                 const found = globalCachedAllUsers.find(u => u.username === targetNode);
@@ -1632,7 +1700,7 @@
         });
 
         window.openMyOwnProfile = function() { if (userDataRecord) renderProfileCard(userDataRecord, true); };
-        document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatFriendData) renderProfileCard(activeChatFriendData, false); });
+        document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatChannelData && !activeChatChannelData.isGroup) renderProfileCard(activeChatChannelData, false); });
 
         async function triggerHubComprehensiveSearch() {
             const filterText = hubSearchBar.value.trim().toLowerCase();
@@ -1782,8 +1850,8 @@
             feedFilePreview.style.display = 'none';
         });
 
-        function openChatWindow(friendData, elementDomNode) {
-            activeChatFriendData = friendData;
+        function openChatWindow(channelData, elementDomNode) {
+            activeChatChannelData = channelData;
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
             dashboardContainer.classList.add('chat-active');
@@ -1795,23 +1863,32 @@
                 document.getElementById('app-sidebar-pane').style.display = 'none';
                 document.getElementById('app-chat-pane').style.display = 'flex';
             }
-            
-            const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (friendData.username === 'yaseen' || friendData.adminAttached) ? getAdminBadgeMarkup() : "";
-            document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml} ${adminHtml}`;
 
-            const roomKey = currentUser.uid < friendData.uid ? `${currentUser.uid}_${friendData.uid}` : `${friendData.uid}_${currentUser.uid}`;
+            const headerInspectBtn = document.getElementById('view-friend-profile-header-btn');
+            
+            if (channelData.isGroup) {
+                document.getElementById('chat-with-heading').innerHTML = `👥 ${channelData.groupName}`;
+                headerInspectBtn.style.display = "none";
+            } else {
+                headerInspectBtn.style.display = "block";
+                const tickHtml = (channelData.verified || channelData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+                const adminHtml = (channelData.username === 'yaseen' || channelData.adminAttached) ? getAdminBadgeMarkup() : "";
+                document.getElementById('chat-with-heading').innerHTML = `${channelData.fullName} ${tickHtml} ${adminHtml}`;
+            }
+
+            const roomKey = channelData.isGroup ? channelData.id : (currentUser.uid < channelData.uid ? `${currentUser.uid}_${channelData.uid}` : `${channelData.uid}_${currentUser.uid}`);
+            const collectionPath = channelData.isGroup ? collection(db, "groups", roomKey, "messages") : collection(db, "messages", roomKey, "records");
 
             if (unsubscribeChatListener) unsubscribeChatListener();
-            unsubscribeChatListener = onSnapshot(query(collection(db, "messages", roomKey, "records"), orderBy("timestamp", "asc")), function(snapshot) {
+            unsubscribeChatListener = onSnapshot(query(collectionPath, orderBy("timestamp", "asc")), function(snapshot) {
                 messagesBox.innerHTML = "";
                 snapshot.forEach(function(msgDoc) {
                     const msg = msgDoc.data();
                     const isSent = msg.senderId === currentUser.uid;
                     
-                    if (!isSent && !msg.seen) {
+                    if (!channelData.isGroup && !isSent && !msg.seen) {
                         updateDoc(doc(db, "messages", roomKey, "records", msgDoc.id), { seen: true });
-                        dispatchClosedAlertPacket(friendData.fullName, msg.text);
+                        dispatchClosedAlertPacket(channelData.fullName, msg.text);
                     }
 
                     const bubble = document.createElement('div');
@@ -1821,13 +1898,19 @@
                     if (msg.file) assetPayload += `<img src="${msg.file}">`;
                     if (msg.audio) assetPayload += `<audio src="${msg.audio}" controls></audio>`;
 
+                    let metaRowHtml = `<span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
+                    if (!channelData.isGroup && isSent) {
+                        metaRowHtml += getReadReceiptMarkup(msg.seen);
+                    }
+
+                    // Render auxiliary sender signatures inside multi-node group chats
+                    const senderLabelStr = (channelData.isGroup && !isSent) ? `<p style="font-size:11px; font-weight:700; color:var(--accent-glow); margin-bottom:4px;">@${msg.senderUsername || 'node'}</p>` : "";
+
                     bubble.innerHTML = `
+                        ${senderLabelStr}
                         <p>${msg.text}</p>
                         ${assetPayload}
-                        <div class="msg-meta-row">
-                            <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                            ${isSent ? getReadReceiptMarkup(msg.seen) : ""}
-                        </div>
+                        <div class="msg-meta-row">${metaRowHtml}</div>
                     `;
                     messagesBox.appendChild(bubble);
                 });
@@ -1839,127 +1922,56 @@
             const textValue = overrideText || messageInput.value.trim();
             if (!textValue && !stagedChatFileBase64 && !voiceBase64) return;
             
-            const roomKey = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
+            const isGroupMode = activeChatChannelData.isGroup || false;
+            const roomKey = isGroupMode ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`);
             
-            await addDoc(collection(db, "messages", roomKey, "records"), {
+            const payloadObject = {
                 senderId: currentUser.uid,
+                senderUsername: userDataRecord.username,
                 text: textValue,
                 file: stagedChatFileBase64,
                 audio: voiceBase64,
-                timestamp: Date.now(),
-                seen: false
-            });
+                timestamp: Date.now()
+            };
+
+            if (!isGroupMode) {
+                payloadObject.seen = false;
+                await addDoc(collection(db, "messages", roomKey, "records"), payloadObject);
+            } else {
+                await addDoc(collection(db, "groups", roomKey, "messages"), payloadObject);
+            }
             
             if (!overrideText) messageInput.value = "";
             stagedChatFileBase64 = "";
             chatFileInput.value = "";
         }
 
-        // Integrated WebRTC Signaling Calling Actions Handlers
-        voiceCallTriggerBtn.onclick = () => initiateVoiceCallHandshake();
-        callDisconnectActionBtn.onclick = () => terminateVoiceCallSession();
-
-        async function initiateVoiceCallHandshake() {
-            if (!activeChatFriendData || !currentUser) return;
-            
-            document.getElementById('call-modal-avatar').src = activeChatFriendData.photoURL;
-            document.getElementById('call-modal-name').innerText = activeChatFriendData.fullName;
-            document.getElementById('call-modal-status').innerText = "Ringing Target Node...";
-            voiceCallOverlayModal.style.display = 'flex';
-
-            const callRoomId = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
-            
-            try {
-                currentLocalMediaAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                await setDoc(doc(db, "activeCalls", callRoomId), {
-                    callerId: currentUser.uid,
-                    callerName: userDataRecord.fullName,
-                    receiverId: activeChatFriendData.uid,
-                    status: "dialing",
-                    timestamp: Date.now()
-                });
-                listenToCallRoomState(callRoomId);
-            } catch (err) {
-                alert("Voice hardware capture denied or unavailable.");
-                voiceCallOverlayModal.style.display = 'none';
-            }
-        }
-
-        function listenToCallRoomState(callRoomId) {
-            if (activeCallingRoomUnsubscribe) activeCallingRoomUnsubscribe();
-            activeCallingRoomUnsubscribe = onSnapshot(doc(db, "activeCalls", callRoomId), (snapshot) => {
-                if (!snapshot.exists()) {
-                    cleanUpCallUiState();
-                    return;
-                }
-                const callData = snapshot.data();
-                if (callData.status === "connected") {
-                    document.getElementById('call-modal-status').innerText = "Call Active [00:01]";
-                    document.getElementById('call-modal-status').style.color = "var(--admin-glow)";
-                }
-            });
-        }
-
-        async function terminateVoiceCallSession() {
-            if (!activeChatFriendData || !currentUser) return;
-            const callRoomId = currentUser.uid < activeChatFriendData.uid ? `${currentUser.uid}_${activeChatFriendData.uid}` : `${activeChatFriendData.uid}_${currentUser.uid}`;
-            await setDoc(doc(db, "activeCalls", callRoomId), { status: "disconnected" });
-            setTimeout(async () => {
-                try { await deleteDoc(doc(db, "activeCalls", callRoomId)); } catch(e){}
-            }, 1000);
-            cleanUpCallUiState();
-        }
-
-        function cleanUpCallUiState() {
-            if (currentLocalMediaAudioStream) {
-                currentLocalMediaAudioStream.getTracks().forEach(track => track.stop());
-                currentLocalMediaAudioStream = null;
-            }
-            if (activeCallingRoomUnsubscribe) {
-                activeCallingRoomUnsubscribe();
-                activeCallingRoomUnsubscribe = null;
-            }
-            voiceCallOverlayModal.style.display = 'none';
-            document.getElementById('call-modal-status').style.color = "var(--text-muted)";
-        }
-
-        function listenForIncomingCallsMatrix() {
-            onSnapshot(query(collection(db, "activeCalls"), where("receiverId", "==", currentUser.uid)), (snapshot) => {
-                snapshot.forEach(async (changeDoc) => {
-                    const callData = changeDoc.data();
-                    if (callData.status === "dialing") {
-                        const acceptCallConfirm = confirm(`Incoming Call from ${callData.callerName}. Accept stream connection?`);
-                        if (acceptCallConfirm) {
-                            document.getElementById('call-modal-avatar').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + callData.callerName;
-                            document.getElementById('call-modal-name').innerText = callData.callerName;
-                            document.getElementById('call-modal-status').innerText = "Connecting Audio stream...";
-                            voiceCallOverlayModal.style.display = 'flex';
-                            
-                            currentLocalMediaAudioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                            await updateDoc(doc(db, "activeCalls", changeDoc.id), { status: "connected" });
-                            listenToCallRoomState(changeDoc.id);
-                        } else {
-                            await updateDoc(doc(db, "activeCalls", changeDoc.id), { status: "disconnected" });
-                        }
-                    }
-                });
-            });
-        }
-
-        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
-        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
-
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
+
+            // Section 1: Groups Node Iteration Render Logic
+            globalCachedGroupRooms.forEach(gRoom => {
+                const item = document.createElement('div');
+                item.className = 'friend-item';
+                if(activeChatChannelData && activeChatChannelData.isGroup && activeChatChannelData.id === gRoom.id) item.classList.add('active');
+                item.innerHTML = `
+                    <div style="width:44px; height:44px; border-radius:50%; background:var(--brand-gradient); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:18px;">G</div>
+                    <div class="info"><h4>${gRoom.groupName}</h4><p>${gRoom.members.length} participants</p></div>
+                `;
+                item.onclick = () => openChatWindow(gRoom, item);
+                friendsListElement.appendChild(item);
+            });
+
+            // Section 2: Direct Creators Node Iteration Render Logic
             globalCachedAllUsers.forEach(fData => {
                 if (fData.uid === currentUser.uid) return;
                 const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 const adminHtml = (fData.username === 'yaseen' || fData.adminAttached) ? getAdminBadgeMarkup() : "";
                 const item = document.createElement('div');
                 item.className = 'friend-item';
-                if(activeChatFriendData && activeChatFriendData.uid === fData.uid) item.classList.add('active');
+                if(activeChatChannelData && !activeChatChannelData.isGroup && activeChatChannelData.uid === fData.uid) item.classList.add('active');
                 item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
-                item.onclick = () => openChatWindow(fData, item);
+                item.onclick = () => { activeChatFriendData = fData; openChatWindow(fData, item); };
                 friendsListElement.appendChild(item);
             });
         }
@@ -2033,6 +2045,16 @@
                 triggerHubComprehensiveSearch();
             });
 
+            onSnapshot(query(collection(db, "groups"), where("members", "array-contains", currentUser.uid)), (gSnap) => {
+                globalCachedGroupRooms = [];
+                gSnap.forEach(gDoc => {
+                    const gData = gDoc.data();
+                    gData.id = gDoc.id;
+                    globalCachedGroupRooms.push(gData);
+                });
+                loadFriendsSidebarList();
+            });
+
             onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => {
                 globalCachedFeedPosts = [];
                 snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() }));
@@ -2046,7 +2068,6 @@
                 renderStoryTrayElements();
             });
 
-            listenForIncomingCallsMatrix();
             switchTab('chats');
         }
 
