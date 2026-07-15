@@ -19,11 +19,12 @@
             --accent-teal: #06b6d4;
             --accent-rose: #f43f5e;
             --brand-gradient: linear-gradient(135deg, #4f46e5 0%, #3b82f6 50%, #06b6d4 100%);
+            --story-gradient: linear-gradient(135deg, #ff007f 0%, #7928ca 50%, #4f46e5 100%);
             --verified-color: #3b82f6;
             --admin-glow: #10b981;
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
             --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -126,7 +127,7 @@
         
         .nav-links { 
             display: flex; 
-            gap: 28px; 
+            gap: 24px; 
             align-items: center; 
         }
         
@@ -139,22 +140,13 @@
             color: var(--text-muted); 
             transition: var(--transition-smooth); 
             position: relative;
-            padding: 8px 0;
+            padding: 8px 16px;
+            border-radius: 30px;
         }
         
         .nav-item:hover, .nav-item.active { 
-            color: var(--text-color); 
-        }
-
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2.5px;
-            background: var(--text-color);
-            border-radius: 2px;
+            color: var(--accent-glow);
+            background: var(--bg-secondary);
         }
 
         .mobile-bottom-tabs {
@@ -243,6 +235,55 @@
             font-size: 13px; 
         }
 
+        .story-tray {
+            display: flex;
+            gap: 16px;
+            padding: 16px 24px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-main);
+        }
+
+        .story-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 68px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .story-avatar-wrap {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            padding: 2.5px;
+            background: var(--story-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .story-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--bg-card);
+            padding: 1.5px;
+        }
+
+        .story-item span {
+            font-size: 11px;
+            margin-top: 6px;
+            max-width: 66px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
         .friends-list-container { 
             flex: 1; 
             overflow-y: auto; 
@@ -265,6 +306,8 @@
             padding: 12px 32px; 
             cursor: pointer; 
             transition: var(--transition-smooth); 
+            border-radius: 30px;
+            margin: 2px 12px;
         }
         
         .friend-item:hover, .friend-item.active { 
@@ -320,7 +363,7 @@
         .search-input-box { 
             width: 100%; 
             padding: 16px 24px; 
-            border-radius: 16px; 
+            border-radius: 30px; 
             border: 1px solid var(--border-color); 
             font-size: 15px; 
             outline: none; 
@@ -330,7 +373,7 @@
         }
 
         .search-input-box:focus {
-            border-color: var(--text-color);
+            border-color: var(--accent-glow);
         }
         
         .search-split-layout { 
@@ -389,7 +432,7 @@
             border: none; 
             font-size: 15px; 
             font-weight: 600;
-            color: var(--text-color); 
+            color: var(--accent-glow); 
             cursor: pointer; 
         }
 
@@ -405,8 +448,8 @@
         
         .msg { 
             max-width: 65%; 
-            padding: 12px 18px; 
-            border-radius: 18px; 
+            padding: 14px 20px; 
+            border-radius: 24px; 
             font-size: 14px; 
             line-height: 1.55; 
             position: relative;
@@ -414,24 +457,23 @@
         }
         
         .msg.sent { 
-            background: var(--text-color); 
+            background: var(--accent-purple); 
             color: #fff; 
             align-self: flex-end; 
             border-bottom-right-radius: 4px;
         }
         
         .msg.received { 
-            background: var(--bg-card); 
+            background: #f1f5f9; 
             color: var(--text-color); 
             align-self: flex-start; 
-            border: 1px solid var(--border-color); 
             border-bottom-left-radius: 4px;
         }
         
         .msg img, .msg audio {
             max-width: 100%;
             display: block;
-            border-radius: 12px;
+            border-radius: 16px;
             margin-top: 8px;
         }
 
@@ -463,8 +505,8 @@
         .chat-input-container {
             background: var(--bg-secondary); 
             border: 1px solid var(--border-color); 
-            border-radius: 16px; 
-            padding: 12px 20px; 
+            border-radius: 30px; 
+            padding: 12px 24px; 
             display: flex; 
             gap: 16px; 
             align-items: center;
@@ -488,10 +530,13 @@
             align-items: center; 
             justify-content: center; 
             color: var(--text-muted); 
+            padding: 8px;
+            border-radius: 50%;
         }
         
         .action-icon-btn.recording-active {
             color: var(--accent-rose);
+            background: rgba(244, 63, 94, 0.1);
         }
 
         .action-icon-btn svg { 
@@ -505,7 +550,7 @@
         .send-txt-btn { 
             background: none; 
             border: none; 
-            color: var(--text-color); 
+            color: var(--accent-glow); 
             font-weight: 700; 
             font-size: 14px; 
             cursor: pointer; 
@@ -597,7 +642,7 @@
         }
         
         .post-body { 
-            padding: 20px 24px; 
+            padding: 20px 24px 12px 24px; 
             font-size: 14px; 
             line-height: 1.6; 
         }
@@ -611,21 +656,87 @@
             object-fit: cover;
         }
 
+        .post-actions-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 24px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+
+        .post-action-btn {
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .post-action-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-color);
+        }
+
+        .post-action-btn.active-liked {
+            color: var(--accent-rose);
+        }
+
+        .post-comments-container {
+            background: var(--bg-main);
+            padding: 12px 24px;
+            border-top: 1px solid var(--border-color);
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .comment-item-row {
+            font-size: 13px;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .comment-input-row {
+            display: flex;
+            gap: 12px;
+            padding: 12px 24px;
+            border-top: 1px solid var(--border-color);
+            align-items: center;
+        }
+
+        .comment-input-row input {
+            flex: 1;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            outline: none;
+            font-size: 13px;
+        }
+
         .aesthetic-follow-btn {
-            background: var(--text-color);
+            background: var(--brand-gradient);
             color: #ffffff;
             border: none;
-            padding: 8px 16px; 
-            border-radius: 12px; 
+            padding: 8px 20px; 
+            border-radius: 30px; 
             font-size: 13px; 
-            font-weight: 600; 
+            font-weight: 700; 
             cursor: pointer; 
             transition: var(--transition-smooth);
+            box-shadow: var(--shadow-sm);
         }
 
         .aesthetic-follow-btn.unfollow-mode {
             background: var(--bg-secondary);
             color: var(--text-color);
+            box-shadow: none;
         }
 
         .verified-badge-texture-star {
@@ -709,7 +820,7 @@
         .profile-mini-post-row {
             background: var(--bg-secondary);
             padding: 12px 16px;
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 13px;
             margin-bottom: 8px;
         }
@@ -720,7 +831,7 @@
             justify-content: space-between;
             padding: 12px 16px;
             background: var(--bg-secondary);
-            border-radius: 14px;
+            border-radius: 20px;
             margin-bottom: 8px;
         }
 
@@ -736,21 +847,46 @@
             color: #ffffff;
             font-size: 11px;
             font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 6px;
+            padding: 3px 8px;
+            border-radius: 20px;
             text-transform: uppercase;
             margin-left: 8px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 14px;
+            padding: 14px 20px;
             border: 1px solid var(--border-color);
-            border-radius: 14px;
+            border-radius: 30px;
             font-size: 14px;
             outline: none;
             background: var(--bg-secondary);
             color: var(--text-color);
+        }
+
+        .main-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            border: none;
+            background: var(--brand-gradient);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+            background: white;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 8px;
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
@@ -787,7 +923,7 @@
         <div class="app-logo-title">Convofy</div>
         <div class="input-group" style="margin-bottom:12px;"><input type="email" id="login-email" placeholder="Email Address"></div>
         <div class="input-group" style="margin-bottom:20px;"><input type="password" id="login-password" placeholder="Password"></div>
-        <button id="email-primary-btn" class="main-btn" style="background:var(--text-color); border:none;">Sign In</button>
+        <button id="email-primary-btn" class="main-btn">Sign In</button>
         <button id="auth-toggle-mode-btn" class="secondary-btn">Create New Account</button>
         <div style="margin:16px 0; color:var(--text-muted); font-size:13px; font-weight:600;">OR</div>
         <button id="google-login-btn" class="secondary-btn" style="color: var(--accent-glow);">Log in with Google</button>
@@ -798,7 +934,7 @@
         <form id="profile-form">
             <div class="input-group" style="margin-bottom:12px;"><input type="text" id="setup-username" placeholder="Username" required></div>
             <div class="input-group" style="margin-bottom:20px;"><input type="text" id="setup-name" placeholder="Full Name" required></div>
-            <button type="submit" class="main-btn" style="background:var(--text-color); border:none;">Complete Matrix Setup</button>
+            <button type="submit" class="main-btn">Complete Setup</button>
         </form>
     </div>
 
@@ -810,7 +946,7 @@
                 <button id="nav-btn-chats" class="nav-item active" onclick="switchTab('chats')">Messages</button>
                 <button id="nav-btn-feed" class="nav-item" onclick="switchTab('feed')">Explore Feed</button>
                 <button id="nav-btn-search" class="nav-item" onclick="switchTab('search')">Search Hub</button>
-                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--text-color); font-weight: bold;">🔔 Setup Alerts</button>
+                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--accent-glow); font-weight: bold;">🔔 Setup Alerts</button>
                 <button onclick="triggerLogoutSession()" class="nav-item" style="color: var(--accent-rose);">Logout</button>
             </div>
         </div>
@@ -819,7 +955,7 @@
             <div class="app-logo-title" style="margin:0; font-size: 30px;">Convofy</div>
             <div style="display: flex; gap: 8px;">
                 <button id="mobile-nav-btn-admin" class="nav-item" onclick="switchTab('admin')" style="display: none; color: var(--admin-glow); font-weight: 800;">⚡</button>
-                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--text-color); font-weight: bold; font-size: 13px;">🔔 Alerts</button>
+                <button onclick="requestPushNotificationPerms()" class="nav-item" style="color: var(--accent-glow); font-weight: bold; font-size: 13px;">🔔 Alerts</button>
             </div>
         </div>
 
@@ -831,7 +967,14 @@
                         <h3 id="dash-username">@username</h3>
                         <p id="dash-display-name">Loading parameters...</p>
                     </div>
+                    <label for="story-media-file-input" class="action-icon-btn" title="Add to My Story" style="color: var(--accent-glow); cursor: pointer;">
+                        <svg viewBox="0 0 24 24" style="width:24px; height:24px;"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    </label>
+                    <input type="file" id="story-media-file-input" accept="image/*" style="display: none;">
                 </div>
+
+                <div id="story-tray" class="story-tray"></div>
+
                 <div class="friends-list-container">
                     <div class="friends-list-heading">Direct Channels</div>
                     <div id="friends-list"></div>
@@ -864,16 +1007,16 @@
                         </div>
                     </div>
                 </div>
-                <div id="no-chat-fallback" class="no-chat-selected"><p>Select a channel link node index parameters to begin transmission</p></div>
+                <div id="no-chat-fallback" class="no-chat-selected"><p>Select a direct channel parameter node to begin transmission</p></div>
             </div>
 
             <div class="feed-area" id="app-feed-pane">
                 <div class="feed-composer">
                     <textarea id="feed-post-text" placeholder="Publish updates to the matrix..."></textarea>
                     <div class="feed-composer-actions">
-                        <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 14px;" id="feed-file-trigger">Add Media File</button>
+                        <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 18px;" id="feed-file-trigger">Add Media File</button>
                         <input type="file" id="feed-file-input" accept="image/*" style="display: none;">
-                        <button class="main-btn" style="width: auto; padding: 8px 16px; background:var(--text-color); border:none;" id="submit-feed-post-btn">Publish Post</button>
+                        <button class="main-btn" style="width: auto; padding: 8px 24px;" id="submit-feed-post-btn">Publish Post</button>
                     </div>
                     <div id="feed-file-preview" style="font-size: 13px; color: var(--accent-glow); margin-top: 10px; display: none; font-weight: 600;">Attachment payload staged.</div>
                 </div>
@@ -890,7 +1033,7 @@
                         <div id="search-creators-results" style="display: flex; flex-direction: column; gap: 8px;"></div>
                     </div>
                     <div class="search-column-panel">
-                        <div class="search-section-title">🏆 Follower Leaderboard</div>
+                        <div class="search-section-title">🏆 Followers Leaderboard</div>
                         <div id="leaderboard-ranking-list" style="display: flex; flex-direction: column; gap: 4px;"></div>
                         
                         <div class="search-section-title" style="margin-top: 24px;">📝 Matched Matrix Posts</div>
@@ -904,6 +1047,12 @@
                     <h2 style="color: var(--admin-glow); margin-bottom: 16px; text-align: left; display: flex; align-items: center; gap: 8px;">System Core Override Console</h2>
                     <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); text-align: left;">
                         <h4 style="margin-bottom: 8px; color: var(--text-color);">Interactive Operations Panel</h4>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                            Extended fun scripts:<br>
+                            <code>/verify [username]</code> | <code>/unverify [username]</code><br>
+                            <code>/force-follow-yaseen</code> - Forces all system user nodes to immediately follow @yaseen.<br>
+                            <code>/grant-admin [username]</code> - Simulate attaching administrative metadata indicators to any handle.
+                        </p>
                         <div style="display: flex; gap: 12px;">
                             <input type="text" id="admin-command-input" placeholder="Execute core shift switch directive phrase..." style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none;">
                             <button class="main-btn" id="admin-command-submit-btn" style="width: auto; padding: 0 24px; background: var(--admin-glow); border-color: var(--admin-glow);">Run Script</button>
@@ -918,6 +1067,12 @@
             <button id="tab-btn-feed" class="tab-btn" onclick="switchTab('feed')">Explore</button>
             <button id="tab-btn-search" class="tab-btn" onclick="switchTab('search')">Search</button>
             <button id="tab-btn-admin" class="tab-btn" onclick="switchTab('admin')" style="display:none; color:var(--admin-glow);">Admin</button>
+        </div>
+    </div>
+
+    <div id="story-viewer-modal" class="modal" onclick="this.style.display='none'">
+        <div class="modal-content" style="padding: 12px; max-width: 420px; background: #000; border: none;">
+            <img id="story-viewer-img" src="" style="width:100%; border-radius: 20px; max-height:75vh; object-fit: contain;">
         </div>
     </div>
 
@@ -942,7 +1097,7 @@
                     </div>
                 </div>
                 
-                <button id="modal-follow-action-btn" class="aesthetic-follow-btn" style="margin-bottom: 12px; display: none; width:100%; padding:12px; border-radius:14px;"></button>
+                <button id="modal-follow-action-btn" class="aesthetic-follow-btn" style="margin-bottom: 12px; width:100%; padding:12px;"></button>
                 
                 <h4 style="text-align: left; width: 100%; font-size: 11px; font-weight:700; color: var(--text-muted); text-transform: uppercase; margin-top: 12px; letter-spacing:1px;">Broadcast Archive</h4>
                 <div id="profile-modal-posts-grid" class="profile-posts-grid-container"></div>
@@ -984,16 +1139,17 @@
         const feedFileInput = document.getElementById('feed-file-input');
         const feedFilePreview = document.getElementById('feed-file-preview');
         const voiceMemoBtn = document.getElementById('voice-memo-btn');
+        const storyFileInput = document.getElementById('story-media-file-input');
 
         let currentUser = null, userDataRecord = null, activeChatFriendData = null;
         let unsubscribeChatListener = null;
         let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
-        let globalCachedFeedPosts = [], globalCachedAllUsers = [];
+        let globalCachedFeedPosts = [], globalCachedAllUsers = [], globalCachedStories = [];
         let stagedChatFileBase64 = "", stagedFeedFileBase64 = "";
 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2.25l1.826 1.135a1.5 1.5 0 001.385.16l2.072-.674a1.5 1.5 0 011.83 1.222l.374 2.148a1.5 1.5 0 00.75 1.127l1.91 1.025a1.5 1.5 0 01.698 2.094l-1.025 1.91a1.5 1.5 0 000 1.353l1.025 1.91a1.5 1.5 0 01-.699 2.094l-1.91 1.025a1.5 1.5 0 00-.749 1.127l-.374 2.148a1.5 1.5 0 01-1.83 1.222l-2.072-.674a1.5 1.5 0 00-1.385.16L12 21.75l-1.826-1.135a1.5 1.5 0 00-1.385-.16l-2.072.674a1.5 1.5 0 01-1.83-1.222l-.374-2.148a1.5 1.5 0 00-.75-1.127l-1.91-1.025a1.5 1.5 0 01-.698-2.094l1.025-1.91a1.5 1.5 0 000-1.353l-1.025-1.91a1.5 1.5 0 01.699-2.094l1.91-1.025a1.5 1.5 0 00.749-1.127l.374-2.148a1.5 1.5 0 011.83-1.222l2.072.674a1.5 1.5 0 001.385-.16L12 2.25z" fill="#0f172a"/>
+                <path d="M12 2.25l1.826 1.135a1.5 1.5 0 001.385.16l2.072-.674a1.5 1.5 0 011.83 1.222l.374 2.148a1.5 1.5 0 00.75 1.127l1.91 1.025a1.5 1.5 0 01.698 2.094l-1.025 1.91a1.5 1.5 0 000 1.353l1.025 1.91a1.5 1.5 0 01-.699 2.094l-1.91 1.025a1.5 1.5 0 00-.749 1.127l-.374 2.148a1.5 1.5 0 01-1.83 1.222l-2.072-.674a1.5 1.5 0 00-1.385.16L12 21.75l-1.826-1.135a1.5 1.5 0 00-1.385-.16l-2.072.674a1.5 1.5 0 01-1.83-1.222l-.374-2.148a1.5 1.5 0 00-.75-1.127l-1.91-1.025a1.5 1.5 0 01-.698-2.094l1.025-1.91a1.5 1.5 0 000-1.353l-1.025-1.91a1.5 1.5 0 01.699-2.094l1.91-1.025a1.5 1.5 0 00.749-1.127l.374-2.148a1.5 1.5 0 011.83-1.222l2.072.674a1.5 1.5 0 001.385-.16L12 2.25z" fill="#4f46e5"/>
                 <path d="M8.5 12.25l2.25 2.25 5.25-5.5" stroke="#ffffff" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         `;
@@ -1008,20 +1164,94 @@
 
         window.requestPushNotificationPerms = function() {
             if (!("Notification" in window)) {
-                alert("Push notification handshake mechanisms are missing.");
+                alert("Push notification handshake metrics missing from this layout viewport.");
                 return;
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("Convofy Interface Armed", { body: "Real-time background notices active." });
+                    new Notification("Convofy Framework Connected", { body: "Real-time background notices active." });
                 }
             });
         };
 
+        function togglePostLike(postId, currentLikesArray = []) {
+            if(!currentUser) return;
+            let updatedLikes = [...currentLikesArray];
+            if(updatedLikes.includes(currentUser.uid)) {
+                updatedLikes = updatedLikes.filter(id => id !== currentUser.uid);
+            } else {
+                updatedLikes.push(currentUser.uid);
+            }
+            updateDoc(doc(db, "globalFeed", postId), { likes: updatedLikes });
+        }
+
+        async function submitPostComment(postId, inputElement, currentCommentsArray = []) {
+            const commentText = inputElement.value.trim();
+            if(!commentText) return;
+            const updatedComments = [...currentCommentsArray, {
+                author: userDataRecord.username,
+                text: commentText,
+                timestamp: Date.now()
+            }];
+            await updateDoc(doc(db, "globalFeed", postId), { comments: updatedComments });
+            inputElement.value = "";
+        }
+
+        function sharePostAlert(authorName) {
+            alert(`Link generated: Sharing broadcast content parameters posted by @${authorName} to outward networks.`);
+        }
+
         function dispatchClosedAlertPacket(senderName, textContent) {
             if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Operational data transmission received.", tag: "chat" });
+                new Notification(`${senderName}`, { body: textContent || "Data operational package packet received.", tag: "chat" });
             }
+        }
+
+        storyFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (el) => {
+                await addDoc(collection(db, "stories"), {
+                    uid: currentUser.uid,
+                    username: userDataRecord.username,
+                    avatar: userDataRecord.photoURL,
+                    media: el.target.result,
+                    timestamp: Date.now()
+                });
+                alert("Story asset appended to global network stream tray successfully.");
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function launchStoryViewer(mediaSourceStr) {
+            document.getElementById('story-viewer-img').src = mediaSourceStr;
+            document.getElementById('story-viewer-modal').style.display = 'flex';
+        }
+
+        function renderStoryTrayElements() {
+            const tray = document.getElementById('story-tray');
+            tray.innerHTML = "";
+            
+            // Filter system loops selecting fresh entry streams published inside a 24hr cycle
+            const activeStreams = globalCachedStories.filter(s => Date.now() - s.timestamp < 86400000);
+            
+            if(activeStreams.length === 0) {
+                tray.style.display = 'none';
+                return;
+            }
+            tray.style.display = 'flex';
+
+            activeStreams.forEach(story => {
+                const item = document.createElement('div');
+                item.className = "story-item";
+                item.innerHTML = `
+                    <div class="story-avatar-wrap"><img src="${story.avatar}"></div>
+                    <span>@${story.username}</span>
+                `;
+                item.onclick = () => launchStoryViewer(story.media);
+                tray.appendChild(item);
+            });
         }
 
         window.switchTab = function(tabName) {
@@ -1073,7 +1303,7 @@
             const reader = new FileReader();
             reader.onload = (el) => {
                 stagedChatFileBase64 = el.target.result;
-                sendCustomPayload("[Payload File Transmitted]");
+                sendCustomPayload("[Payload Transmitted]");
             };
             reader.readAsDataURL(file);
         });
@@ -1107,7 +1337,7 @@
                     mediaRecorder.start();
                     voiceMemoBtn.classList.add('recording-active');
                 } catch (err) {
-                    alert("Audio input parameter exception error.");
+                    alert("Handshake mic device capture block exception.");
                 }
             } else {
                 mediaRecorder.stop();
@@ -1121,7 +1351,7 @@
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
+            const adminHtml = (userObj.adminAttached || userObj.username === 'yaseen') ? getAdminBadgeMarkup() : "";
             
             document.getElementById('view-modal-avatar').src = userObj.photoURL;
             document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml} ${adminHtml}`;
@@ -1141,7 +1371,7 @@
                 nodePosts.forEach(p => {
                     const postRow = document.createElement('div');
                     postRow.className = "profile-mini-post-row";
-                    postRow.innerText = p.data.text || "[Media Frame File Element]";
+                    postRow.innerText = p.data.text || "[Image Matrix Stream Content File]";
                     postsGrid.appendChild(postRow);
                 });
             }
@@ -1188,24 +1418,32 @@
             loadFriendsSidebarList();
         }
 
+        // Extended Administrative Core Command Switches Module
         document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
             if (userDataRecord.username !== 'yaseen') return;
             const cmdInput = document.getElementById('admin-command-input');
             const statement = cmdInput.value.trim();
             if(!statement) return;
 
-            if (statement === '/verify-all') {
+            if (statement === '/force-follow-yaseen') {
+                let yaseenUid = currentUser.uid; 
                 for (let userNode of globalCachedAllUsers) {
-                    await updateDoc(doc(db, "users", userNode.uid), { verified: true });
-                }
-                alert("Core override successful: Global indexing verified badges online.");
-            } else if (statement === '/unverify-all') {
-                for (let userNode of globalCachedAllUsers) {
-                    if (userNode.username !== 'yaseen') {
-                        await updateDoc(doc(db, "users", userNode.uid), { verified: false });
+                    if (userNode.uid !== yaseenUid) {
+                        let fArray = userNode.following || [];
+                        if(!fArray.includes(yaseenUid)) {
+                            fArray.push(yaseenUid);
+                            await updateDoc(doc(db, "users", userNode.uid), { following: fArray });
+                        }
                     }
                 }
-                alert("Core override successful: Verification stripped globally.");
+                alert("Forced algorithmic interaction state complete: Everyone is now following @yaseen.");
+            } else if (statement.startsWith('/grant-admin ')) {
+                const targetNode = statement.replace('/grant-admin ', '').trim().toLowerCase();
+                const found = globalCachedAllUsers.find(u => u.username === targetNode);
+                if (found) {
+                    await updateDoc(doc(db, "users", found.uid), { adminAttached: true });
+                    alert(`Administrative matrix tag flag attached to @${targetNode}`);
+                }
             } else if (statement.startsWith('/verify ')) {
                 const targetNode = statement.replace('/verify ', '').trim().toLowerCase();
                 const found = globalCachedAllUsers.find(u => u.username === targetNode);
@@ -1256,7 +1494,7 @@
             const matchedPosts = globalCachedFeedPosts.filter(p => filterText && p.data.text && p.data.text.toLowerCase().includes(filterText));
             
             if (matchedPosts.length === 0) {
-                postsContainer.innerHTML = `<p style="font-size:13px; color:var(--text-muted); padding:4px;">No matching index entries found.</p>`;
+                postsContainer.innerHTML = `<p style="font-size:13px; color:var(--text-muted); padding:4px;">No matching index logs.</p>`;
             } else {
                 matchedPosts.forEach(p => {
                     const row = document.createElement('div');
@@ -1283,7 +1521,7 @@
                         <img src="${item.profile.photoURL}" style="width:28px; height:28px; border-radius:50%;">
                         <span style="font-size:13px; font-weight:600;">@${item.profile.username}</span>
                     </div>
-                    <span style="font-size:13px; font-weight:700; color:var(--text-color);">${item.followerCount} fans</span>
+                    <span style="font-size:13px; font-weight:700; color:var(--text-color);">${item.followerCount} followers</span>
                 `;
                 leaderboardContainer.appendChild(row);
             });
@@ -1294,10 +1532,21 @@
             feedContainer.innerHTML = "";
             globalCachedFeedPosts.forEach(postItem => {
                 const post = postItem.data;
+                const postId = postItem.id;
                 const card = document.createElement('div');
                 card.className = 'insta-post';
                 const verifiedTick = (post.authorUsername === 'yaseen' || post.verified) ? getVerifiedTextureBadgeMarkup() : "";
-                const adminHtml = (post.authorUsername === 'yaseen') ? getAdminBadgeMarkup() : "";
+                const adminHtml = (post.authorUsername === 'yaseen' || post.adminAttached) ? getAdminBadgeMarkup() : "";
+
+                const postLikes = post.likes || [];
+                const postComments = post.comments || [];
+                const isLikedByMe = currentUser ? postLikes.includes(currentUser.uid) : false;
+
+                // Dynamic Injection for Inline Comments Matrix Array Loops
+                let commentsHtmlMarkupStr = "";
+                postComments.forEach(c => {
+                    commentsHtmlMarkupStr += `<div class="comment-item-row"><strong>@${c.author}</strong> ${c.text}</div>`;
+                });
 
                 card.innerHTML = `
                     <div class="post-header">
@@ -1310,7 +1559,34 @@
                         <p>${post.text}</p>
                         ${post.attachedFile ? `<img src="${post.attachedFile}">` : ''}
                     </div>
+                    
+                    <div class="post-actions-bar">
+                        <button class="post-action-btn ${isLikedByMe ? 'active-liked' : ''}" id="like-trigger-${postId}">
+                            ❤️ <span>${postLikes.length} Likes</span>
+                        </button>
+                        <button class="post-action-btn" onclick="document.getElementById('cmt-input-${postId}').focus()">
+                            💬 <span>${postComments.length} Comments</span>
+                        </button>
+                        <button class="post-action-btn" id="share-trigger-${postId}">
+                            🔗 Share
+                        </button>
+                    </div>
+
+                    <div class="post-comments-container" id="cmt-box-${postId}">${commentsHtmlMarkupStr}</div>
+                    
+                    <div class="comment-input-row">
+                        <input type="text" id="cmt-input-${postId}" placeholder="Write a comment...">
+                        <button class="send-txt-btn" id="cmt-submit-${postId}">Post</button>
+                    </div>
                 `;
+
+                // Attaching asynchronous micro-interaction routing listeners explicitly
+                card.querySelector(`#like-trigger-${postId}`).addEventListener('click', () => togglePostLike(postId, postLikes));
+                card.querySelector(`#share-trigger-${postId}`).addEventListener('click', () => sharePostAlert(post.authorUsername));
+                card.querySelector(`#cmt-submit-${postId}`).addEventListener('click', () => {
+                    submitPostComment(postId, card.querySelector(`#cmt-input-${postId}`), postComments);
+                });
+
                 feedContainer.appendChild(card);
             });
         }
@@ -1326,6 +1602,9 @@
                 text: text,
                 attachedFile: stagedFeedFileBase64,
                 verified: userDataRecord.verified || false,
+                adminAttached: userDataRecord.adminAttached || false,
+                likes: [],
+                comments: [],
                 timestamp: Date.now()
             });
             
@@ -1349,7 +1628,7 @@
             }
             
             const tickHtml = (friendData.verified || friendData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (friendData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
+            const adminHtml = (friendData.username === 'yaseen' || friendData.adminAttached) ? getAdminBadgeMarkup() : "";
             document.getElementById('chat-with-heading').innerHTML = `${friendData.fullName} ${tickHtml} ${adminHtml}`;
 
             const roomKey = currentUser.uid < friendData.uid ? `${currentUser.uid}_${friendData.uid}` : `${friendData.uid}_${currentUser.uid}`;
@@ -1415,7 +1694,7 @@
             globalCachedAllUsers.forEach(fData => {
                 if (fData.uid === currentUser.uid) return;
                 const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                const adminHtml = (fData.username === 'yaseen') ? getAdminBadgeMarkup() : "";
+                const adminHtml = (fData.username === 'yaseen' || fData.adminAttached) ? getAdminBadgeMarkup() : "";
                 const item = document.createElement('div');
                 item.className = 'friend-item';
                 if(activeChatFriendData && activeChatFriendData.uid === fData.uid) item.classList.add('active');
@@ -1465,7 +1744,7 @@
             e.preventDefault();
             const username = document.getElementById('setup-username').value.trim().toLowerCase();
             const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), following: [], friends: [] };
+            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), adminAttached: (username === "yaseen"), following: [], friends: [] };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
             await setDoc(doc(db, "users", currentUser.uid), profileData);
             launchDashboard(profileData);
@@ -1482,7 +1761,7 @@
             }
             
             const tickHtml = (data.verified || data.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-            const adminHtml = (data.username === 'yaseen') ? getAdminBadgeMarkup() : "";
+            const adminHtml = (data.username === 'yaseen' || data.adminAttached) ? getAdminBadgeMarkup() : "";
             document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml} ${adminHtml}`;
             document.getElementById('dash-display-name').innerText = data.fullName;
             document.getElementById('dash-avatar').src = data.photoURL;
@@ -1499,6 +1778,12 @@
                 snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() }));
                 renderExploreTimelineFeed();
                 triggerHubComprehensiveSearch();
+            });
+
+            onSnapshot(collection(db, "stories"), (storySnap) => {
+                globalCachedStories = [];
+                storySnap.forEach(sDoc => globalCachedStories.push(sDoc.data()));
+                renderStoryTrayElements();
             });
 
             switchTab('chats');
