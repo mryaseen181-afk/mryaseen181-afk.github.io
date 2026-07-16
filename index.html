@@ -414,7 +414,7 @@
             display: flex; 
             flex-direction: column; 
             background: var(--bg-main); 
-            min-width: 0; 
+min-width: 0; 
             height: 100%;
         }
         
@@ -1101,7 +1101,7 @@
                         <h3 id="dash-username">@username</h3>
                         <p id="dash-display-name">Loading parameters...</p>
                     </div>
-                    <label for="story-media-file-input" class="action-icon-btn" title="Add to My Story" style="color: var(--accent-glow); cursor: pointer;">
+                    <label id="sidebar-story-label" class="action-icon-btn" title="Add to My Story" style="color: var(--accent-glow); cursor: pointer;">
                         <svg viewBox="0 0 24 24" style="width:24px; height:24px;"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
                     </label>
                     <input type="file" id="story-media-file-input" accept="image/*" style="display: none;">
@@ -1352,104 +1352,14 @@
             }
         };
 
-        window.requestPushNotificationPerms = function() {
-            if (!("Notification" in window)) {
-                alert("Push notification structures are missing from this layout viewport.");
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    new Notification("Convofy System Armed", { body: "Real-time system data alerts activated completely." });
-                }
-            });
-        };
-
-        function togglePostLike(postId, currentLikesArray = []) {
-            if(!currentUser) return;
-            let updatedLikes = [...currentLikesArray];
-            if(updatedLikes.includes(currentUser.uid)) {
-                updatedLikes = updatedLikes.filter(id => id !== currentUser.uid);
-            } else {
-                updatedLikes.push(currentUser.uid);
-            }
-            updateDoc(doc(db, "globalFeed", postId), { likes: updatedLikes });
-        }
-
-        async function submitPostComment(postId, inputElement, currentCommentsArray = []) {
-            const commentText = inputElement.value.trim();
-            if(!commentText) return;
-            const updatedComments = [...currentCommentsArray, {
-                author: userDataRecord.username,
-                text: commentText,
-                timestamp: Date.now()
-            }];
-            await updateDoc(doc(db, "globalFeed", postId), { comments: updatedComments });
-            inputElement.value = "";
-        }
-
-        function sharePostAlert(authorName) {
-            alert(`Link parameters generated: Shared content payload matching @${authorName}.`);
-        }
-
-        function dispatchClosedAlertPacket(senderName, textContent) {
-            if (Notification.permission === "granted" && document.hidden) {
-                new Notification(`${senderName}`, { body: textContent || "Operational matrix block stream package received.", tag: "chat" });
-            }
-        }
-
-        sidebarMakeGroupBtn.onclick = () => {
-            groupMembersSelectionBox.innerHTML = "";
-            globalCachedAllUsers.forEach(u => {
-                if (u.uid === currentUser.uid) return;
-                const row = document.createElement('label');
-                row.className = "checkbox-item-row";
-                row.innerHTML = `<input type="checkbox" value="${u.uid}"> <span>@${u.username} (${u.fullName})</span>`;
-                groupMembersSelectionBox.appendChild(row);
-            });
-            groupCreationModal.style.display = 'flex';
-        };
-
-        closeGroupModalBtn.onclick = () => { groupCreationModal.style.display = 'none'; };
-
-        groupSubmitActionBtn.onclick = async () => {
-            const title = groupNameInput.value.trim();
-            if (!title) return alert("Provide group title identifier label parameter.");
-            
-            const selectedCheckboxes = groupMembersSelectionBox.querySelectorAll('input[type="checkbox"]:checked');
-            const memberUidsList = [currentUser.uid];
-            selectedCheckboxes.forEach(cb => memberUidsList.push(cb.value));
-
-            if (memberUidsList.length < 2) return alert("Select at least one auxiliary node member.");
-
-            await addDoc(collection(db, "groups"), {
-                groupName: title,
-                isGroup: true,
-                members: memberUidsList,
-                createdBy: currentUser.uid,
-                timestamp: Date.now()
-            });
-
-            groupNameInput.value = "";
-            groupCreationModal.style.display = 'none';
-        };
-
-        groupAvatarChangeBtn.onclick = () => groupAvatarFileInput.click();
-        groupAvatarFileInput.onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file || !activeChatChannelData || !activeChatChannelData.isGroup) return;
-            
-            const storageRef = ref(storage, `groups/${activeChatChannelData.id}/avatar_${Date.now()}`);
-            uploadBytes(storageRef, file).then(async (snapshot) => {
-                const downloadUrl = await getDownloadURL(snapshot.ref);
-                await updateDoc(doc(db, "groups", activeChatChannelData.id), { customAvatar: downloadUrl });
-                alert("Group profile logo matrix updated successfully.");
-            });
-        };
+        // UI Handshake Click Overrides Allocation Map
+        document.getElementById('chat-file-trigger').addEventListener('click', () => chatFileInput.click());
+        document.getElementById('feed-file-trigger').addEventListener('click', () => feedFileInput.click());
+        document.getElementById('sidebar-story-label').addEventListener('click', () => storyFileInput.click());
 
         window.deleteGroupChannel = async function(groupId, event) {
             if(event) event.stopPropagation();
             if(!confirm("Are you sure you want to permanently delete this group room channel?")) return;
-            
             try {
                 await deleteDoc(doc(db, "groups", groupId));
                 alert("Group channel destroyed.");
@@ -1458,90 +1368,15 @@
                     document.getElementById('no-chat-fallback').style.display = 'flex';
                     activeChatChannelData = null;
                 }
-            } catch(e) {
-                console.error(e);
-            }
+            } catch(e) { console.error(e); }
         };
 
         window.deleteChatMessageRecord = async function(msgId) {
             if(!confirm("Delete this message?")) return;
             if(!activeChatChannelData) return;
-
             const roomKey = activeChatChannelData.isGroup ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
             const docRef = activeChatChannelData.isGroup ? doc(db, "groups", roomKey, "messages", msgId) : doc(db, "messages", roomKey, "records", msgId);
-
-            try {
-                await deleteDoc(docRef);
-            } catch(e) {
-                console.error(e);
-            }
-        };
-
-        window.switchTab = function(tabName) {
-            dashboardContainer.setAttribute('data-tab', tabName);
-            dashboardContainer.classList.remove('chat-active');
-
-            const chatPane = document.getElementById('app-chat-pane');
-            const feedPane = document.getElementById('app-feed-pane');
-            const searchPane = document.getElementById('app-search-pane');
-            const adminPane = document.getElementById('app-admin-pane');
-            const sidePane = document.getElementById('app-sidebar-pane');
-            
-            ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'].forEach(b => {
-                const el = document.getElementById(b);
-                if(el) el.classList.remove('active');
-            });
-
-            chatPane.style.display = 'none'; 
-            sidePane.style.display = 'none'; 
-            feedPane.style.display = 'none'; 
-            searchPane.style.display = 'none'; 
-            adminPane.style.display = 'none';
-
-            if (window.innerWidth > 768) {
-                if (tabName === 'feed') {
-                    feedPane.style.display = 'flex';
-                    document.getElementById('nav-btn-feed')?.classList.add('active');
-                    document.getElementById('tab-btn-feed')?.classList.add('active');
-                } else if (tabName === 'search') {
-                    searchPane.style.display = 'flex';
-                    document.getElementById('nav-btn-search')?.classList.add('active');
-                    document.getElementById('tab-btn-search')?.classList.add('active');
-                    triggerHubComprehensiveSearch();
-                } else if (tabName === 'admin') {
-                    adminPane.style.display = 'block';
-                    document.getElementById('nav-btn-admin')?.classList.add('active');
-                    document.getElementById('tab-btn-admin')?.classList.add('active');
-                } else {
-                    sidePane.style.display = 'flex'; 
-                    chatPane.style.display = 'flex';
-                    document.getElementById('nav-btn-chats')?.classList.add('active');
-                    document.getElementById('tab-btn-chats')?.classList.add('active');
-                }
-            } else {
-                document.getElementById(`tab-btn-${tabName}`)?.classList.add('active');
-                document.getElementById(`nav-btn-${tabName}`)?.classList.add('active');
-                
-                if (tabName === 'feed') {
-                    feedPane.style.display = 'flex';
-                } else if (tabName === 'search') {
-                    searchPane.style.display = 'flex';
-                    triggerHubComprehensiveSearch();
-                } else if (tabName === 'admin') {
-                    adminPane.style.display = 'block';
-                } else {
-                    sidePane.style.display = 'flex';
-                }
-            }
-        };
-
-        window.exitChatToSidebar = function() {
-            dashboardContainer.classList.remove('chat-active');
-            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
-            if(window.innerWidth <= 768) {
-                document.getElementById('app-chat-pane').style.display = 'none';
-                document.getElementById('app-sidebar-pane').style.display = 'flex';
-            }
+            try { await deleteDoc(docRef); } catch(e) { console.error(e); }
         };
 
         function openChatWindow(channelData, elementDomNode) {
@@ -1616,6 +1451,7 @@
         }
 
         async function sendCustomPayload(overrideText = null, voiceBlob = null) {
+            if(!activeChatChannelData) return;
             const textValue = overrideText || messageInput.value.trim();
             const isGroupMode = activeChatChannelData.isGroup || false;
             const roomKey = isGroupMode ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
@@ -1648,29 +1484,23 @@
             };
 
             const collectionPath = isGroupMode ? collection(db, "groups", roomKey, "messages") : collection(db, "messages", roomKey, "records");
-            
             if (!isGroupMode) payloadObject.seen = false;
+            
             await addDoc(collectionPath, payloadObject);
             
             if (!overrideText) messageInput.value = "";
             chatFileInput.value = "";
         }
 
-        document.getElementById('chat-file-trigger').addEventListener('click', () => chatFileInput.click());
-        document.getElementById('feed-file-trigger').addEventListener('click', () => feedFileInput.click());
-
         chatFileInput.addEventListener('change', () => sendCustomPayload());
-
+        
         feedFileInput.addEventListener('change', () => {
-            if (feedFileInput.files && feedFileInput.files[0]) {
-                feedFilePreview.style.display = 'block';
-            }
+            if (feedFileInput.files && feedFileInput.files[0]) feedFilePreview.style.display = 'block';
         });
 
         storyFileInput.addEventListener('change', async () => {
             const file = storyFileInput.files[0];
             if (!file) return;
-
             const storageRef = ref(storage, `stories/${currentUser.uid}/story_${Date.now()}`);
             const snapshot = await uploadBytes(storageRef, file);
             const downloadUrl = await getDownloadURL(snapshot.ref);
@@ -1682,7 +1512,7 @@
                 media: downloadUrl,
                 timestamp: Date.now()
             });
-            alert("Story asset uploaded to your profile successfully!");
+            alert("Story asset uploaded successfully!");
         });
 
         voiceMemoBtn.addEventListener('click', async () => {
@@ -1698,9 +1528,7 @@
                     };
                     mediaRecorder.start();
                     voiceMemoBtn.classList.add('recording-active');
-                } catch (err) {
-                    alert("Media devices setup interface microphone access blocked.");
-                }
+                } catch (err) { alert("Microphone hardware configuration access blocked."); }
             } else {
                 mediaRecorder.stop();
                 mediaRecorder.stream.getTracks().forEach(track => track.stop());
@@ -1708,6 +1536,18 @@
                 voiceMemoBtn.classList.remove('recording-active');
             }
         });
+
+        groupAvatarChangeBtn.onclick = () => groupAvatarFileInput.click();
+        groupAvatarFileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file || !activeChatChannelData || !activeChatChannelData.isGroup) return;
+            const storageRef = ref(storage, `groups/${activeChatChannelData.id}/avatar_${Date.now()}`);
+            uploadBytes(storageRef, file).then(async (snapshot) => {
+                const downloadUrl = await getDownloadURL(snapshot.ref);
+                await updateDoc(doc(db, "groups", activeChatChannelData.id), { customAvatar: downloadUrl });
+                alert("Group profile logo matrix updated successfully.");
+            });
+        };
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
@@ -1760,9 +1600,7 @@
                     actionBtn.classList.remove('unfollow-mode');
                     actionBtn.onclick = () => toggleFollowState(userObj.uid, true);
                 }
-            } else {
-                actionBtn.style.display = "none";
-            }
+            } else { actionBtn.style.display = "none"; }
             
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
@@ -1803,16 +1641,12 @@
                 alert("Algorithmic injection complete: All accounts forced to follow @yaseen.");
             } else if (statement === '/clear-feed') {
                 const postsQuery = await getDocs(collection(db, "globalFeed"));
-                postsQuery.forEach(async (d) => {
-                    await deleteDoc(doc(db, "globalFeed", d.id));
-                });
+                postsQuery.forEach(async (d) => { await deleteDoc(doc(db, "globalFeed", d.id)); });
                 alert("Timeline collection successfully flushed.");
             } else if (statement.startsWith('/alert-all ')) {
                 const alertTxt = statement.replace('/alert-all ', '').trim();
                 globalCachedAllUsers.forEach(u => {
-                    if(Notification.permission === "granted") {
-                        new Notification("System Core Broadcast", { body: alertTxt });
-                    }
+                    if(Notification.permission === "granted") new Notification("System Core Broadcast", { body: alertTxt });
                 });
             } else if (statement.startsWith('/grant-admin ')) {
                 const targetNode = statement.replace('/grant-admin ', '').trim().toLowerCase();
@@ -1845,23 +1679,15 @@
 
         async function triggerHubComprehensiveSearch() {
             const filterText = hubSearchBar.value.trim().toLowerCase();
-            
             const creatorsContainer = document.getElementById('search-creators-results');
             creatorsContainer.innerHTML = "";
             globalCachedAllUsers.forEach(u => {
                 if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
                 const tickHtml = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                
                 const row = document.createElement('div');
                 row.className = "friend-item";
                 row.style.margin = "4px 0";
-                row.innerHTML = `
-                    <img src="${u.photoURL}">
-                    <div class="info">
-                        <h4>${u.fullName} ${tickHtml}</h4>
-                        <p>@${u.username}</p>
-                    </div>
-                `;
+                row.innerHTML = `<img src="${u.photoURL}"><div class="info"><h4>${u.fullName} ${tickHtml}</h4><p>@${u.username}</p></div>`;
                 row.onclick = () => renderProfileCard(u, u.uid === currentUser.uid);
                 creatorsContainer.appendChild(row);
             });
@@ -1869,7 +1695,6 @@
             const postsContainer = document.getElementById('search-posts-results');
             postsContainer.innerHTML = "";
             const matchedPosts = globalCachedFeedPosts.filter(p => filterText && p.data.text && p.data.text.toLowerCase().includes(filterText));
-            
             if (matchedPosts.length === 0) {
                 postsContainer.innerHTML = `<p style="font-size:13px; color:var(--text-muted); padding:4px;">No matching index logs.</p>`;
             } else {
@@ -1883,7 +1708,6 @@
 
             const leaderboardContainer = document.getElementById('leaderboard-ranking-list');
             leaderboardContainer.innerHTML = "";
-            
             const mappedLeaderboard = globalCachedAllUsers.map(user => {
                 const count = globalCachedAllUsers.filter(u => u.following && u.following.includes(user.uid)).length;
                 return { profile: user, followerCount: count };
@@ -1897,9 +1721,7 @@
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span class="leaderboard-rank">#${index + 1}</span>
                         <img src="${item.profile.photoURL}" style="width:28px; height:28px; border-radius:50%;">
-                        <span style="font-size:13px; font-weight:600; display:flex; align-items:center; gap:4px;">
-                            @${item.profile.username} ${badgeMarkupStr}
-                        </span>
+                        <span style="font-size:13px; font-weight:600; display:flex; align-items:center; gap:4px;">@${item.profile.username} ${badgeMarkupStr}</span>
                     </div>
                     <span style="font-size:13px; font-weight:700; color:var(--text-color);">${item.followerCount} followers</span>
                 `;
@@ -1917,54 +1739,28 @@
                 card.className = 'insta-post';
                 const verifiedTick = (post.authorUsername === 'yaseen' || post.verified) ? getVerifiedTextureBadgeMarkup() : "";
                 const adminHtml = (post.authorUsername === 'yaseen' || post.adminAttached) ? getAdminBadgeMarkup() : "";
-
                 const postLikes = post.likes || [];
                 const postComments = post.comments || [];
                 const isLikedByMe = currentUser ? postLikes.includes(currentUser.uid) : false;
 
                 let commentsHtmlMarkupStr = "";
-                postComments.forEach(c => {
-                    commentsHtmlMarkupStr += `<div class="comment-item-row"><strong>@${c.author}</strong> ${c.text}</div>`;
-                });
+                postComments.forEach(c => { commentsHtmlMarkupStr += `<div class="comment-item-row"><strong>@${c.author}</strong> ${c.text}</div>`; });
 
                 card.innerHTML = `
-                    <div class="post-header">
-                        <div class="post-author-info">
-                            <img src="${post.authorPhoto}">
-                            <h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4>
-                        </div>
-                    </div>
-                    <div class="post-body">
-                        <p>${post.text}</p>
-                        ${post.attachedFile ? `<img src="${post.attachedFile}">` : ''}
-                    </div>
-                    
+                    <div class="post-header"><div class="post-author-info"><img src="${post.authorPhoto}"><h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4></div></div>
+                    <div class="post-body"><p>${post.text}</p>${post.attachedFile ? `<img src="${post.attachedFile}">` : ''}</div>
                     <div class="post-actions-bar">
-                        <button class="post-action-btn ${isLikedByMe ? 'active-liked' : ''}" id="like-trigger-${postId}">
-                            ❤️ <span>${postLikes.length} Likes</span>
-                        </button>
-                        <button class="post-action-btn" onclick="document.getElementById('cmt-input-${postId}').focus()">
-                            💬 <span>${postComments.length} Comments</span>
-                        </button>
-                        <button class="post-action-btn" id="share-trigger-${postId}">
-                            🔗 Share
-                        </button>
+                        <button class="post-action-btn ${isLikedByMe ? 'active-liked' : ''}" id="like-trigger-${postId}">❤️ <span>${postLikes.length} Likes</span></button>
+                        <button class="post-action-btn" onclick="document.getElementById('cmt-input-${postId}').focus()">💬 <span>${postComments.length} Comments</span></button>
+                        <button class="post-action-btn" id="share-trigger-${postId}">🔗 Share</button>
                     </div>
-
                     <div class="post-comments-container" id="cmt-box-${postId}">${commentsHtmlMarkupStr}</div>
-                    
-                    <div class="comment-input-row">
-                        <input type="text" id="cmt-input-${postId}" placeholder="Write a comment...">
-                        <button class="send-txt-btn" id="cmt-submit-${postId}">Post</button>
-                    </div>
+                    <div class="comment-input-row"><input type="text" id="cmt-input-${postId}" placeholder="Write a comment..."><button class="send-txt-btn" id="cmt-submit-${postId}">Post</button></div>
                 `;
 
                 card.querySelector(`#like-trigger-${postId}`).addEventListener('click', () => togglePostLike(postId, postLikes));
                 card.querySelector(`#share-trigger-${postId}`).addEventListener('click', () => sharePostAlert(post.authorUsername));
-                card.querySelector(`#cmt-submit-${postId}`).addEventListener('click', () => {
-                    submitPostComment(postId, card.querySelector(`#cmt-input-${postId}`), postComments);
-                });
-
+                card.querySelector(`#cmt-submit-${postId}`).addEventListener('click', () => { submitPostComment(postId, card.querySelector(`#cmt-input-${postId}`), postComments); });
                 feedContainer.appendChild(card);
             });
         }
@@ -2000,16 +1796,13 @@
 
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
-
             globalCachedGroupRooms.forEach(gRoom => {
                 const item = document.createElement('div');
                 item.className = 'friend-item';
                 if(activeChatChannelData && activeChatChannelData.isGroup && activeChatChannelData.id === gRoom.id) item.classList.add('active');
                 
                 let avatarLayout = `<div style="width:44px; height:44px; border-radius:50%; background:var(--brand-gradient); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:18px;">G</div>`;
-                if (gRoom.customAvatar) {
-                    avatarLayout = `<img src="${gRoom.customAvatar}" style="width:44px; height:44px; border-radius:50%; object-fit:cover;">`;
-                }
+                if (gRoom.customAvatar) avatarLayout = `<img src="${gRoom.customAvatar}" style="width:44px; height:44px; border-radius:50%; object-fit:cover;">`;
 
                 item.innerHTML = `
                     ${avatarLayout}
@@ -2033,98 +1826,69 @@
             });
         }
 
-        toggleAuthModeBtn.addEventListener('click', function() {
-            isSignUpMode = !isSignUpMode;
-            primaryAuthBtn.innerText = isSignUpMode ? "Register Node" : "Sign In";
-        });
+        window.switchTab = function(tabName) {
+            dashboardContainer.setAttribute('data-tab', tabName);
+            dashboardContainer.classList.remove('chat-active');
+            const chatPane = document.getElementById('app-chat-pane');
+            const feedPane = document.getElementById('app-feed-pane');
+            const searchPane = document.getElementById('app-search-pane');
+            const adminPane = document.getElementById('app-admin-pane');
+            const sidePane = document.getElementById('app-sidebar-pane');
+            
+            ['tab-btn-chats', 'tab-btn-feed', 'tab-btn-search', 'tab-btn-admin', 'nav-btn-chats', 'nav-btn-feed', 'nav-btn-search', 'nav-btn-admin'].forEach(b => {
+                const el = document.getElementById(b); if(el) el.classList.remove('active');
+            });
 
-        primaryAuthBtn.addEventListener('click', function() {
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            if (isSignUpMode) {
-                createUserWithEmailAndPassword(auth, email, password);
+            chatPane.style.display = 'none'; sidePane.style.display = 'none'; feedPane.style.display = 'none'; searchPane.style.display = 'none'; adminPane.style.display = 'none';
+
+            if (window.innerWidth > 768) {
+                if (tabName === 'feed') {
+                    feedPane.style.display = 'flex'; document.getElementById('nav-btn-feed')?.classList.add('active'); document.getElementById('tab-btn-feed')?.classList.add('active');
+                } else if (tabName === 'search') {
+                    searchPane.style.display = 'flex'; document.getElementById('nav-btn-search')?.classList.add('active'); document.getElementById('tab-btn-search')?.classList.add('active'); triggerHubComprehensiveSearch();
+                } else if (tabName === 'admin') {
+                    adminPane.style.display = 'block'; document.getElementById('nav-btn-admin')?.classList.add('active'); document.getElementById('tab-btn-admin')?.classList.add('active');
+                } else {
+                    sidePane.style.display = 'flex'; chatPane.style.display = 'flex'; document.getElementById('nav-btn-chats')?.classList.add('active'); document.getElementById('tab-btn-chats')?.classList.add('active');
+                }
             } else {
-                signInWithEmailAndPassword(auth, email, password);
+                document.getElementById(`tab-btn-${tabName}`)?.classList.add('active'); document.getElementById(`nav-btn-${tabName}`)?.classList.add('active');
+                if (tabName === 'feed') feedPane.style.display = 'flex';
+                else if (tabName === 'search') { searchPane.style.display = 'flex'; triggerHubComprehensiveSearch(); }
+                else if (tabName === 'admin') adminPane.style.display = 'block';
+                else sidePane.style.display = 'flex';
             }
-        });
+        };
 
+        toggleAuthModeBtn.addEventListener('click', function() { isSignUpMode = !isSignUpMode; primaryAuthBtn.innerText = isSignUpMode ? "Register Node" : "Sign In"; });
+        primaryAuthBtn.addEventListener('click', function() { const email = document.getElementById('login-email').value.trim(); const password = document.getElementById('login-password').value; if (isSignUpMode) { createUserWithEmailAndPassword(auth, email, password); } else { signInWithEmailAndPassword(auth, email, password); } });
         document.getElementById('google-login-btn').addEventListener('click', () => signInWithPopup(auth, provider));
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                currentUser = user;
-                const snap = await getDoc(doc(db, "users", user.uid));
-                loadingScreen.style.display = 'none';
-                if (snap.exists()) {
-                    userDataRecord = snap.data();
-                    launchDashboard(userDataRecord);
-                } else {
-                    profileSetupContainer.style.display = 'block';
-                    loginContainer.style.display = 'none';
-                }
-            } else {
-                loadingScreen.style.display = 'none';
-                loginContainer.style.display = 'block';
-                dashboardContainer.style.display = 'none';
-            }
+                currentUser = user; const snap = await getDoc(doc(db, "users", user.uid)); loadingScreen.style.display = 'none';
+                if (snap.exists()) { userDataRecord = snap.data(); launchDashboard(userDataRecord); } else { profileSetupContainer.style.display = 'block'; loginContainer.style.display = 'none'; }
+            } else { loadingScreen.style.display = 'none'; loginContainer.style.display = 'block'; dashboardContainer.style.display = 'none'; }
         });
 
         document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('setup-username').value.trim().toLowerCase();
-            const fullName = document.getElementById('setup-name').value;
+            e.preventDefault(); const username = document.getElementById('setup-username').value.trim().toLowerCase(); const fullName = document.getElementById('setup-name').value;
             const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), adminAttached: (username === "yaseen"), following: [], friends: [] };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
-            await setDoc(doc(db, "users", currentUser.uid), profileData);
-            launchDashboard(profileData);
+            await setDoc(doc(db, "users", currentUser.uid), profileData); launchDashboard(profileData);
         });
 
         function launchDashboard(data) {
-            profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; 
-            dashboardContainer.style.display = 'flex';
-            
-            if (data.username === 'yaseen') {
-                document.getElementById('nav-btn-admin').style.display = 'inline-block';
-                document.getElementById('tab-btn-admin').style.display = 'inline-block';
-                document.getElementById('mobile-nav-btn-admin').style.display = 'inline-block';
-            }
-            
+            profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; dashboardContainer.style.display = 'flex';
+            if (data.username === 'yaseen') { document.getElementById('nav-btn-admin').style.display = 'inline-block'; document.getElementById('tab-btn-admin').style.display = 'inline-block'; document.getElementById('mobile-nav-btn-admin').style.display = 'inline-block'; }
             const tickHtml = (data.verified || data.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
             const adminHtml = (data.username === 'yaseen' || data.adminAttached) ? getAdminBadgeMarkup() : "";
-            document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml} ${adminHtml}`;
-            document.getElementById('dash-display-name').innerText = data.fullName;
-            document.getElementById('dash-avatar').src = data.photoURL;
+            document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml} ${adminHtml}`; document.getElementById('dash-display-name').innerText = data.fullName; document.getElementById('dash-avatar').src = data.photoURL;
 
-            onSnapshot(collection(db, "users"), (uSnap) => {
-                globalCachedAllUsers = [];
-                uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); if (uDoc.id === currentUser.uid) userDataRecord = uDoc.data(); });
-                loadFriendsSidebarList();
-                triggerHubComprehensiveSearch();
-            });
-
-            onSnapshot(query(collection(db, "groups"), where("members", "array-contains", currentUser.uid)), (gSnap) => {
-                globalCachedGroupRooms = [];
-                gSnap.forEach(gDoc => {
-                    const gData = gDoc.data();
-                    gData.id = gDoc.id;
-                    globalCachedGroupRooms.push(gData);
-                });
-                loadFriendsSidebarList();
-            });
-
-            onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => {
-                globalCachedFeedPosts = [];
-                snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() }));
-                renderExploreTimelineFeed();
-                triggerHubComprehensiveSearch();
-            });
-
-            onSnapshot(collection(db, "stories"), (storySnap) => {
-                globalCachedStories = [];
-                storySnap.forEach(sDoc => globalCachedStories.push(sDoc.data()));
-                renderStoryTrayElements();
-            });
-
+            onSnapshot(collection(db, "users"), (uSnap) => { globalCachedAllUsers = []; uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); if (uDoc.id === currentUser.uid) userDataRecord = uDoc.data(); }); loadFriendsSidebarList(); triggerHubComprehensiveSearch(); });
+            onSnapshot(query(collection(db, "groups"), where("members", "array-contains", currentUser.uid)), (gSnap) => { globalCachedGroupRooms = []; gSnap.forEach(gDoc => { const gData = gDoc.data(); gData.id = gDoc.id; globalCachedGroupRooms.push(gData); }); loadFriendsSidebarList(); });
+            onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => { globalCachedFeedPosts = []; snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() })); renderExploreTimelineFeed(); triggerHubComprehensiveSearch(); });
+            onSnapshot(collection(db, "stories"), (storySnap) => { globalCachedStories = []; storySnap.forEach(sDoc => globalCachedStories.push(sDoc.data())); renderStoryTrayElements(); });
             switchTab('chats');
         }
 
