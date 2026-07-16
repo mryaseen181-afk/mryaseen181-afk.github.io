@@ -1650,6 +1650,137 @@
             cmdInput.value = "";
         });
 
+        // Missing Functions Implementation
+        function renderStoryTrayElements() {
+            const tray = document.getElementById('story-tray');
+            if (!tray) return;
+            tray.innerHTML = "";
+            const uniqueStories = [];
+            const seenUsers = new Set();
+            const now = Date.now();
+            const activeStories = globalCachedStories
+                .filter(s => (now - s.timestamp) < 24 * 60 * 60 * 1000)
+                .sort((a, b) => b.timestamp - a.timestamp);
+            activeStories.forEach(s => {
+                if (!seenUsers.has(s.uid)) {
+                    seenUsers.add(s.uid);
+                    uniqueStories.push(s);
+                }
+            });
+            uniqueStories.forEach(story => {
+                const item = document.createElement('div');
+                item.className = 'story-item';
+                item.innerHTML = `
+                    <div class="story-avatar-wrap">
+                        <img src="${story.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + story.username}" alt="${story.username}'s Story">
+                    </div>
+                    <span>@${story.username}</span>
+                `;
+                item.onclick = () => {
+                    const modal = document.getElementById('story-viewer-modal');
+                    const img = document.getElementById('story-viewer-img');
+                    if (modal && img) {
+                        img.src = story.media;
+                        modal.style.display = 'flex';
+                    }
+                };
+                tray.appendChild(item);
+            });
+        }
+
+        async function togglePostLike(postId, currentLikes) {
+            if (!currentUser) return;
+            let updatedLikes = [...currentLikes];
+            if (updatedLikes.includes(currentUser.uid)) {
+                updatedLikes = updatedLikes.filter(uid => uid !== currentUser.uid);
+            } else {
+                updatedLikes.push(currentUser.uid);
+            }
+            try {
+                await updateDoc(doc(db, "globalFeed", postId), { likes: updatedLikes });
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function sharePostAlert(authorUsername) {
+            const dummyUrl = `${window.location.origin}/?user=${authorUsername}`;
+            navigator.clipboard.writeText(dummyUrl).then(() => {
+                alert(`Share link copied for @${authorUsername}'s post!`);
+            }).catch(() => {
+                alert(`Sharing post from @${authorUsername}`);
+            });
+        }
+
+        async function submitPostComment(postId, inputElement, currentComments) {
+            const commentText = inputElement.value.trim();
+            if (!commentText || !userDataRecord) return;
+            const newComment = {
+                author: userDataRecord.username,
+                text: commentText,
+                timestamp: Date.now()
+            };
+            const updatedComments = [...currentComments, newComment];
+            try {
+                await updateDoc(doc(db, "globalFeed", postId), { comments: updatedComments });
+                inputElement.value = "";
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function openRelationshipExplorer(title, uidList) {
+            const modal = document.getElementById('relationship-explorer-modal');
+            const titleEl = document.getElementById('relationship-explorer-title');
+            const listEl = document.getElementById('relationship-explorer-list');
+            if (!modal || !titleEl || !listEl) return;
+            titleEl.innerText = title;
+            listEl.innerHTML = "";
+            if (uidList.length === 0) {
+                listEl.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding:12px;">No connections found.</p>`;
+            } else {
+                uidList.forEach(uid => {
+                    const userObj = globalCachedAllUsers.find(u => u.uid === uid);
+                    if (userObj) {
+                        const row = document.createElement('div');
+                        row.className = "friend-item";
+                        row.style.margin = "4px 0";
+                        const tickHtml = (userObj.verified || userObj.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+                        row.innerHTML = `<img src="${userObj.photoURL}"><div class="info"><h4>${userObj.fullName} ${tickHtml}</h4><p>@${userObj.username}</p></div>`;
+                        row.onclick = () => {
+                            modal.style.display = 'none';
+                            renderProfileCard(userObj, userObj.uid === currentUser.uid);
+                        };
+                        listEl.appendChild(row);
+                    }
+                });
+            }
+            modal.style.display = 'flex';
+        }
+
+        window.requestPushNotificationPerms = function() {
+            if (!("Notification" in window)) {
+                alert("This browser does not support desktop notifications.");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    alert("Notification permission granted!");
+                } else {
+                    alert("Notification permission denied/blocked.");
+                }
+            });
+        };
+
+        function dispatchClosedAlertPacket(senderName, text) {
+            if (Notification.permission === "granted" && document.hidden) {
+                new Notification(`New Message from ${senderName}`, {
+                    body: text,
+                    icon: "https://api.dicebear.com/7.x/avataaars/svg?seed=" + senderName
+                });
+            }
+        }
+
         window.openMyOwnProfile = function() { if (userDataRecord) renderProfileCard(userDataRecord, true); };
         document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatChannelData && !activeChatChannelData.isGroup) renderProfileCard(activeChatChannelData, false); });
 
