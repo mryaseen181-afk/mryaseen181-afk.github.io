@@ -1286,6 +1286,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, orderBy, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDDTkv84V_QzdV5KqWOhAiWzkXnsYoF30Q",
@@ -1299,6 +1300,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
         const provider = new GoogleAuthProvider();
 
         const loadingScreen = document.getElementById('loading-screen');
@@ -1332,7 +1334,6 @@
         let unsubscribeChatListener = null;
         let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
         let globalCachedFeedPosts = [], globalCachedAllUsers = [], globalCachedStories = [], globalCachedGroupRooms = [];
-        let stagedChatFileBase64 = "", stagedFeedFileBase64 = "";
 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1390,34 +1391,10 @@
             alert(`Link parameters generated: Shared content payload matching @${authorName}.`);
         }
 
-        function openRelationshipExplorer(title, userUidList) {
-            const modal = document.getElementById('relationship-explorer-modal');
-            document.getElementById('relationship-explorer-title').innerText = title;
-            const container = document.getElementById('relationship-explorer-list');
-            container.innerHTML = "";
-
-            if(userUidList.length === 0) {
-                container.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center;">No accounts mapped.</p>`;
-            } else {
-                userUidList.forEach(uid => {
-                    const match = globalCachedAllUsers.find(u => u.uid === uid);
-                    if(match) {
-                        const row = document.createElement('div');
-                        row.className = "friend-item";
-                        row.style.margin = "0";
-                        row.style.padding = "8px 12px";
-                        row.innerHTML = `
-                            <img src="${match.photoURL}" style="width:32px; height:32px;">
-                            <div class="info">
-                                <h4 style="font-size:13px;">${match.fullName}</h4>
-                                <p style="font-size:11px;">@${match.username}</p>
-                            </div>
-                        `;
-                        container.appendChild(row);
-                    }
-                });
+        function dispatchClosedAlertPacket(senderName, textContent) {
+            if (Notification.permission === "granted" && document.hidden) {
+                new Notification(`${senderName}`, { body: textContent || "Operational matrix block stream package received.", tag: "chat" });
             }
-            modal.style.display = 'flex';
         }
 
         sidebarMakeGroupBtn.onclick = () => {
@@ -1449,7 +1426,6 @@
                 isGroup: true,
                 members: memberUidsList,
                 createdBy: currentUser.uid,
-                customAvatar: "",
                 timestamp: Date.now()
             });
 
@@ -1461,14 +1437,13 @@
         groupAvatarFileInput.onchange = (e) => {
             const file = e.target.files[0];
             if (!file || !activeChatChannelData || !activeChatChannelData.isGroup) return;
-            const reader = new FileReader();
-            reader.onload = async (el) => {
-                await updateDoc(doc(db, "groups", activeChatChannelData.id), {
-                    customAvatar: el.target.result
-                });
+            
+            const storageRef = ref(storage, `groups/${activeChatChannelData.id}/avatar_${Date.now()}`);
+            uploadBytes(storageRef, file).then(async (snapshot) => {
+                const downloadUrl = await getDownloadURL(snapshot.ref);
+                await updateDoc(doc(db, "groups", activeChatChannelData.id), { customAvatar: downloadUrl });
                 alert("Group profile logo matrix updated successfully.");
-            };
-            reader.readAsDataURL(file);
+            });
         };
 
         window.deleteGroupChannel = async function(groupId, event) {
@@ -1640,71 +1615,101 @@
             });
         }
 
-        async function sendCustomPayload(overrideText = null, voiceBase64 = null) {
+        async function sendCustomPayload(overrideText = null, voiceBlob = null) {
             const textValue = overrideText || messageInput.value.trim();
-            if (!textValue && !stagedChatFileBase64 && !voiceBase64) return;
-            
             const isGroupMode = activeChatChannelData.isGroup || false;
             const roomKey = isGroupMode ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
             
+            let uploadedFileUrl = "";
+            let uploadedAudioUrl = "";
+
+            if (chatFileInput.files && chatFileInput.files[0]) {
+                const file = chatFileInput.files[0];
+                const storageRef = ref(storage, `chats/${roomKey}/images/${Date.now()}_${file.name}`);
+                const snapshot = await uploadBytes(storageRef, file);
+                uploadedFileUrl = await getDownloadURL(snapshot.ref);
+            }
+
+            if (voiceBlob) {
+                const storageRef = ref(storage, `chats/${roomKey}/voice/${Date.now()}_voicenote.ogg`);
+                const snapshot = await uploadBytes(storageRef, voiceBlob);
+                uploadedAudioUrl = await getDownloadURL(snapshot.ref);
+            }
+
+            if (!textValue && !uploadedFileUrl && !uploadedAudioUrl) return;
+
             const payloadObject = {
                 senderId: currentUser.uid,
                 senderUsername: userDataRecord.username,
-                text: textValue,
-                file: stagedChatFileBase64,
-                audio: voiceBase64,
+                text: textValue || (uploadedFileUrl ? "[Image Attached]" : "[Voice Note Attached]"),
+                file: uploadedFileUrl,
+                audio: uploadedAudioUrl,
                 timestamp: Date.now()
             };
 
-            if (!isGroupMode) {
-                payloadObject.seen = false;
-                await addDoc(collection(db, "messages", roomKey, "records"), payloadObject);
-            } else {
-                await addDoc(collection(db, "groups", roomKey, "messages"), payloadObject);
-            }
+            const collectionPath = isGroupMode ? collection(db, "groups", roomKey, "messages") : collection(db, "messages", roomKey, "records");
+            
+            if (!isGroupMode) payloadObject.seen = false;
+            await addDoc(collectionPath, payloadObject);
             
             if (!overrideText) messageInput.value = "";
-            stagedChatFileBase64 = "";
             chatFileInput.value = "";
         }
 
-        document.getElementById('send-msg-btn').addEventListener('click', () => sendCustomPayload());
-        messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendCustomPayload(); });
+        document.getElementById('chat-file-trigger').addEventListener('click', () => chatFileInput.click());
+        document.getElementById('feed-file-trigger').addEventListener('click', () => feedFileInput.click());
 
-        async function loadFriendsSidebarList() {
-            friendsListElement.innerHTML = "";
+        chatFileInput.addEventListener('change', () => sendCustomPayload());
 
-            globalCachedGroupRooms.forEach(gRoom => {
-                const item = document.createElement('div');
-                item.className = 'friend-item';
-                if(activeChatChannelData && activeChatChannelData.isGroup && activeChatChannelData.id === gRoom.id) item.classList.add('active');
-                
-                let avatarLayout = `<div style="width:44px; height:44px; border-radius:50%; background:var(--brand-gradient); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:18px;">G</div>`;
-                if (gRoom.customAvatar) {
-                    avatarLayout = `<img src="${gRoom.customAvatar}" style="width:44px; height:44px; border-radius:50%; object-fit:cover;">`;
+        feedFileInput.addEventListener('change', () => {
+            if (feedFileInput.files && feedFileInput.files[0]) {
+                feedFilePreview.style.display = 'block';
+            }
+        });
+
+        storyFileInput.addEventListener('change', async () => {
+            const file = storyFileInput.files[0];
+            if (!file) return;
+
+            const storageRef = ref(storage, `stories/${currentUser.uid}/story_${Date.now()}`);
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadUrl = await getDownloadURL(snapshot.ref);
+
+            await addDoc(collection(db, "stories"), {
+                uid: currentUser.uid,
+                username: userDataRecord.username,
+                avatar: userDataRecord.photoURL,
+                media: downloadUrl,
+                timestamp: Date.now()
+            });
+            alert("Story asset uploaded to your profile successfully!");
+        });
+
+        voiceMemoBtn.addEventListener('click', async () => {
+            if (!mediaRecorder) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
+                        sendCustomPayload(null, blob);
+                        audioChunks = [];
+                    };
+                    mediaRecorder.start();
+                    voiceMemoBtn.classList.add('recording-active');
+                } catch (err) {
+                    alert("Media devices setup interface microphone access blocked.");
                 }
+            } else {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                mediaRecorder = null;
+                voiceMemoBtn.classList.remove('recording-active');
+            }
+        });
 
-                item.innerHTML = `
-                    ${avatarLayout}
-                    <div class="info"><h4>${gRoom.groupName}</h4><p>${gRoom.members.length} participants</p></div>
-                    <button class="delete-group-sidebar-trigger" onclick="deleteGroupChannel('${gRoom.id}', event)">Delete</button>
-                `;
-                item.onclick = () => openChatWindow(gRoom, item);
-                friendsListElement.appendChild(item);
-            });
-
-            globalCachedAllUsers.forEach(fData => {
-                if (fData.uid === currentUser.uid) return;
-                const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                const adminHtml = (fData.username === 'yaseen' || fData.adminAttached) ? getAdminBadgeMarkup() : "";
-                const item = document.createElement('div');
-                item.className = 'friend-item';
-                if(activeChatChannelData && !activeChatChannelData.isGroup && activeChatChannelData.uid === fData.uid) item.classList.add('active');
-                item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
-                item.onclick = () => { openChatWindow(fData, item); };
-                friendsListElement.appendChild(item);
-            });
-        }
+        window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
             if (userObj.isGroup) return; 
@@ -1966,14 +1971,21 @@
 
         document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
             const text = document.getElementById('feed-post-text').value.trim();
-            if (!text && !stagedFeedFileBase64) return;
+            if (!text && !feedFileInput.files[0]) return;
             
+            let postDownloadUrl = "";
+            if (feedFileInput.files && feedFileInput.files[0]) {
+                const storageRef = ref(storage, `feed/posts/${Date.now()}_post`);
+                const snapshot = await uploadBytes(storageRef, feedFileInput.files[0]);
+                postDownloadUrl = await getDownloadURL(snapshot.ref);
+            }
+
             await addDoc(collection(db, "globalFeed"), {
                 authorName: userDataRecord.fullName,
                 authorUsername: userDataRecord.username,
                 authorPhoto: userDataRecord.photoURL,
                 text: text,
-                attachedFile: stagedFeedFileBase64,
+                attachedFile: postDownloadUrl,
                 verified: userDataRecord.verified || false,
                 adminAttached: userDataRecord.adminAttached || false,
                 likes: [],
@@ -1982,9 +1994,44 @@
             });
             
             document.getElementById('feed-post-text').value = "";
-            stagedFeedFileBase64 = "";
+            feedFileInput.value = "";
             feedFilePreview.style.display = 'none';
         });
+
+        async function loadFriendsSidebarList() {
+            friendsListElement.innerHTML = "";
+
+            globalCachedGroupRooms.forEach(gRoom => {
+                const item = document.createElement('div');
+                item.className = 'friend-item';
+                if(activeChatChannelData && activeChatChannelData.isGroup && activeChatChannelData.id === gRoom.id) item.classList.add('active');
+                
+                let avatarLayout = `<div style="width:44px; height:44px; border-radius:50%; background:var(--brand-gradient); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:18px;">G</div>`;
+                if (gRoom.customAvatar) {
+                    avatarLayout = `<img src="${gRoom.customAvatar}" style="width:44px; height:44px; border-radius:50%; object-fit:cover;">`;
+                }
+
+                item.innerHTML = `
+                    ${avatarLayout}
+                    <div class="info"><h4>${gRoom.groupName}</h4><p>${gRoom.members.length} participants</p></div>
+                    <button class="delete-group-sidebar-trigger" onclick="deleteGroupChannel('${gRoom.id}', event)">Delete</button>
+                `;
+                item.onclick = () => openChatWindow(gRoom, item);
+                friendsListElement.appendChild(item);
+            });
+
+            globalCachedAllUsers.forEach(fData => {
+                if (fData.uid === currentUser.uid) return;
+                const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+                const adminHtml = (fData.username === 'yaseen' || fData.adminAttached) ? getAdminBadgeMarkup() : "";
+                const item = document.createElement('div');
+                item.className = 'friend-item';
+                if(activeChatChannelData && !activeChatChannelData.isGroup && activeChatChannelData.uid === fData.uid) item.classList.add('active');
+                item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
+                item.onclick = () => { openChatWindow(fData, item); };
+                friendsListElement.appendChild(item);
+            });
+        }
 
         toggleAuthModeBtn.addEventListener('click', function() {
             isSignUpMode = !isSignUpMode;
@@ -2081,9 +2128,7 @@
             switchTab('chats');
         }
 
-        hubSearchBar.addEventListener('input', triggerHubComprehensiveSearch);
         window.triggerLogoutSession = () => signOut(auth).then(() => location.reload());
-        window.addEventListener('resize', () => { switchTab(dashboardContainer.getAttribute('data-tab')); });
     </script>
 </body>
 </html>
