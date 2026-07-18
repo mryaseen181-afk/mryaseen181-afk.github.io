@@ -999,21 +999,50 @@
 
         .profile-posts-grid-container {
             width: 100%;
-            max-height: 160px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+            max-height: 320px;
             overflow-y: auto;
-            text-align: left;
-            margin-top: 8px;
             padding: 2px;
         }
 
-        .profile-mini-post-row {
+        .profile-grid-item {
+            aspect-ratio: 1 / 1;
             background: var(--bg-secondary);
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-bottom: 8px;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
             border: 1px solid var(--border-color);
+            transition: var(--transition-smooth);
+        }
+
+        .profile-grid-item:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .profile-grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-grid-item .text-fallback {
+            font-size: 11px;
             color: var(--text-color);
+            padding: 8px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
         }
 
         .leaderboard-row {
@@ -1761,13 +1790,17 @@
             const postsGrid = document.getElementById('profile-modal-posts-grid');
             postsGrid.innerHTML = "";
             if (nodePosts.length === 0) {
-                postsGrid.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding:12px;">No broadcasts archived.</p>`;
+                postsGrid.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding:12px; grid-column: span 3;">No posts yet.</p>`;
             } else {
                 nodePosts.forEach(p => {
-                    const postRow = document.createElement('div');
-                    postRow.className = "profile-mini-post-row";
-                    postRow.innerText = p.data.text || "[Image Matrix Stream Content File]";
-                    postsGrid.appendChild(postRow);
+                    const item = document.createElement('div');
+                    item.className = "profile-grid-item";
+                    if (p.data.attachedFile) {
+                        item.innerHTML = `<img src="${p.data.attachedFile}">`;
+                    } else {
+                        item.innerHTML = `<div class="text-fallback">${p.data.text || ''}</div>`;
+                    }
+                    postsGrid.appendChild(item);
                 });
             }
 
