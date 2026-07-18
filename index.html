@@ -2839,7 +2839,12 @@
         document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
             const btn = document.getElementById('submit-feed-post-btn');
             const text = document.getElementById('feed-post-text').value.trim();
-            if (!text && (!feedFileInput.files || feedFileInput.files.length === 0)) return;
+            console.log("Publish post clicked. Text:", text, "Files:", feedFileInput.files);
+            
+            if (!text && (!feedFileInput.files || feedFileInput.files.length === 0)) {
+                console.log("Empty post text and files. Aborting.");
+                return;
+            }
             
             btn.disabled = true;
             btn.innerText = "Publishing...";
@@ -2847,11 +2852,15 @@
             try {
                 let attachedFiles = [];
                 if (feedFileInput.files && feedFileInput.files.length > 0) {
+                    console.log("Processing attached files...");
                     for (let i = 0; i < feedFileInput.files.length; i++) {
                         const file = feedFileInput.files[i];
+                        console.log(`Uploading file ${i + 1}/${feedFileInput.files.length}: ${file.name}`);
                         const storageRef = ref(storage, `feed/posts/${Date.now()}_post_${i}`);
                         const snapshot = await uploadBytes(storageRef, file);
+                        console.log(`File ${i + 1} upload complete. Fetching URL...`);
                         const downloadUrl = await getDownloadURL(snapshot.ref);
+                        console.log(`File ${i + 1} URL:`, downloadUrl);
                         attachedFiles.push(downloadUrl);
                     }
                 }
@@ -2863,6 +2872,7 @@
                 const verifiedVal = userDataRecord ? (userDataRecord.verified || false) : false;
                 const adminVal = userDataRecord ? (userDataRecord.adminAttached || false) : false;
 
+                console.log("Adding document to globalFeed collection...");
                 const postRef = await addDoc(collection(db, "globalFeed"), {
                     authorName: authorName,
                     authorUsername: authorUsername,
@@ -2876,15 +2886,18 @@
                     comments: [],
                     timestamp: Date.now()
                 });
+                console.log("Document added successfully. ID:", postRef.id);
 
                 // Parse user tags
                 const userTags = text.match(/@([a-zA-Z0-9_]+)/g);
                 if (userTags) {
-                    userTags.forEach(tag => {
+                    console.log("Parsing tags:", userTags);
+                    for (const tag of userTags) {
                         const cleanUsername = tag.replace('@', '').toLowerCase();
                         const targetUser = globalCachedAllUsers.find(u => u.username === cleanUsername);
                         if (targetUser && targetUser.uid !== currentUser.uid) {
-                            addDoc(collection(db, "notifications"), {
+                            console.log("Notifying tagged user:", cleanUsername);
+                            await addDoc(collection(db, "notifications"), {
                                 toUid: targetUser.uid,
                                 fromUsername: authorUsername,
                                 type: "tag_post",
@@ -2894,12 +2907,14 @@
                                 seen: false
                             });
                         }
-                    });
+                    }
                 }
                 
+                console.log("Resetting inputs...");
                 document.getElementById('feed-post-text').value = "";
                 feedFileInput.value = "";
                 feedFilePreview.style.display = 'none';
+                console.log("Publish post completed successfully!");
             } catch (e) {
                 console.error("Post publication failed:", e);
                 alert("Failed to publish post: " + e.message + "\n\nStack: " + e.stack);
