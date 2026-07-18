@@ -580,22 +580,77 @@
 
         .msg-delete-overlay-btn {
             position: absolute;
-            top: -10px;
-            right: 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 700;
+            top: 4px;
+            right: 4px;
+            background: rgba(244, 63, 94, 0.1);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
             color: var(--accent-rose);
             cursor: pointer;
-            display: none;
+            opacity: 0;
+            transition: var(--transition-smooth);
             z-index: 10;
         }
 
         .msg:hover .msg-delete-overlay-btn {
+            opacity: 1;
+        }
+
+        /* Swipable Carousel Styles */
+        .post-carousel-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 16px;
+            margin-top: 12px;
+        }
+        .post-carousel-track {
             display: flex;
+            transition: transform 0.3s ease-in-out;
+            width: 100%;
+        }
+        .post-carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .post-carousel-slide img {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+        .post-carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            z-index: 20;
+            transition: background 0.3s;
+        }
+        .post-carousel-arrow:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .post-carousel-arrow.prev {
+            left: 12px;
+        }
+        .post-carousel-arrow.next {
+            right: 12px;
         }
         
         .msg img, .msg audio {
@@ -1399,7 +1454,6 @@
                 <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1; height: 100%;">
                     <div class="chat-header">
                         <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
-                        <button id="vanish-mode-toggle-btn" class="small-action-pill-btn" style="margin-left: 12px; background: transparent; border: 1px solid var(--border-color); color: var(--text-color); cursor: pointer;">👻 Vanish Mode: OFF</button>
                         <div class="chat-header-meta"><h3 id="chat-with-heading">Chat Room</h3></div>
                         
                         <button id="group-avatar-change-btn" class="small-action-pill-btn" style="margin-left: auto; display: none;">Edit Logo</button>
@@ -1434,7 +1488,7 @@
                     <textarea id="feed-post-text" placeholder="What's on your mind?"></textarea>
                     <div class="feed-composer-actions">
                         <button class="secondary-btn" style="width: auto; margin: 0; padding: 8px 18px;" id="feed-file-trigger">Add Media File</button>
-                        <input type="file" id="feed-file-input" accept="image/*" style="display: none;">
+                        <input type="file" id="feed-file-input" accept="image/*" style="display: none;" multiple>
                         <button class="main-btn" style="width: auto; padding: 8px 24px;" id="submit-feed-post-btn">Publish Post</button>
                     </div>
                     <div id="feed-file-preview" style="font-size: 13px; color: var(--accent-glow); margin-top: 10px; display: none; font-weight: 600;">File attached.</div>
@@ -1455,6 +1509,9 @@
                         <div class="search-section-title">🏆 Followers Leaderboard</div>
                         <div id="leaderboard-ranking-list" style="display: flex; flex-direction: column; gap: 4px;"></div>
                         
+                        <div class="search-section-title" style="margin-top: 24px;">✨ Suggested for you</div>
+                        <div id="suggested-ranking-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                        
                         <div class="search-section-title" style="margin-top: 24px;">📝 Search Posts</div>
                         <div id="search-posts-results" style="display: flex; flex-direction: column; gap: 12px;"></div>
 
@@ -1473,9 +1530,11 @@
         </div>
     </div>
 
-    <div id="story-viewer-modal" class="modal" onclick="this.style.display='none'">
-        <div class="modal-content" style="padding: 12px; max-width: 420px; background: #000; border: none;">
-            <img id="story-viewer-img" src="" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=default';" style="width:100%; border-radius: 20px; max-height:75vh; object-fit: contain;">
+    <div id="story-viewer-modal" class="modal" onclick="if(event.target === this) this.style.display='none'">
+        <div class="modal-content" style="padding: 12px; max-width: 420px; background: #000; border: none; position: relative;">
+            <span class="close-modal" style="color: #fff; top: 8px; right: 12px;" onclick="document.getElementById('story-viewer-modal').style.display='none'">&times;</span>
+            <img id="story-viewer-img" src="" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=default';" style="width:100%; border-radius: 20px; max-height:70vh; object-fit: contain;">
+            <div id="story-viewers-list" style="margin-top: 12px; color: #fff; text-align: left; max-height: 100px; overflow-y: auto; display: none; font-size: 11px;"></div>
         </div>
     </div>
 
@@ -1540,9 +1599,34 @@
                     <div id="follow-requests-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 150px; overflow-y: auto;"></div>
                 </div>
 
+                <!-- Task 15: Highlights Section -->
+                <div id="profile-highlights-section" style="width: 100%; text-align: left; margin-top: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4 style="font-size: 11px; font-weight:700; color: var(--text-muted); text-transform: uppercase; letter-spacing:1px; margin: 0;">Highlights</h4>
+                        <button id="new-highlight-btn" class="small-action-pill-btn" style="display: none; font-size: 10px; padding: 4px 8px; cursor: pointer;">＋ New Highlight</button>
+                    </div>
+                    <div id="profile-highlights-list" style="display: flex; gap: 12px; overflow-x: auto; padding: 4px 0;"></div>
+                </div>
+
                 <h4 style="text-align: left; width: 100%; font-size: 11px; font-weight:700; color: var(--text-muted); text-transform: uppercase; margin-top: 12px; letter-spacing:1px;">Post History</h4>
                 <div id="profile-modal-posts-grid" class="profile-posts-grid-container"></div>
             </div>
+        </div>
+    </div>
+
+    <div id="highlight-creation-modal" class="modal" style="z-index: 120;">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close-modal" onclick="document.getElementById('highlight-creation-modal').style.display='none'">&times;</span>
+            <h3 style="margin-bottom: 16px;">Create Highlight</h3>
+            <div class="input-group">
+                <label>Highlight Title</label>
+                <input type="text" id="highlight-title-input" placeholder="e.g. Summer vibes">
+            </div>
+            <div class="input-group">
+                <label>Select Stories to include</label>
+                <div id="highlight-stories-selection" class="checkbox-list-container"></div>
+            </div>
+            <button id="highlight-submit-btn" class="main-btn" style="margin-top: 10px;">Save Highlight</button>
         </div>
     </div>
 
@@ -1609,8 +1693,6 @@
         let unsubscribeTypingListener = null;
         let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
         let globalCachedFeedPosts = [], globalCachedAllUsers = [], globalCachedStories = [], globalCachedGroupRooms = [];
-        let vanishMode = false;
-        let vanishedMessagesToDelete = [];
 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1653,19 +1735,6 @@
             try { await deleteDoc(docRef); } catch(e) { console.error(e); }
         };
 
-        async function deleteVanishMessages() {
-            const toDelete = [...vanishedMessagesToDelete];
-            vanishedMessagesToDelete = [];
-            for (const item of toDelete) {
-                try {
-                    const docRef = item.isGroup ? doc(db, "groups", item.room, "messages", item.id) : doc(db, "messages", item.room, "records", item.id);
-                    await deleteDoc(docRef);
-                } catch (e) {
-                    console.error("Vanish delete failed", e);
-                }
-            }
-        }
-
         async function addMessageReaction(msgId, emoji) {
             if (!activeChatChannelData) return;
             const roomKey = activeChatChannelData.isGroup ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
@@ -1688,9 +1757,6 @@
         }
 
         async function openChatWindow(channelData, elementDomNode) {
-            // Task 9: Vanish Mode - delete pending vanish messages
-            await deleteVanishMessages();
-
             activeChatChannelData = channelData;
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
@@ -1720,15 +1786,6 @@
 
             const roomKey = channelData.isGroup ? channelData.id : (currentUser.uid < channelData.uid ? `${currentUser.uid}_${channelData.uid}` : `${channelData.uid}_${currentUser.uid}`);
             const collectionPath = channelData.isGroup ? collection(db, "groups", roomKey, "messages") : collection(db, "messages", roomKey, "records");
-
-            // Task 9: Vanish Mode status and toggle reset
-            vanishMode = false;
-            const vanishBtn = document.getElementById('vanish-mode-toggle-btn');
-            if (vanishBtn) {
-                vanishBtn.innerText = "👻 Vanish Mode: OFF";
-                vanishBtn.style.borderColor = "var(--border-color)";
-                vanishBtn.style.color = "var(--text-color)";
-            }
 
             // Task 7: Message Requests Banner
             const inputWrapper = document.querySelector('.chat-input-wrapper');
@@ -1832,25 +1889,12 @@
                         dispatchClosedAlertPacket(channelData.fullName, msg.text);
                     }
 
-                    // Task 9: Vanish Mode auto-deletion logic
-                    if (msg.vanish && !isSent) {
-                        if (!vanishedMessagesToDelete.some(item => item.id === msgId)) {
-                            vanishedMessagesToDelete.push({ id: msgId, room: roomKey, isGroup: channelData.isGroup });
-                        }
-                        setTimeout(async () => {
-                            try {
-                                const docRef = channelData.isGroup ? doc(db, "groups", roomKey, "messages", msgId) : doc(db, "messages", roomKey, "records", msgId);
-                                await deleteDoc(docRef);
-                            } catch (e) {}
-                        }, 10000);
-                    }
-
                     const bubble = document.createElement('div');
                     bubble.className = `msg ${isSent ? 'sent' : 'received'}`;
                     bubble.style.position = 'relative';
                     
                     let assetPayload = '';
-                    if (msg.file) assetPayload += `<img src="${msg.file}">`;
+                    if (msg.file) assetPayload += `<img src="${msg.file}" class="chat-attached-image" style="cursor: pointer;">`;
                     if (msg.audio) assetPayload += `<audio src="${msg.audio}" controls></audio>`;
 
                     let metaRowHtml = `<span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
@@ -1889,7 +1933,7 @@
                         <p>${msg.text}</p>
                         ${assetPayload}
                         ${reactionBadgesHtml}
-                        <button class="msg-delete-overlay-btn" onclick="deleteChatMessageRecord('${msgId}')">Delete</button>
+                        <button class="msg-delete-overlay-btn" onclick="deleteChatMessageRecord('${msgId}')" title="Delete Message">🗑️</button>
                         <div class="msg-meta-row">${metaRowHtml}</div>
                     `;
 
@@ -1916,6 +1960,15 @@
                             opt.parentElement.style.display = 'none';
                         };
                     });
+
+                    // React to image double tap with ❤️
+                    const bubbleImg = bubble.querySelector('.chat-attached-image');
+                    if (bubbleImg) {
+                        bubbleImg.addEventListener('dblclick', (e) => {
+                            e.stopPropagation();
+                            addMessageReaction(msgId, '❤️');
+                        });
+                    }
 
                     messagesBox.appendChild(bubble);
                 });
@@ -1955,9 +2008,6 @@
                 audio: uploadedAudioUrl,
                 timestamp: Date.now()
             };
-            if (vanishMode) {
-                payloadObject.vanish = true;
-            }
 
             const collectionPath = isGroupMode ? collection(db, "groups", roomKey, "messages") : collection(db, "messages", roomKey, "records");
             if (!isGroupMode) payloadObject.seen = false;
@@ -2027,22 +2077,55 @@
             });
         };
 
-        const vanishBtn = document.getElementById('vanish-mode-toggle-btn');
-        if (vanishBtn) {
-            vanishBtn.addEventListener('click', () => {
-                vanishMode = !vanishMode;
-                vanishBtn.innerText = vanishMode ? "👻 Vanish Mode: ON" : "👻 Vanish Mode: OFF";
-                vanishBtn.style.borderColor = vanishMode ? "var(--accent-rose)" : "var(--border-color)";
-                vanishBtn.style.color = vanishMode ? "var(--accent-rose)" : "var(--text-color)";
-            });
-        }
+        let currentHighlightIndex = 0;
+        window.playHighlightStories = function(storyMediaUrls) {
+            const modal = document.getElementById('story-viewer-modal');
+            const img = document.getElementById('story-viewer-img');
+            const viewersListEl = document.getElementById('story-viewers-list');
+            if (viewersListEl) viewersListEl.style.display = 'none';
+            
+            if (modal && img && storyMediaUrls.length > 0) {
+                currentHighlightIndex = 0;
+                img.src = storyMediaUrls[currentHighlightIndex];
+                modal.style.display = 'flex';
+                
+                img.onclick = (e) => {
+                    e.stopPropagation();
+                    currentHighlightIndex++;
+                    if (currentHighlightIndex < storyMediaUrls.length) {
+                        img.src = storyMediaUrls[currentHighlightIndex];
+                    } else {
+                        modal.style.display = 'none';
+                        img.onclick = null;
+                    }
+                };
+            }
+        };
 
-        window.addEventListener('beforeunload', () => {
-            deleteVanishMessages();
-        });
-        window.addEventListener('pagehide', () => {
-            deleteVanishMessages();
-        });
+        document.getElementById('highlight-submit-btn').onclick = async () => {
+            const title = document.getElementById('highlight-title-input').value.trim();
+            if (!title) {
+                alert("Please enter a title");
+                return;
+            }
+            const selectionBox = document.getElementById('highlight-stories-selection');
+            const checked = selectionBox.querySelectorAll('input[type="checkbox"]:checked');
+            const urls = Array.from(checked).map(cb => cb.value);
+            if (urls.length === 0) {
+                alert("Please select at least one story");
+                return;
+            }
+            await addDoc(collection(db, "highlights"), {
+                uid: currentUser.uid,
+                title: title,
+                mediaUrls: urls,
+                timestamp: Date.now()
+            });
+            alert("Highlight saved!");
+            document.getElementById('highlight-creation-modal').style.display = 'none';
+            document.getElementById('highlight-title-input').value = "";
+            if (userDataRecord) renderProfileCard(userDataRecord, true);
+        };
 
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
@@ -2205,6 +2288,53 @@
                 reqSection.style.display = 'none';
             }
 
+            // Task 15: Highlights Section Config
+            const highlightsListEl = document.getElementById('profile-highlights-list');
+            highlightsListEl.innerHTML = "";
+            const highlightsSnap = await getDocs(query(collection(db, "highlights"), where("uid", "==", userObj.uid)));
+            highlightsSnap.forEach(hlDoc => {
+                const hlData = hlDoc.data();
+                const item = document.createElement('div');
+                item.className = 'story-item';
+                item.style.marginRight = '8px';
+                item.innerHTML = `
+                    <div class="story-avatar-wrap" style="background: var(--brand-gradient);">
+                        <div style="width: 100%; height: 100%; border-radius: 50%; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-size: 20px;">🌸</div>
+                    </div>
+                    <span>${hlData.title}</span>
+                `;
+                item.onclick = () => {
+                    playHighlightStories(hlData.mediaUrls || []);
+                };
+                highlightsListEl.appendChild(item);
+            });
+
+            const newHlBtn = document.getElementById('new-highlight-btn');
+            if (isOwnProfile) {
+                newHlBtn.style.display = 'block';
+                newHlBtn.onclick = () => {
+                    document.getElementById('highlight-creation-modal').style.display = 'flex';
+                    const myStories = globalCachedStories.filter(s => s.uid === currentUser.uid);
+                    const selectionBox = document.getElementById('highlight-stories-selection');
+                    selectionBox.innerHTML = "";
+                    if (myStories.length === 0) {
+                        selectionBox.innerHTML = `<p style="font-size: 12px; color: var(--text-muted); padding: 8px;">No past stories found to highlight.</p>`;
+                    } else {
+                        myStories.forEach((story, idx) => {
+                            const row = document.createElement('div');
+                            row.className = "checkbox-item-row";
+                            row.innerHTML = `
+                                <input type="checkbox" id="hl-story-${idx}" value="${story.media}">
+                                <label for="hl-story-${idx}">Story ${idx + 1} (${new Date(story.timestamp).toLocaleDateString()})</label>
+                            `;
+                            selectionBox.appendChild(row);
+                        });
+                    }
+                };
+            } else {
+                newHlBtn.style.display = 'none';
+            }
+
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
 
@@ -2252,11 +2382,39 @@
                     </div>
                     <span>@${story.username}</span>
                 `;
-                item.onclick = () => {
+                item.onclick = async () => {
                     const modal = document.getElementById('story-viewer-modal');
                     const img = document.getElementById('story-viewer-img');
+                    const viewersListEl = document.getElementById('story-viewers-list');
                     if (modal && img) {
                         img.src = story.media;
+                        
+                        if (story.id && currentUser) {
+                            const storyRef = doc(db, "stories", story.id);
+                            let viewersList = story.viewers || [];
+                            if (!viewersList.includes(currentUser.uid)) {
+                                viewersList.push(currentUser.uid);
+                                await updateDoc(storyRef, { viewers: viewersList });
+                            }
+                        }
+
+                        if (story.uid === currentUser.uid) {
+                            viewersListEl.style.display = 'block';
+                            const viewersList = story.viewers || [];
+                            if (viewersList.length === 0) {
+                                viewersListEl.innerHTML = "<strong>Viewers:</strong> No views yet";
+                            } else {
+                                const viewerNames = [];
+                                viewersList.forEach(vUid => {
+                                    const uObj = globalCachedAllUsers.find(u => u.uid === vUid);
+                                    if (uObj) viewerNames.push(`@${uObj.username}`);
+                                });
+                                viewersListEl.innerHTML = `<strong>Viewers (${viewersList.length}):</strong> ${viewerNames.join(', ')}`;
+                            }
+                        } else {
+                            viewersListEl.style.display = 'none';
+                        }
+
                         modal.style.display = 'flex';
                     }
                 };
@@ -2468,6 +2626,66 @@
                 });
             }
 
+            const suggestionsContainer = document.getElementById('suggested-ranking-list');
+            if (suggestionsContainer && currentUser) {
+                suggestionsContainer.innerHTML = "";
+                const myFollowing = (userDataRecord && userDataRecord.following) ? userDataRecord.following : [];
+                
+                const suggestions = globalCachedAllUsers
+                    .filter(u => u.uid !== currentUser.uid && !myFollowing.includes(u.uid))
+                    .map(u => {
+                        const uFollowing = u.following || [];
+                        const mutualsCount = myFollowing.filter(uid => uFollowing.includes(uid)).length;
+                        return { profile: u, mutualsCount: mutualsCount };
+                    })
+                    .sort((a, b) => b.mutualsCount - a.mutualsCount);
+
+                suggestions.slice(0, 5).forEach(item => {
+                    const u = item.profile;
+                    const badgeMarkupStr = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+                    const row = document.createElement('div');
+                    row.className = "leaderboard-row";
+                    row.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg-secondary); border-radius: 16px; margin-bottom: 8px; border: 1px solid var(--border-color);";
+                    
+                    row.innerHTML = `
+                        <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" class="sugg-profile-trigger">
+                            <img src="${u.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=default';" style="width:28px; height:28px; border-radius:50%;">
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-size:13px; font-weight:600; display:flex; align-items:center; gap:4px;">@${u.username} ${badgeMarkupStr}</span>
+                                <span style="font-size:10px; color:var(--text-muted);">${item.mutualsCount} mutual follows</span>
+                            </div>
+                        </div>
+                        <button class="small-action-pill-btn quick-follow-btn" style="background: var(--accent-glow); color: white; border: none; padding: 6px 12px; font-size: 11px; cursor: pointer; border-radius: 14px;">Follow</button>
+                    `;
+                    
+                    row.querySelector('.sugg-profile-trigger').onclick = () => renderProfileCard(u, false);
+                    row.querySelector('.quick-follow-btn').onclick = async (e) => {
+                        e.stopPropagation();
+                        if (u.isPrivate) {
+                            await addDoc(collection(db, "followRequests"), {
+                                fromUid: currentUser.uid,
+                                fromUsername: userDataRecord.username,
+                                toUid: u.uid,
+                                status: "pending",
+                                timestamp: Date.now()
+                            });
+                            row.querySelector('.quick-follow-btn').innerText = "Requested";
+                            row.querySelector('.quick-follow-btn').disabled = true;
+                            row.querySelector('.quick-follow-btn').style.background = "var(--bg-secondary)";
+                            row.querySelector('.quick-follow-btn').style.color = "var(--text-muted)";
+                            alert("Follow request sent to private account!");
+                        } else {
+                            await toggleFollowState(u.uid, true);
+                        }
+                    };
+                    suggestionsContainer.appendChild(row);
+                });
+                
+                if (suggestions.length === 0) {
+                    suggestionsContainer.innerHTML = `<p style="font-size:12px; color:var(--text-muted); padding:8px;">No suggestions available.</p>`;
+                }
+            }
+
             const savedContainer = document.getElementById('search-saved-results');
             if (savedContainer) {
                 savedContainer.innerHTML = "";
@@ -2493,6 +2711,22 @@
             }
         }
 
+        window.navigateCarousel = function(postId, direction) {
+            const container = document.getElementById(`carousel-${postId}`);
+            if (!container) return;
+            const track = container.querySelector('.post-carousel-track');
+            const slides = container.querySelectorAll('.post-carousel-slide');
+            if (!track || slides.length === 0) return;
+            
+            let currentIndex = parseInt(container.getAttribute('data-index') || '0');
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = slides.length - 1;
+            if (currentIndex >= slides.length) currentIndex = 0;
+            
+            container.setAttribute('data-index', currentIndex);
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        };
+
         function renderExploreTimelineFeed() {
             const feedContainer = document.getElementById('feed-posts-container');
             feedContainer.innerHTML = "";
@@ -2512,16 +2746,40 @@
 
                 const isSaved = (userDataRecord && userDataRecord.savedPosts) ? userDataRecord.savedPosts.includes(postId) : false;
 
+                let mediaHtml = '';
+                const attachedFilesList = post.attachedFiles || (post.attachedFile ? [post.attachedFile] : []);
+                if (attachedFilesList.length > 1) {
+                    let slidesHtml = '';
+                    attachedFilesList.forEach(url => {
+                        slidesHtml += `
+                            <div class="post-carousel-slide">
+                                <div style="position:relative; width:100%; display:inline-block;">
+                                    <img src="${url}" class="post-image-img">
+                                    <div class="heart-overlay">❤️</div>
+                                </div>
+                            </div>`;
+                    });
+                    mediaHtml = `
+                        <div class="post-carousel-container" id="carousel-${postId}" data-index="0">
+                            <button class="post-carousel-arrow prev" onclick="event.stopPropagation(); navigateCarousel('${postId}', -1)">❮</button>
+                            <button class="post-carousel-arrow next" onclick="event.stopPropagation(); navigateCarousel('${postId}', 1)">❯</button>
+                            <div class="post-carousel-track">${slidesHtml}</div>
+                        </div>
+                    `;
+                } else if (attachedFilesList.length === 1) {
+                    mediaHtml = `
+                        <div style="position:relative; width:100%; display:inline-block;">
+                            <img src="${attachedFilesList[0]}" class="post-image-img">
+                            <div class="heart-overlay">❤️</div>
+                        </div>
+                    `;
+                }
+
                 card.innerHTML = `
                     <div class="post-header"><div class="post-author-info"><img src="${post.authorPhoto}"><h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4></div></div>
                     <div class="post-body">
                         <p>${post.text}</p>
-                        ${post.attachedFile ? `
-                            <div style="position:relative; width:100%; display:inline-block;">
-                                <img src="${post.attachedFile}" class="post-image-img">
-                                <div class="heart-overlay">❤️</div>
-                            </div>
-                        ` : ''}
+                        ${mediaHtml}
                     </div>
                     <div class="post-actions-bar">
                         <button class="post-action-btn ${isLikedByMe ? 'active-liked' : ''}" id="like-trigger-${postId}">❤️ <span>${postLikes.length} Likes</span></button>
@@ -2533,13 +2791,14 @@
                     <div class="comment-input-row"><input type="text" id="cmt-input-${postId}" placeholder="Write a comment..."><button class="send-txt-btn" id="cmt-submit-${postId}">Post</button></div>
                 `;
 
-                const postImg = card.querySelector('.post-image-img');
-                if (postImg) {
+                const postImgs = card.querySelectorAll('.post-image-img');
+                postImgs.forEach(imgEl => {
                     let lastTap = 0;
-                    postImg.addEventListener('click', () => {
+                    imgEl.addEventListener('click', () => {
                         const now = Date.now();
                         if (now - lastTap < 300) {
-                            const heart = card.querySelector('.heart-overlay');
+                            const parentWrap = imgEl.parentElement;
+                            const heart = parentWrap ? parentWrap.querySelector('.heart-overlay') : null;
                             if (heart) {
                                 heart.classList.remove('animate');
                                 void heart.offsetWidth; // Trigger reflow
@@ -2551,7 +2810,7 @@
                         }
                         lastTap = now;
                     });
-                }
+                });
 
                 card.querySelector(`#like-trigger-${postId}`).addEventListener('click', () => togglePostLike(postId, postLikes));
                 card.querySelector(`#share-trigger-${postId}`).addEventListener('click', () => sharePostAlert(post.authorUsername));
@@ -2574,13 +2833,17 @@
 
         document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
             const text = document.getElementById('feed-post-text').value.trim();
-            if (!text && !feedFileInput.files[0]) return;
+            if (!text && (!feedFileInput.files || feedFileInput.files.length === 0)) return;
             
-            let postDownloadUrl = "";
-            if (feedFileInput.files && feedFileInput.files[0]) {
-                const storageRef = ref(storage, `feed/posts/${Date.now()}_post`);
-                const snapshot = await uploadBytes(storageRef, feedFileInput.files[0]);
-                postDownloadUrl = await getDownloadURL(snapshot.ref);
+            let attachedFiles = [];
+            if (feedFileInput.files && feedFileInput.files.length > 0) {
+                for (let i = 0; i < feedFileInput.files.length; i++) {
+                    const file = feedFileInput.files[i];
+                    const storageRef = ref(storage, `feed/posts/${Date.now()}_post_${i}`);
+                    const snapshot = await uploadBytes(storageRef, file);
+                    const downloadUrl = await getDownloadURL(snapshot.ref);
+                    attachedFiles.push(downloadUrl);
+                }
             }
 
             const postRef = await addDoc(collection(db, "globalFeed"), {
@@ -2588,7 +2851,8 @@
                 authorUsername: userDataRecord.username,
                 authorPhoto: userDataRecord.photoURL,
                 text: text,
-                attachedFile: postDownloadUrl,
+                attachedFile: attachedFiles[0] || "",
+                attachedFiles: attachedFiles,
                 verified: userDataRecord.verified || false,
                 adminAttached: userDataRecord.adminAttached || false,
                 likes: [],
@@ -2896,7 +3160,7 @@
             onSnapshot(collection(db, "users"), (uSnap) => { globalCachedAllUsers = []; uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); if (uDoc.id === currentUser.uid) userDataRecord = uDoc.data(); }); loadFriendsSidebarList(); triggerHubComprehensiveSearch(); });
             onSnapshot(query(collection(db, "groups"), where("members", "array-contains", currentUser.uid)), (gSnap) => { globalCachedGroupRooms = []; gSnap.forEach(gDoc => { const gData = gDoc.data(); gData.id = gDoc.id; globalCachedGroupRooms.push(gData); }); loadFriendsSidebarList(); });
             onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => { globalCachedFeedPosts = []; snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() })); renderExploreTimelineFeed(); triggerHubComprehensiveSearch(); });
-            onSnapshot(collection(db, "stories"), (storySnap) => { globalCachedStories = []; storySnap.forEach(sDoc => globalCachedStories.push(sDoc.data())); renderStoryTrayElements(); });
+            onSnapshot(collection(db, "stories"), (storySnap) => { globalCachedStories = []; storySnap.forEach(sDoc => { const sData = sDoc.data(); sData.id = sDoc.id; globalCachedStories.push(sData); }); renderStoryTrayElements(); });
             
             // Listen to tagging notifications
             onSnapshot(query(collection(db, "notifications"), where("toUid", "==", currentUser.uid), orderBy("timestamp", "desc")), (snap) => {
@@ -2917,14 +3181,6 @@
         }
 
         window.exitChatToSidebar = function() {
-            deleteVanishMessages();
-            vanishMode = false;
-            const vanishBtn = document.getElementById('vanish-mode-toggle-btn');
-            if (vanishBtn) {
-                vanishBtn.innerText = "👻 Vanish Mode: OFF";
-                vanishBtn.style.borderColor = "var(--border-color)";
-                vanishBtn.style.color = "var(--text-color)";
-            }
             activeChatChannelData = null;
             dashboardContainer.classList.remove('chat-active');
             if (unsubscribeChatListener) unsubscribeChatListener();
