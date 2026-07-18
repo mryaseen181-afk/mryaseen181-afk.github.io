@@ -2856,15 +2856,22 @@
                     }
                 }
 
+                // Robust fallback mapping if userDataRecord is not yet initialized or fetched
+                const authorName = userDataRecord ? (userDataRecord.fullName || currentUser.email.split('@')[0]) : (currentUser.displayName || currentUser.email.split('@')[0]);
+                const authorUsername = userDataRecord ? (userDataRecord.username || currentUser.email.split('@')[0]) : (currentUser.email.split('@')[0]);
+                const authorPhoto = userDataRecord ? (userDataRecord.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authorUsername}`) : (currentUser.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authorUsername}`);
+                const verifiedVal = userDataRecord ? (userDataRecord.verified || false) : false;
+                const adminVal = userDataRecord ? (userDataRecord.adminAttached || false) : false;
+
                 const postRef = await addDoc(collection(db, "globalFeed"), {
-                    authorName: userDataRecord.fullName,
-                    authorUsername: userDataRecord.username,
-                    authorPhoto: userDataRecord.photoURL,
+                    authorName: authorName,
+                    authorUsername: authorUsername,
+                    authorPhoto: authorPhoto,
                     text: text,
                     attachedFile: attachedFiles[0] || "",
                     attachedFiles: attachedFiles,
-                    verified: userDataRecord.verified || false,
-                    adminAttached: userDataRecord.adminAttached || false,
+                    verified: verifiedVal,
+                    adminAttached: adminVal,
                     likes: [],
                     comments: [],
                     timestamp: Date.now()
@@ -2879,7 +2886,7 @@
                         if (targetUser && targetUser.uid !== currentUser.uid) {
                             addDoc(collection(db, "notifications"), {
                                 toUid: targetUser.uid,
-                                fromUsername: userDataRecord.username,
+                                fromUsername: authorUsername,
                                 type: "tag_post",
                                 postId: postRef.id,
                                 text: text.slice(0, 50),
