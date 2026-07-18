@@ -1025,6 +1025,53 @@
             font-weight: 600;
         }
 
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-glow);
+            padding: 14px 18px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 320px;
+            pointer-events: none;
+            border: 1px solid var(--border-color);
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .toast-notification img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .toast-content h5 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin: 0 0 2px 0;
+        }
+
+        .toast-content p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .profile-posts-grid-container {
             width: 100%;
             display: grid;
@@ -1409,6 +1456,9 @@
                         
                         <div class="search-section-title" style="margin-top: 24px;">📝 Search Posts</div>
                         <div id="search-posts-results" style="display: flex; flex-direction: column; gap: 12px;"></div>
+
+                        <div class="search-section-title" style="margin-top: 24px;">🔖 Saved Posts</div>
+                        <div id="search-saved-results" style="display: flex; flex-direction: column; gap: 12px;"></div>
                     </div>
                 </div>
             </div>
@@ -1944,6 +1994,26 @@
             try {
                 await updateDoc(doc(db, "globalFeed", postId), { comments: updatedComments });
                 inputElement.value = "";
+
+                // Parse user tags
+                const userTags = commentText.match(/@([a-zA-Z0-9_]+)/g);
+                if (userTags) {
+                    userTags.forEach(tag => {
+                        const cleanUsername = tag.replace('@', '').toLowerCase();
+                        const targetUser = globalCachedAllUsers.find(u => u.username === cleanUsername);
+                        if (targetUser && targetUser.uid !== currentUser.uid) {
+                            addDoc(collection(db, "notifications"), {
+                                toUid: targetUser.uid,
+                                fromUsername: userDataRecord.username,
+                                type: "tag_comment",
+                                postId: postId,
+                                text: commentText.slice(0, 50),
+                                timestamp: Date.now(),
+                                seen: false
+                            });
+                        }
+                    });
+                }
             } catch (e) {
                 console.error(e);
             }
@@ -2000,6 +2070,28 @@
                 });
             }
         }
+
+        window.showToastNotification = function(title, body, avatarUrl = '') {
+            let toast = document.getElementById('app-toast-alert');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'app-toast-alert';
+                toast.className = 'toast-notification';
+                document.body.appendChild(toast);
+            }
+            const imgHtml = avatarUrl ? `<img src="${avatarUrl}">` : ``;
+            toast.innerHTML = `
+                ${imgHtml}
+                <div class="toast-content" style="flex: 1; min-width: 0;">
+                    <h5>${title}</h5>
+                    <p>${body}</p>
+                </div>
+            `;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        };
 
         window.openMyOwnProfile = function() { if (userDataRecord) renderProfileCard(userDataRecord, true); };
         document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatChannelData && !activeChatChannelData.isGroup) renderProfileCard(activeChatChannelData, false); });
@@ -2069,6 +2161,30 @@
                     leaderboardContainer.appendChild(row);
                 });
             }
+
+            const savedContainer = document.getElementById('search-saved-results');
+            if (savedContainer) {
+                savedContainer.innerHTML = "";
+                const savedIds = (userDataRecord && userDataRecord.savedPosts) ? userDataRecord.savedPosts : [];
+                const savedPosts = globalCachedFeedPosts.filter(p => savedIds.includes(p.id));
+                if (savedPosts.length === 0) {
+                    savedContainer.innerHTML = `<p style="font-size:13px; color:var(--text-muted); padding:12px; text-align:center;">No saved posts yet.</p>`;
+                } else {
+                    savedPosts.forEach(p => {
+                        const row = document.createElement('div');
+                        row.className = "profile-mini-post-row";
+                        row.style.cssText = 'background:var(--bg-secondary); padding:10px 14px; border-radius:12px; font-size:12px; margin-bottom:8px; border:1px solid var(--border-color); color:var(--text-color); cursor:pointer;';
+                        row.innerHTML = `<strong>@${p.data.authorUsername || 'user'}</strong>: ${p.data.text || '[Image Post]'}`;
+                        row.onclick = () => {
+                            switchTab('feed');
+                            setTimeout(() => {
+                                alert(`Viewing saved post by @${p.data.authorUsername}`);
+                            }, 300);
+                        };
+                        savedContainer.appendChild(row);
+                    });
+                }
+            }
         }
 
         function renderExploreTimelineFeed() {
@@ -2088,6 +2204,8 @@
                 let commentsHtmlMarkupStr = "";
                 postComments.forEach(c => { commentsHtmlMarkupStr += `<div class="comment-item-row"><strong>@${c.author}</strong> ${c.text}</div>`; });
 
+                const isSaved = (userDataRecord && userDataRecord.savedPosts) ? userDataRecord.savedPosts.includes(postId) : false;
+
                 card.innerHTML = `
                     <div class="post-header"><div class="post-author-info"><img src="${post.authorPhoto}"><h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4></div></div>
                     <div class="post-body">
@@ -2103,6 +2221,7 @@
                         <button class="post-action-btn ${isLikedByMe ? 'active-liked' : ''}" id="like-trigger-${postId}">❤️ <span>${postLikes.length} Likes</span></button>
                         <button class="post-action-btn" onclick="document.getElementById('cmt-input-${postId}').focus()">💬 <span>${postComments.length} Comments</span></button>
                         <button class="post-action-btn" id="share-trigger-${postId}">🔗 Share</button>
+                        <button class="post-action-btn" id="bookmark-trigger-${postId}" style="margin-left: auto; color: ${isSaved ? 'var(--accent-glow)' : 'inherit'};">🔖 <span>${isSaved ? 'Saved' : 'Save'}</span></button>
                     </div>
                     <div class="post-comments-container" id="cmt-box-${postId}">${commentsHtmlMarkupStr}</div>
                     <div class="comment-input-row"><input type="text" id="cmt-input-${postId}" placeholder="Write a comment..."><button class="send-txt-btn" id="cmt-submit-${postId}">Post</button></div>
@@ -2131,6 +2250,18 @@
                 card.querySelector(`#like-trigger-${postId}`).addEventListener('click', () => togglePostLike(postId, postLikes));
                 card.querySelector(`#share-trigger-${postId}`).addEventListener('click', () => sharePostAlert(post.authorUsername));
                 card.querySelector(`#cmt-submit-${postId}`).addEventListener('click', () => { submitPostComment(postId, card.querySelector(`#cmt-input-${postId}`), postComments); });
+                card.querySelector(`#bookmark-trigger-${postId}`).addEventListener('click', async () => {
+                    if (!currentUser || !userDataRecord) return;
+                    let saved = userDataRecord.savedPosts || [];
+                    if (saved.includes(postId)) {
+                        saved = saved.filter(id => id !== postId);
+                        alert("Removed from saved posts.");
+                    } else {
+                        saved.push(postId);
+                        alert("Saved to bookmarks!");
+                    }
+                    await updateDoc(doc(db, "users", currentUser.uid), { savedPosts: saved });
+                });
                 feedContainer.appendChild(card);
             });
         }
@@ -2146,7 +2277,7 @@
                 postDownloadUrl = await getDownloadURL(snapshot.ref);
             }
 
-            await addDoc(collection(db, "globalFeed"), {
+            const postRef = await addDoc(collection(db, "globalFeed"), {
                 authorName: userDataRecord.fullName,
                 authorUsername: userDataRecord.username,
                 authorPhoto: userDataRecord.photoURL,
@@ -2158,6 +2289,26 @@
                 comments: [],
                 timestamp: Date.now()
             });
+
+            // Parse user tags
+            const userTags = text.match(/@([a-zA-Z0-9_]+)/g);
+            if (userTags) {
+                userTags.forEach(tag => {
+                    const cleanUsername = tag.replace('@', '').toLowerCase();
+                    const targetUser = globalCachedAllUsers.find(u => u.username === cleanUsername);
+                    if (targetUser && targetUser.uid !== currentUser.uid) {
+                        addDoc(collection(db, "notifications"), {
+                            toUid: targetUser.uid,
+                            fromUsername: userDataRecord.username,
+                            type: "tag_post",
+                            postId: postRef.id,
+                            text: text.slice(0, 50),
+                            timestamp: Date.now(),
+                            seen: false
+                        });
+                    }
+                });
+            }
             
             document.getElementById('feed-post-text').value = "";
             feedFileInput.value = "";
@@ -2402,6 +2553,22 @@
             onSnapshot(query(collection(db, "groups"), where("members", "array-contains", currentUser.uid)), (gSnap) => { globalCachedGroupRooms = []; gSnap.forEach(gDoc => { const gData = gDoc.data(); gData.id = gDoc.id; globalCachedGroupRooms.push(gData); }); loadFriendsSidebarList(); });
             onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => { globalCachedFeedPosts = []; snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() })); renderExploreTimelineFeed(); triggerHubComprehensiveSearch(); });
             onSnapshot(collection(db, "stories"), (storySnap) => { globalCachedStories = []; storySnap.forEach(sDoc => globalCachedStories.push(sDoc.data())); renderStoryTrayElements(); });
+            
+            // Listen to tagging notifications
+            onSnapshot(query(collection(db, "notifications"), where("toUid", "==", currentUser.uid), orderBy("timestamp", "desc")), (snap) => {
+                snap.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const notif = change.doc.data();
+                        if (Date.now() - notif.timestamp < 30000 && !notif.seen) {
+                            const senderObj = globalCachedAllUsers.find(u => u.username === notif.fromUsername);
+                            const avatar = senderObj ? senderObj.photoURL : '';
+                            showToastNotification("You were tagged!", `@${notif.fromUsername} tagged you: ${notif.text}`, avatar);
+                            updateDoc(doc(db, "notifications", change.doc.id), { seen: true });
+                        }
+                    }
+                });
+            });
+
             switchTab('chats');
         }
 
