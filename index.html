@@ -205,6 +205,21 @@
             z-index: 5;
         }
 
+        .presence-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .presence-dot.online {
+            background-color: var(--admin-glow);
+            box-shadow: 0 0 6px var(--admin-glow);
+        }
+        .presence-dot.offline {
+            background-color: var(--text-muted);
+        }
+
         .user-bar {
             display: flex;
             align-items: center;
@@ -1473,6 +1488,7 @@
 
         let currentUser = null, userDataRecord = null, activeChatChannelData = null;
         let unsubscribeChatListener = null;
+        let unsubscribeTypingListener = null;
         let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
         let globalCachedFeedPosts = [], globalCachedAllUsers = [], globalCachedStories = [], globalCachedGroupRooms = [];
 
@@ -1547,6 +1563,36 @@
 
             const roomKey = channelData.isGroup ? channelData.id : (currentUser.uid < channelData.uid ? `${currentUser.uid}_${channelData.uid}` : `${channelData.uid}_${currentUser.uid}`);
             const collectionPath = channelData.isGroup ? collection(db, "groups", roomKey, "messages") : collection(db, "messages", roomKey, "records");
+
+            if (unsubscribeTypingListener) unsubscribeTypingListener();
+            let typingIndicatorEl = document.getElementById('chat-typing-indicator');
+            if (!typingIndicatorEl) {
+                typingIndicatorEl = document.createElement('div');
+                typingIndicatorEl.id = 'chat-typing-indicator';
+                typingIndicatorEl.style.cssText = 'font-size: 11px; color: var(--accent-glow); padding: 6px 20px; font-style: italic; min-height: 18px; text-align: left;';
+                messagesBox.parentNode.insertBefore(typingIndicatorEl, messagesBox.nextSibling);
+            }
+            typingIndicatorEl.innerText = "";
+
+            unsubscribeTypingListener = onSnapshot(doc(db, "typingIndicators", roomKey), (docSnap) => {
+                if (docSnap.exists()) {
+                    const typingMap = docSnap.data();
+                    const typingUsersList = [];
+                    Object.keys(typingMap).forEach(uid => {
+                        if (uid !== currentUser.uid && typingMap[uid] === true) {
+                            const uObj = globalCachedAllUsers.find(u => u.uid === uid);
+                            if (uObj) typingUsersList.push(uObj.fullName);
+                        }
+                    });
+                    if (typingUsersList.length > 0) {
+                        typingIndicatorEl.innerText = `${typingUsersList.join(', ')} ${typingUsersList.length === 1 ? 'is' : 'are'} typing...`;
+                    } else {
+                        typingIndicatorEl.innerText = "";
+                    }
+                } else {
+                    typingIndicatorEl.innerText = "";
+                }
+            });
 
             if (unsubscribeChatListener) unsubscribeChatListener();
             unsubscribeChatListener = onSnapshot(query(collectionPath, orderBy("timestamp", "asc")), function(snapshot) {
@@ -2052,10 +2098,25 @@
                 if (fData.uid === currentUser.uid) return;
                 const tickHtml = (fData.verified || fData.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 const adminHtml = (fData.username === 'yaseen' || fData.adminAttached) ? getAdminBadgeMarkup() : "";
+                const isOnline = fData.status === 'online';
+                const statusDot = `<span class="presence-dot ${isOnline ? 'online' : 'offline'}"></span>`;
+                const lastSeenText = (!isOnline && fData.lastSeen) ? `<span style="font-size:10px; color:var(--text-muted); margin-left: auto;">${new Date(fData.lastSeen).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>` : "";
+
                 const item = document.createElement('div');
                 item.className = 'friend-item';
                 if(activeChatChannelData && !activeChatChannelData.isGroup && activeChatChannelData.uid === fData.uid) item.classList.add('active');
-                item.innerHTML = `<img src="${fData.photoURL}"><div class="info"><h4>${fData.fullName} ${tickHtml} ${adminHtml}</h4><p>@${fData.username}</p></div>`;
+                item.innerHTML = `
+                    <div style="position:relative;">
+                        <img src="${fData.photoURL}" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=default';">
+                    </div>
+                    <div class="info" style="flex: 1;">
+                        <h4 style="display:flex; align-items:center; gap:4px; margin:0;">
+                            ${statusDot} ${fData.fullName} ${tickHtml} ${adminHtml}
+                        </h4>
+                        <p style="margin:0;">@${fData.username}</p>
+                    </div>
+                    ${lastSeenText}
+                `;
                 item.onclick = () => { openChatWindow(fData, item); };
                 friendsListElement.appendChild(item);
             });
@@ -2126,11 +2187,32 @@
             profileSetupContainer.style.display = 'none'; loginContainer.style.display = 'none'; dashboardContainer.style.display = 'flex';
             
             // Wire up the Message Sending Actions (Fixes Bug 1)
-            document.getElementById('send-msg-btn').onclick = () => sendCustomPayload();
+            document.getElementById('send-msg-btn').onclick = () => {
+                sendCustomPayload();
+                if (activeChatChannelData) {
+                    const roomKey = activeChatChannelData.isGroup ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
+                    setDoc(doc(db, "typingIndicators", roomKey), { [currentUser.uid]: false }, { merge: true });
+                }
+            };
             messageInput.onkeydown = (e) => {
                 if (e.key === 'Enter') {
                     sendCustomPayload();
+                    if (activeChatChannelData) {
+                        const roomKey = activeChatChannelData.isGroup ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
+                        setDoc(doc(db, "typingIndicators", roomKey), { [currentUser.uid]: false }, { merge: true });
+                    }
                 }
+            };
+
+            let typingTimeout = null;
+            messageInput.oninput = () => {
+                if (!activeChatChannelData || !currentUser) return;
+                const roomKey = activeChatChannelData.isGroup ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
+                setDoc(doc(db, "typingIndicators", roomKey), { [currentUser.uid]: true }, { merge: true });
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => {
+                    setDoc(doc(db, "typingIndicators", roomKey), { [currentUser.uid]: false }, { merge: true });
+                }, 2000);
             };
 
             if (data.username === 'yaseen') { 
@@ -2209,6 +2291,24 @@
             const adminHtml = (data.username === 'yaseen' || data.adminAttached) ? getAdminBadgeMarkup() : "";
             document.getElementById('dash-username').innerHTML = `@${data.username} ${tickHtml} ${adminHtml}`; document.getElementById('dash-display-name').innerText = data.fullName; document.getElementById('dash-avatar').src = data.photoURL;
 
+            // Presence management
+            const updatePresence = async (status) => {
+                if (currentUser && currentUser.uid) {
+                    try {
+                        await updateDoc(doc(db, "users", currentUser.uid), {
+                            status: status,
+                            lastSeen: Date.now()
+                        });
+                    } catch (e) {
+                        console.error("Presence update failed:", e);
+                    }
+                }
+            };
+            updatePresence('online');
+            window.addEventListener('focus', () => updatePresence('online'));
+            window.addEventListener('blur', () => updatePresence('offline'));
+            window.addEventListener('beforeunload', () => updatePresence('offline'));
+
             onSnapshot(collection(db, "users"), (uSnap) => { globalCachedAllUsers = []; uSnap.forEach(uDoc => { globalCachedAllUsers.push(uDoc.data()); if (uDoc.id === currentUser.uid) userDataRecord = uDoc.data(); }); loadFriendsSidebarList(); triggerHubComprehensiveSearch(); });
             onSnapshot(query(collection(db, "groups"), where("members", "array-contains", currentUser.uid)), (gSnap) => { globalCachedGroupRooms = []; gSnap.forEach(gDoc => { const gData = gDoc.data(); gData.id = gDoc.id; globalCachedGroupRooms.push(gData); }); loadFriendsSidebarList(); });
             onSnapshot(query(collection(db, "globalFeed"), orderBy("timestamp", "desc")), (snapshot) => { globalCachedFeedPosts = []; snapshot.forEach(postDoc => globalCachedFeedPosts.push({ id: postDoc.id, data: postDoc.data() })); renderExploreTimelineFeed(); triggerHubComprehensiveSearch(); });
@@ -2279,7 +2379,14 @@
             triggerHubComprehensiveSearch();
         });
 
-        window.triggerLogoutSession = () => signOut(auth).then(() => location.reload());
+        window.triggerLogoutSession = async () => {
+            if (currentUser) {
+                try {
+                    await updateDoc(doc(db, "users", currentUser.uid), { status: "offline", lastSeen: Date.now() });
+                } catch(e) {}
+            }
+            signOut(auth).then(() => location.reload());
+        };
     </script>
 </body>
 </html>
