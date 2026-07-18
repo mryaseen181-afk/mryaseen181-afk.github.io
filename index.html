@@ -1761,58 +1761,7 @@
             loadFriendsSidebarList();
         }
 
-        document.getElementById('admin-command-submit-btn').addEventListener('click', async () => {
-            if (userDataRecord.username !== 'yaseen') return;
-            const cmdInput = document.getElementById('admin-command-input');
-            const statement = cmdInput.value.trim();
-            if(!statement) return;
 
-            if (statement === '/force-follow-yaseen') {
-                let yaseenUid = currentUser.uid; 
-                for (let userNode of globalCachedAllUsers) {
-                    if (userNode.uid !== yaseenUid) {
-                        let fArray = userNode.following || [];
-                        if(!fArray.includes(yaseenUid)) {
-                            fArray.push(yaseenUid);
-                            await updateDoc(doc(db, "users", userNode.uid), { following: fArray });
-                        }
-                    }
-                }
-                alert("Algorithmic injection complete: All accounts forced to follow @yaseen.");
-            } else if (statement === '/clear-feed') {
-                const postsQuery = await getDocs(collection(db, "globalFeed"));
-                postsQuery.forEach(async (d) => { await deleteDoc(doc(db, "globalFeed", d.id)); });
-                alert("Timeline collection successfully flushed.");
-            } else if (statement.startsWith('/alert-all ')) {
-                const alertTxt = statement.replace('/alert-all ', '').trim();
-                globalCachedAllUsers.forEach(u => {
-                    if(Notification.permission === "granted") new Notification("System Core Broadcast", { body: alertTxt });
-                });
-            } else if (statement.startsWith('/grant-admin ')) {
-                const targetNode = statement.replace('/grant-admin ', '').trim().toLowerCase();
-                const found = globalCachedAllUsers.find(u => u.username === targetNode);
-                if (found) {
-                    await updateDoc(doc(db, "users", found.uid), { adminAttached: true });
-                    alert(`Administrative metadata indicators attached to @${targetNode}`);
-                }
-            } else if (statement.startsWith('/verify ')) {
-                const targetNode = statement.replace('/verify ', '').trim().toLowerCase();
-                const found = globalCachedAllUsers.find(u => u.username === targetNode);
-                if (found) {
-                    await updateDoc(doc(db, "users", found.uid), { verified: true });
-                    alert(`Verification granted to @${targetNode}`);
-                }
-            } else if (statement.startsWith('/unverify ')) {
-                const targetNode = statement.replace('/unverify ', '').trim().toLowerCase();
-                if (targetNode === 'yaseen') return;
-                const found = globalCachedAllUsers.find(u => u.username === targetNode);
-                if (found) {
-                    await updateDoc(doc(db, "users", found.uid), { verified: false });
-                    alert(`Verification stripped from @${targetNode}`);
-                }
-            }
-            cmdInput.value = "";
-        });
 
         // Missing Functions Implementation
         function renderStoryTrayElements() {
