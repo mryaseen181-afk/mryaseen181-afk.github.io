@@ -9,12 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,900;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #0b0f19;
-            --bg-card: #151d30;
-            --bg-secondary: #1e2942;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-main: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-secondary: #f9fafb;
+            --border-color: #e5e7eb;
+            --text-color: #1f2937;
+            --text-muted: #6b7280;
             --accent-glow: #6366f1;
             --accent-teal: #14b8a6;
             --accent-rose: #f43f5e;
@@ -22,9 +22,9 @@
             --story-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #6366f1 100%);
             --verified-color: #3b82f6;
             --admin-glow: #10b981;
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.4);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
             --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -45,7 +45,7 @@
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.15);
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
@@ -1939,55 +1939,70 @@
         document.getElementById('view-friend-profile-header-btn').addEventListener('click', function() { if (activeChatChannelData && !activeChatChannelData.isGroup) renderProfileCard(activeChatChannelData, false); });
 
         async function triggerHubComprehensiveSearch() {
-            const filterText = hubSearchBar.value.trim().toLowerCase();
+            if (!hubSearchBar) return;
+            const filterText = hubSearchBar.value ? hubSearchBar.value.trim().toLowerCase() : "";
             const creatorsContainer = document.getElementById('search-creators-results');
+            if (!creatorsContainer) return;
             creatorsContainer.innerHTML = "";
+            let usersMatched = 0;
             globalCachedAllUsers.forEach(u => {
+                if (!u || !u.username || !u.fullName) return;
                 if (filterText && !u.username.includes(filterText) && !u.fullName.toLowerCase().includes(filterText)) return;
+                usersMatched++;
                 const tickHtml = (u.verified || u.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
                 const row = document.createElement('div');
                 row.className = "friend-item";
                 row.style.margin = "4px 0";
-                row.innerHTML = `<img src="${u.photoURL}"><div class="info"><h4>${u.fullName} ${tickHtml}</h4><p>@${u.username}</p></div>`;
+                row.innerHTML = `<img src="${u.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=default';"><div class="info"><h4>${u.fullName} ${tickHtml}</h4><p>@${u.username}</p></div>`;
                 row.onclick = () => renderProfileCard(u, u.uid === currentUser.uid);
                 creatorsContainer.appendChild(row);
             });
+            if (usersMatched === 0) {
+                creatorsContainer.innerHTML = `<p style="font-size:13px; color:var(--text-muted); padding:12px; text-align:center;">No users found matching that query.</p>`;
+            }
 
             const postsContainer = document.getElementById('search-posts-results');
-            postsContainer.innerHTML = "";
-            const matchedPosts = globalCachedFeedPosts.filter(p => filterText && p.data.text && p.data.text.toLowerCase().includes(filterText));
-            if (matchedPosts.length === 0) {
-                postsContainer.innerHTML = `<p style="font-size:13px; color:var(--text-muted); padding:4px;">No matching index logs.</p>`;
-            } else {
-                matchedPosts.forEach(p => {
-                    const row = document.createElement('div');
-                    row.className = "profile-mini-post-row";
-                    row.innerHTML = `<strong>@${p.data.authorUsername}</strong>: ${p.data.text}`;
-                    postsContainer.appendChild(row);
-                });
+            if (postsContainer) {
+                postsContainer.innerHTML = "";
+                const matchedPosts = globalCachedFeedPosts.filter(p => p && p.data && p.data.text && filterText && p.data.text.toLowerCase().includes(filterText));
+                if (matchedPosts.length === 0) {
+                    postsContainer.innerHTML = `<p style="font-size:13px; color:var(--text-muted); padding:12px; text-align:center;">No matching posts found.</p>`;
+                } else {
+                    matchedPosts.forEach(p => {
+                        const row = document.createElement('div');
+                        row.className = "profile-mini-post-row";
+                        row.innerHTML = `<strong>@${p.data.authorUsername || 'user'}</strong>: ${p.data.text}`;
+                        postsContainer.appendChild(row);
+                    });
+                }
             }
 
             const leaderboardContainer = document.getElementById('leaderboard-ranking-list');
-            leaderboardContainer.innerHTML = "";
-            const mappedLeaderboard = globalCachedAllUsers.map(user => {
-                const count = globalCachedAllUsers.filter(u => u.following && u.following.includes(user.uid)).length;
-                return { profile: user, followerCount: count };
-            }).sort((a, b) => b.followerCount - a.followerCount);
+            if (leaderboardContainer) {
+                leaderboardContainer.innerHTML = "";
+                const mappedLeaderboard = globalCachedAllUsers
+                    .filter(u => u && u.uid && u.username)
+                    .map(user => {
+                        const count = globalCachedAllUsers.filter(u => u && u.following && u.following.includes(user.uid)).length;
+                        return { profile: user, followerCount: count };
+                    }).sort((a, b) => b.followerCount - a.followerCount);
 
-            mappedLeaderboard.slice(0, 5).forEach((item, index) => {
-                const badgeMarkupStr = (item.profile.verified || item.profile.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
-                const row = document.createElement('div');
-                row.className = "leaderboard-row";
-                row.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <span class="leaderboard-rank">#${index + 1}</span>
-                        <img src="${item.profile.photoURL}" style="width:28px; height:28px; border-radius:50%;">
-                        <span style="font-size:13px; font-weight:600; display:flex; align-items:center; gap:4px;">@${item.profile.username} ${badgeMarkupStr}</span>
-                    </div>
-                    <span style="font-size:13px; font-weight:700; color:var(--text-color);">${item.followerCount} followers</span>
-                `;
-                leaderboardContainer.appendChild(row);
-            });
+                mappedLeaderboard.slice(0, 5).forEach((item, index) => {
+                    if (!item || !item.profile) return;
+                    const badgeMarkupStr = (item.profile.verified || item.profile.username === 'yaseen') ? getVerifiedTextureBadgeMarkup() : "";
+                    const row = document.createElement('div');
+                    row.className = "leaderboard-row";
+                    row.innerHTML = `
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="leaderboard-rank">#${index + 1}</span>
+                            <img src="${item.profile.photoURL || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}" onerror="this.onerror=null; this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=default';" style="width:28px; height:28px; border-radius:50%;">
+                            <span style="font-size:13px; font-weight:600; display:flex; align-items:center; gap:4px;">@${item.profile.username} ${badgeMarkupStr}</span>
+                        </div>
+                        <span style="font-size:13px; font-weight:700; color:var(--text-color);">${item.followerCount} followers</span>
+                    `;
+                    leaderboardContainer.appendChild(row);
+                });
+            }
         }
 
         function renderExploreTimelineFeed() {
