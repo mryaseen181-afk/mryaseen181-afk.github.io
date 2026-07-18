@@ -1399,6 +1399,7 @@
                 <div id="active-chat-window" style="display: none; flex-direction: column; flex: 1; height: 100%;">
                     <div class="chat-header">
                         <button class="back-arrow" onclick="exitChatToSidebar()">✕ Close</button>
+                        <button id="vanish-mode-toggle-btn" class="small-action-pill-btn" style="margin-left: 12px; background: transparent; border: 1px solid var(--border-color); color: var(--text-color); cursor: pointer;">👻 Vanish Mode: OFF</button>
                         <div class="chat-header-meta"><h3 id="chat-with-heading">Chat Room</h3></div>
                         
                         <button id="group-avatar-change-btn" class="small-action-pill-btn" style="margin-left: auto; display: none;">Edit Logo</button>
@@ -1512,6 +1513,11 @@
                 <h2 id="view-modal-name" style="display:flex; align-items:center; gap:6px;">Profile</h2>
                 <p id="view-modal-username" style="color:var(--text-muted); font-weight:700;">@username</p>
                 
+                <div id="private-acc-toggle-container" style="display: none; align-items: center; gap: 8px; margin-top: 8px; margin-bottom: 8px; justify-content: center; width: 100%;">
+                    <input type="checkbox" id="private-acc-toggle">
+                    <label for="private-acc-toggle" style="font-size: 13px; font-weight: 600; color: var(--text-color);">Private Account</label>
+                </div>
+
                 <div class="profile-stat-row">
                     <div class="profile-stat-box" id="stat-trigger-followers">
                         <h5 id="profile-stat-followers">0</h5>
@@ -1529,6 +1535,11 @@
                 
                 <button id="modal-follow-action-btn" class="aesthetic-follow-btn" style="margin-bottom: 12px; width:100%; padding:12px;"></button>
                 
+                <div id="follow-requests-section" style="display: none; width: 100%; text-align: left; margin-top: 16px; margin-bottom: 16px;">
+                    <h4 style="font-size: 11px; font-weight:700; color: var(--text-muted); text-transform: uppercase; letter-spacing:1px; margin-bottom: 8px;">Follow Requests</h4>
+                    <div id="follow-requests-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 150px; overflow-y: auto;"></div>
+                </div>
+
                 <h4 style="text-align: left; width: 100%; font-size: 11px; font-weight:700; color: var(--text-muted); text-transform: uppercase; margin-top: 12px; letter-spacing:1px;">Post History</h4>
                 <div id="profile-modal-posts-grid" class="profile-posts-grid-container"></div>
             </div>
@@ -1598,6 +1609,8 @@
         let unsubscribeTypingListener = null;
         let isSignUpMode = false, mediaRecorder = null, audioChunks = [];
         let globalCachedFeedPosts = [], globalCachedAllUsers = [], globalCachedStories = [], globalCachedGroupRooms = [];
+        let vanishMode = false;
+        let vanishedMessagesToDelete = [];
 
         const getVerifiedTextureBadgeMarkup = () => `
             <svg class="verified-badge-texture-star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1640,7 +1653,44 @@
             try { await deleteDoc(docRef); } catch(e) { console.error(e); }
         };
 
-        function openChatWindow(channelData, elementDomNode) {
+        async function deleteVanishMessages() {
+            const toDelete = [...vanishedMessagesToDelete];
+            vanishedMessagesToDelete = [];
+            for (const item of toDelete) {
+                try {
+                    const docRef = item.isGroup ? doc(db, "groups", item.room, "messages", item.id) : doc(db, "messages", item.room, "records", item.id);
+                    await deleteDoc(docRef);
+                } catch (e) {
+                    console.error("Vanish delete failed", e);
+                }
+            }
+        }
+
+        async function addMessageReaction(msgId, emoji) {
+            if (!activeChatChannelData) return;
+            const roomKey = activeChatChannelData.isGroup ? activeChatChannelData.id : (currentUser.uid < activeChatChannelData.uid ? `${currentUser.uid}_${activeChatChannelData.uid}` : `${activeChatChannelData.uid}_${currentUser.uid}`);
+            const docRef = activeChatChannelData.isGroup ? doc(db, "groups", roomKey, "messages", msgId) : doc(db, "messages", roomKey, "records", msgId);
+            
+            const mSnap = await getDoc(docRef);
+            if (!mSnap.exists()) return;
+            const mData = mSnap.data();
+            const currentReactions = mData.reactions || {};
+            
+            let userList = currentReactions[emoji] || [];
+            if (userList.includes(currentUser.uid)) {
+                userList = userList.filter(uid => uid !== currentUser.uid);
+            } else {
+                userList.push(currentUser.uid);
+            }
+            
+            currentReactions[emoji] = userList;
+            await updateDoc(docRef, { reactions: currentReactions });
+        }
+
+        async function openChatWindow(channelData, elementDomNode) {
+            // Task 9: Vanish Mode - delete pending vanish messages
+            await deleteVanishMessages();
+
             activeChatChannelData = channelData;
             document.getElementById('no-chat-fallback').style.display = 'none';
             document.getElementById('active-chat-window').style.display = 'flex';
@@ -1670,6 +1720,74 @@
 
             const roomKey = channelData.isGroup ? channelData.id : (currentUser.uid < channelData.uid ? `${currentUser.uid}_${channelData.uid}` : `${channelData.uid}_${currentUser.uid}`);
             const collectionPath = channelData.isGroup ? collection(db, "groups", roomKey, "messages") : collection(db, "messages", roomKey, "records");
+
+            // Task 9: Vanish Mode status and toggle reset
+            vanishMode = false;
+            const vanishBtn = document.getElementById('vanish-mode-toggle-btn');
+            if (vanishBtn) {
+                vanishBtn.innerText = "👻 Vanish Mode: OFF";
+                vanishBtn.style.borderColor = "var(--border-color)";
+                vanishBtn.style.color = "var(--text-color)";
+            }
+
+            // Task 7: Message Requests Banner
+            const inputWrapper = document.querySelector('.chat-input-wrapper');
+            const standardInputContainer = document.querySelector('.chat-input-container');
+            const oldBanner = document.getElementById('message-request-banner');
+            if (oldBanner) oldBanner.remove();
+
+            const isMessageRequest = !channelData.isGroup && !(
+                userDataRecord.following && userDataRecord.following.includes(channelData.uid) &&
+                channelData.following && channelData.following.includes(currentUser.uid)
+            );
+
+            if (isMessageRequest) {
+                standardInputContainer.style.display = 'none';
+                const banner = document.createElement('div');
+                banner.id = 'message-request-banner';
+                banner.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px; background: var(--bg-secondary); border-radius: 16px; border: 1px solid var(--border-color); width: 100%; margin-top: 8px;';
+                banner.innerHTML = `
+                    <span style="font-size: 13px; font-weight: 600; color: var(--text-color); text-align: center;">Accept this message request to start chatting?</span>
+                    <div style="display: flex; gap: 12px; width: 100%; justify-content: center;">
+                        <button id="accept-msg-req-btn" class="small-action-pill-btn" style="background: var(--admin-glow); color: white; border: none; padding: 8px 16px; font-size: 12px; flex: 1; max-width: 120px; cursor: pointer;">Accept</button>
+                        <button id="decline-msg-req-btn" class="small-action-pill-btn" style="background: var(--accent-rose); color: white; border: none; padding: 8px 16px; font-size: 12px; flex: 1; max-width: 120px; cursor: pointer;">Decline</button>
+                    </div>
+                `;
+                inputWrapper.appendChild(banner);
+
+                banner.querySelector('#accept-msg-req-btn').onclick = async () => {
+                    let myFollowing = userDataRecord.following || [];
+                    if (!myFollowing.includes(channelData.uid)) {
+                        myFollowing.push(channelData.uid);
+                        await updateDoc(doc(db, "users", currentUser.uid), { following: myFollowing });
+                        userDataRecord.following = myFollowing;
+                    }
+                    let theirFollowing = channelData.following || [];
+                    if (!theirFollowing.includes(currentUser.uid)) {
+                        theirFollowing.push(currentUser.uid);
+                        await updateDoc(doc(db, "users", channelData.uid), { following: theirFollowing });
+                        channelData.following = theirFollowing;
+                    }
+                    alert("Request accepted!");
+                    banner.remove();
+                    standardInputContainer.style.display = 'flex';
+                    loadFriendsSidebarList();
+                };
+
+                banner.querySelector('#decline-msg-req-btn').onclick = async () => {
+                    if (confirm("Decline this request and clear history?")) {
+                        const msgsSnap = await getDocs(collectionPath);
+                        msgsSnap.forEach(async (mDoc) => {
+                            await deleteDoc(doc(db, "messages", roomKey, "records", mDoc.id));
+                        });
+                        alert("Request declined and chat history cleared.");
+                        exitChatToSidebar();
+                        loadFriendsSidebarList();
+                    }
+                };
+            } else {
+                standardInputContainer.style.display = 'flex';
+            }
 
             if (unsubscribeTypingListener) unsubscribeTypingListener();
             let typingIndicatorEl = document.getElementById('chat-typing-indicator');
@@ -1714,8 +1832,22 @@
                         dispatchClosedAlertPacket(channelData.fullName, msg.text);
                     }
 
+                    // Task 9: Vanish Mode auto-deletion logic
+                    if (msg.vanish && !isSent) {
+                        if (!vanishedMessagesToDelete.some(item => item.id === msgId)) {
+                            vanishedMessagesToDelete.push({ id: msgId, room: roomKey, isGroup: channelData.isGroup });
+                        }
+                        setTimeout(async () => {
+                            try {
+                                const docRef = channelData.isGroup ? doc(db, "groups", roomKey, "messages", msgId) : doc(db, "messages", roomKey, "records", msgId);
+                                await deleteDoc(docRef);
+                            } catch (e) {}
+                        }, 10000);
+                    }
+
                     const bubble = document.createElement('div');
                     bubble.className = `msg ${isSent ? 'sent' : 'received'}`;
+                    bubble.style.position = 'relative';
                     
                     let assetPayload = '';
                     if (msg.file) assetPayload += `<img src="${msg.file}">`;
@@ -1728,13 +1860,63 @@
 
                     const senderLabelStr = (channelData.isGroup && !isSent) ? `<p style="font-size:11px; font-weight:700; color:var(--accent-glow); margin-bottom:4px;">@${msg.senderUsername || 'node'}</p>` : "";
 
+                    // Task 8: Direct Message Reactions Badges
+                    let reactionBadgesHtml = '<div class="msg-reaction-badges-row" style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px;">';
+                    if (msg.reactions) {
+                        Object.keys(msg.reactions).forEach(emoji => {
+                            const uids = msg.reactions[emoji] || [];
+                            if (uids.length > 0) {
+                                reactionBadgesHtml += `<span class="reaction-badge" style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2px 6px; font-size: 11px; display: inline-flex; align-items: center; gap: 2px; cursor: pointer;" title="Reacted by ${uids.length} users">${emoji} <span style="font-size: 9px; color: var(--text-muted);">${uids.length}</span></span>`;
+                            }
+                        });
+                    }
+                    reactionBadgesHtml += '</div>';
+
+                    // Task 8: Reaction panel markup
+                    const reactionPanelHtml = `
+                        <div class="message-reaction-panel" style="display: none; position: absolute; top: -32px; left: 10px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 4px 8px; gap: 6px; z-index: 100; box-shadow: var(--shadow-md);">
+                            <span class="emoji-opt" data-emoji="👍" style="cursor: pointer; font-size: 14px;">👍</span>
+                            <span class="emoji-opt" data-emoji="❤️" style="cursor: pointer; font-size: 14px;">❤️</span>
+                            <span class="emoji-opt" data-emoji="😂" style="cursor: pointer; font-size: 14px;">😂</span>
+                            <span class="emoji-opt" data-emoji="😮" style="cursor: pointer; font-size: 14px;">😮</span>
+                            <span class="emoji-opt" data-emoji="😢" style="cursor: pointer; font-size: 14px;">😢</span>
+                        </div>
+                    `;
+
                     bubble.innerHTML = `
+                        ${reactionPanelHtml}
                         ${senderLabelStr}
                         <p>${msg.text}</p>
                         ${assetPayload}
+                        ${reactionBadgesHtml}
                         <button class="msg-delete-overlay-btn" onclick="deleteChatMessageRecord('${msgId}')">Delete</button>
                         <div class="msg-meta-row">${metaRowHtml}</div>
                     `;
+
+                    // Task 8: reaction panel show/hide logic on hover & click
+                    bubble.addEventListener('mouseenter', () => {
+                        const panel = bubble.querySelector('.message-reaction-panel');
+                        if (panel) panel.style.display = 'flex';
+                    });
+                    bubble.addEventListener('mouseleave', () => {
+                        const panel = bubble.querySelector('.message-reaction-panel');
+                        if (panel) panel.style.display = 'none';
+                    });
+                    bubble.addEventListener('click', (e) => {
+                        const panel = bubble.querySelector('.message-reaction-panel');
+                        if (panel && !e.target.classList.contains('emoji-opt')) {
+                            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+                        }
+                    });
+                    bubble.querySelectorAll('.emoji-opt').forEach(opt => {
+                        opt.onclick = (e) => {
+                            e.stopPropagation();
+                            const emoji = opt.getAttribute('data-emoji');
+                            addMessageReaction(msgId, emoji);
+                            opt.parentElement.style.display = 'none';
+                        };
+                    });
+
                     messagesBox.appendChild(bubble);
                 });
                 messagesBox.scrollTop = messagesBox.scrollHeight;
@@ -1773,6 +1955,9 @@
                 audio: uploadedAudioUrl,
                 timestamp: Date.now()
             };
+            if (vanishMode) {
+                payloadObject.vanish = true;
+            }
 
             const collectionPath = isGroupMode ? collection(db, "groups", roomKey, "messages") : collection(db, "messages", roomKey, "records");
             if (!isGroupMode) payloadObject.seen = false;
@@ -1842,6 +2027,23 @@
             });
         };
 
+        const vanishBtn = document.getElementById('vanish-mode-toggle-btn');
+        if (vanishBtn) {
+            vanishBtn.addEventListener('click', () => {
+                vanishMode = !vanishMode;
+                vanishBtn.innerText = vanishMode ? "👻 Vanish Mode: ON" : "👻 Vanish Mode: OFF";
+                vanishBtn.style.borderColor = vanishMode ? "var(--accent-rose)" : "var(--border-color)";
+                vanishBtn.style.color = vanishMode ? "var(--accent-rose)" : "var(--text-color)";
+            });
+        }
+
+        window.addEventListener('beforeunload', () => {
+            deleteVanishMessages();
+        });
+        window.addEventListener('pagehide', () => {
+            deleteVanishMessages();
+        });
+
         window.closeViewProfileModal = function() { document.getElementById('view-profile-modal').style.display = 'none'; };
 
         window.renderProfileCard = async function(userObj, isOwnProfile = false) {
@@ -1853,6 +2055,19 @@
             document.getElementById('view-modal-name').innerHTML = `${userObj.fullName} ${tickHtml} ${adminHtml}`;
             document.getElementById('view-modal-username').innerText = "@" + userObj.username;
             
+            // Task 6: Private account checkbox toggle for own profile
+            const privateToggleContainer = document.getElementById('private-acc-toggle-container');
+            const privateToggle = document.getElementById('private-acc-toggle');
+            if (isOwnProfile) {
+                privateToggleContainer.style.display = 'flex';
+                privateToggle.checked = userObj.isPrivate || false;
+                privateToggle.onchange = async () => {
+                    await updateDoc(doc(db, "users", currentUser.uid), { isPrivate: privateToggle.checked });
+                };
+            } else {
+                privateToggleContainer.style.display = 'none';
+            }
+
             const followersUidList = globalCachedAllUsers.filter(u => u.following && u.following.includes(userObj.uid)).map(u => u.uid);
             const followingUidList = userObj.following || [];
 
@@ -1867,38 +2082,129 @@
             
             const postsGrid = document.getElementById('profile-modal-posts-grid');
             postsGrid.innerHTML = "";
-            if (nodePosts.length === 0) {
-                postsGrid.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding:12px; grid-column: span 3;">No posts yet.</p>`;
+
+            const isFollowing = userDataRecord && userDataRecord.following && userDataRecord.following.includes(userObj.uid);
+
+            // Task 6: Private account wall check
+            if (!isOwnProfile && userObj.isPrivate && !isFollowing) {
+                postsGrid.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding:12px; grid-column: span 3;">This account is private. Send a follow request to see their posts.</p>`;
             } else {
-                nodePosts.forEach(p => {
-                    const item = document.createElement('div');
-                    item.className = "profile-grid-item";
-                    if (p.data.attachedFile) {
-                        item.innerHTML = `<img src="${p.data.attachedFile}">`;
-                    } else {
-                        item.innerHTML = `<div class="text-fallback">${p.data.text || ''}</div>`;
-                    }
-                    postsGrid.appendChild(item);
-                });
+                if (nodePosts.length === 0) {
+                    postsGrid.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding:12px; grid-column: span 3;">No posts yet.</p>`;
+                } else {
+                    nodePosts.forEach(p => {
+                        const item = document.createElement('div');
+                        item.className = "profile-grid-item";
+                        if (p.data.attachedFile) {
+                            item.innerHTML = `<img src="${p.data.attachedFile}">`;
+                        } else {
+                            item.innerHTML = `<div class="text-fallback">${p.data.text || ''}</div>`;
+                        }
+                        postsGrid.appendChild(item);
+                    });
+                }
             }
 
             const actionBtn = document.getElementById('modal-follow-action-btn');
             if (!isOwnProfile && userDataRecord) {
                 actionBtn.style.display = "block";
-                const activeFollowing = userDataRecord.following || [];
-                const isFollowing = activeFollowing.includes(userObj.uid);
                 
                 if (isFollowing) {
                     actionBtn.innerText = "Unfollow Member";
                     actionBtn.classList.add('unfollow-mode');
                     actionBtn.onclick = () => toggleFollowState(userObj.uid, false);
                 } else {
-                    actionBtn.innerText = "Follow Member";
-                    actionBtn.classList.remove('unfollow-mode');
-                    actionBtn.onclick = () => toggleFollowState(userObj.uid, true);
+                    // Task 6: If B is private, follow requests logic
+                    if (userObj.isPrivate) {
+                        const reqSnap = await getDocs(query(collection(db, "followRequests"), where("fromUid", "==", currentUser.uid), where("toUid", "==", userObj.uid), where("status", "==", "pending")));
+                        if (!reqSnap.empty) {
+                            actionBtn.innerText = "Requested";
+                            actionBtn.classList.remove('unfollow-mode');
+                            actionBtn.onclick = null;
+                        } else {
+                            actionBtn.innerText = "Follow Member";
+                            actionBtn.classList.remove('unfollow-mode');
+                            actionBtn.onclick = async () => {
+                                await addDoc(collection(db, "followRequests"), {
+                                    fromUid: currentUser.uid,
+                                    fromUsername: userDataRecord.username,
+                                    toUid: userObj.uid,
+                                    status: "pending",
+                                    timestamp: Date.now()
+                                });
+                                actionBtn.innerText = "Requested";
+                                actionBtn.onclick = null;
+                            };
+                        }
+                    } else {
+                        actionBtn.innerText = "Follow Member";
+                        actionBtn.classList.remove('unfollow-mode');
+                        actionBtn.onclick = () => toggleFollowState(userObj.uid, true);
+                    }
                 }
             } else { actionBtn.style.display = "none"; }
             
+            // Task 6: Follow Requests list on own profile
+            const reqSection = document.getElementById('follow-requests-section');
+            const reqList = document.getElementById('follow-requests-list');
+            if (isOwnProfile && currentUser) {
+                reqSection.style.display = 'block';
+                const requestsSnap = await getDocs(query(collection(db, "followRequests"), where("toUid", "==", currentUser.uid), where("status", "==", "pending")));
+                reqList.innerHTML = "";
+                if (requestsSnap.empty) {
+                    reqList.innerHTML = `<p style="font-size: 12px; color: var(--text-muted);">No pending requests.</p>`;
+                } else {
+                    requestsSnap.forEach(reqDoc => {
+                        const reqData = reqDoc.data();
+                        const reqId = reqDoc.id;
+                        const row = document.createElement('div');
+                        row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; background: var(--bg-secondary); padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border-color); margin-top: 4px;';
+                        row.innerHTML = `
+                            <span style="font-size: 12px; font-weight: 600; color: var(--text-color);">@${reqData.fromUsername}</span>
+                            <div style="display: flex; gap: 6px;">
+                                <button class="small-action-pill-btn approve-btn" style="background: var(--admin-glow); color: white; border: none; padding: 4px 8px; font-size: 11px; cursor: pointer;">Approve</button>
+                                <button class="small-action-pill-btn decline-btn" style="background: var(--accent-rose); color: white; border: none; padding: 4px 8px; font-size: 11px; cursor: pointer;">Decline</button>
+                            </div>
+                        `;
+                        
+                        row.querySelector('.approve-btn').onclick = async () => {
+                            const aUserDocRef = doc(db, "users", reqData.fromUid);
+                            const aUserSnap = await getDoc(aUserDocRef);
+                            if (aUserSnap.exists()) {
+                                const aData = aUserSnap.data();
+                                const aFollowing = aData.following || [];
+                                if (!aFollowing.includes(currentUser.uid)) {
+                                    aFollowing.push(currentUser.uid);
+                                    await updateDoc(aUserDocRef, { following: aFollowing });
+                                }
+                            }
+                            const bUserDocRef = doc(db, "users", currentUser.uid);
+                            const bUserSnap = await getDoc(bUserDocRef);
+                            if (bUserSnap.exists()) {
+                                const bData = bUserSnap.data();
+                                const bFollowers = bData.followers || [];
+                                if (!bFollowers.includes(reqData.fromUid)) {
+                                    bFollowers.push(reqData.fromUid);
+                                    await updateDoc(bUserDocRef, { followers: bFollowers });
+                                }
+                            }
+                            await updateDoc(doc(db, "followRequests", reqId), { status: "approved" });
+                            alert("Approved follow request!");
+                            if (userDataRecord) renderProfileCard(userDataRecord, true);
+                        };
+                        
+                        row.querySelector('.decline-btn').onclick = async () => {
+                            await updateDoc(doc(db, "followRequests", reqId), { status: "declined" });
+                            alert("Declined follow request.");
+                            if (userDataRecord) renderProfileCard(userDataRecord, true);
+                        };
+                        reqList.appendChild(row);
+                    });
+                }
+            } else {
+                reqSection.style.display = 'none';
+            }
+
             document.getElementById('view-profile-modal').style.display = 'flex';
         };
 
@@ -2317,6 +2623,18 @@
 
         async function loadFriendsSidebarList() {
             friendsListElement.innerHTML = "";
+            
+            // Standard chats sub-container
+            const standardHeader = document.createElement('div');
+            standardHeader.className = "friends-list-heading";
+            standardHeader.style.cssText = "padding: 8px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;";
+            standardHeader.innerText = "CHATS";
+            friendsListElement.appendChild(standardHeader);
+
+            const standardContainer = document.createElement('div');
+            friendsListElement.appendChild(standardContainer);
+
+            // Group Rooms are always in standard chats
             globalCachedGroupRooms.forEach(gRoom => {
                 const item = document.createElement('div');
                 item.className = 'friend-item';
@@ -2331,8 +2649,20 @@
                     <button class="delete-group-sidebar-trigger" onclick="deleteGroupChannel('${gRoom.id}', event)">Delete</button>
                 `;
                 item.onclick = () => openChatWindow(gRoom, item);
-                friendsListElement.appendChild(item);
+                standardContainer.appendChild(item);
             });
+
+            // Message Requests sub-container
+            const requestsHeader = document.createElement('div');
+            requestsHeader.className = "friends-list-heading";
+            requestsHeader.style.cssText = "padding: 8px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 12px; display: none;";
+            requestsHeader.innerText = "MESSAGE REQUESTS";
+            friendsListElement.appendChild(requestsHeader);
+
+            const requestsContainer = document.createElement('div');
+            friendsListElement.appendChild(requestsContainer);
+
+            let hasRequests = false;
 
             globalCachedAllUsers.forEach(fData => {
                 if (fData.uid === currentUser.uid) return;
@@ -2358,8 +2688,22 @@
                     ${lastSeenText}
                 `;
                 item.onclick = () => { openChatWindow(fData, item); };
-                friendsListElement.appendChild(item);
+
+                // Task 7: Segment standard chats (follows back) from message requests
+                const isStandard = userDataRecord && userDataRecord.following && userDataRecord.following.includes(fData.uid) &&
+                                   fData.following && fData.following.includes(currentUser.uid);
+                
+                if (isStandard) {
+                    standardContainer.appendChild(item);
+                } else {
+                    requestsContainer.appendChild(item);
+                    hasRequests = true;
+                }
             });
+
+            if (hasRequests) {
+                requestsHeader.style.display = "block";
+            }
         }
 
         window.switchTab = function(tabName) {
@@ -2418,7 +2762,7 @@
 
         document.getElementById('profile-form').addEventListener('submit', async (e) => {
             e.preventDefault(); const username = document.getElementById('setup-username').value.trim().toLowerCase(); const fullName = document.getElementById('setup-name').value;
-            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), adminAttached: (username === "yaseen"), following: [], friends: [] };
+            const profileData = { uid: currentUser.uid, username, fullName, verified: (username === "yaseen"), adminAttached: (username === "yaseen"), following: [], friends: [], isPrivate: false };
             profileData.photoURL = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + username;
             await setDoc(doc(db, "users", currentUser.uid), profileData); launchDashboard(profileData);
         });
@@ -2573,6 +2917,14 @@
         }
 
         window.exitChatToSidebar = function() {
+            deleteVanishMessages();
+            vanishMode = false;
+            const vanishBtn = document.getElementById('vanish-mode-toggle-btn');
+            if (vanishBtn) {
+                vanishBtn.innerText = "👻 Vanish Mode: OFF";
+                vanishBtn.style.borderColor = "var(--border-color)";
+                vanishBtn.style.color = "var(--text-color)";
+            }
             activeChatChannelData = null;
             dashboardContainer.classList.remove('chat-active');
             if (unsubscribeChatListener) unsubscribeChatListener();
