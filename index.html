@@ -798,6 +798,7 @@
             padding: 20px; 
             font-size: 14px; 
             line-height: 1.5; 
+            position: relative;
         }
 
         .post-body img {
@@ -807,6 +808,33 @@
             border-radius: 16px;
             margin-top: 12px;
             object-fit: cover;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .heart-overlay {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 64px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            15% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.9; }
+            30% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+
+        .heart-overlay.animate {
+            animation: heartBeat 0.8s ease-out forwards;
         }
 
         .post-actions-bar {
@@ -2062,7 +2090,15 @@
 
                 card.innerHTML = `
                     <div class="post-header"><div class="post-author-info"><img src="${post.authorPhoto}"><h4>${post.authorName} (@${post.authorUsername}) ${verifiedTick} ${adminHtml}</h4></div></div>
-                    <div class="post-body"><p>${post.text}</p>${post.attachedFile ? `<img src="${post.attachedFile}">` : ''}</div>
+                    <div class="post-body">
+                        <p>${post.text}</p>
+                        ${post.attachedFile ? `
+                            <div style="position:relative; width:100%; display:inline-block;">
+                                <img src="${post.attachedFile}" class="post-image-img">
+                                <div class="heart-overlay">❤️</div>
+                            </div>
+                        ` : ''}
+                    </div>
                     <div class="post-actions-bar">
                         <button class="post-action-btn ${isLikedByMe ? 'active-liked' : ''}" id="like-trigger-${postId}">❤️ <span>${postLikes.length} Likes</span></button>
                         <button class="post-action-btn" onclick="document.getElementById('cmt-input-${postId}').focus()">💬 <span>${postComments.length} Comments</span></button>
@@ -2071,6 +2107,26 @@
                     <div class="post-comments-container" id="cmt-box-${postId}">${commentsHtmlMarkupStr}</div>
                     <div class="comment-input-row"><input type="text" id="cmt-input-${postId}" placeholder="Write a comment..."><button class="send-txt-btn" id="cmt-submit-${postId}">Post</button></div>
                 `;
+
+                const postImg = card.querySelector('.post-image-img');
+                if (postImg) {
+                    let lastTap = 0;
+                    postImg.addEventListener('click', () => {
+                        const now = Date.now();
+                        if (now - lastTap < 300) {
+                            const heart = card.querySelector('.heart-overlay');
+                            if (heart) {
+                                heart.classList.remove('animate');
+                                void heart.offsetWidth; // Trigger reflow
+                                heart.classList.add('animate');
+                            }
+                            if (!isLikedByMe) {
+                                togglePostLike(postId, postLikes);
+                            }
+                        }
+                        lastTap = now;
+                    });
+                }
 
                 card.querySelector(`#like-trigger-${postId}`).addEventListener('click', () => togglePostLike(postId, postLikes));
                 card.querySelector(`#share-trigger-${postId}`).addEventListener('click', () => sharePostAlert(post.authorUsername));
