@@ -1413,6 +1413,16 @@
         </div>
     </div>
 
+    <script>
+        window.addEventListener('error', function(e) {
+            const ls = document.getElementById('loading-screen');
+            if (ls) {
+                ls.style.animation = 'none';
+                ls.innerHTML = "Error loading app:<br><span style='color:#ef4444;font-size:12px;word-break:break-all;'>" + e.message + " (" + e.filename + ":" + e.lineno + ")</span>";
+            }
+        });
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
