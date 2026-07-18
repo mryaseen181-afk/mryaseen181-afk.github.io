@@ -2021,7 +2021,12 @@
         chatFileInput.addEventListener('change', () => sendCustomPayload());
         
         feedFileInput.addEventListener('change', () => {
-            if (feedFileInput.files && feedFileInput.files[0]) feedFilePreview.style.display = 'block';
+            if (feedFileInput.files && feedFileInput.files.length > 0) {
+                feedFilePreview.innerText = `${feedFileInput.files.length} file(s) attached.`;
+                feedFilePreview.style.display = 'block';
+            } else {
+                feedFilePreview.style.display = 'none';
+            }
         });
 
         storyFileInput.addEventListener('change', async () => {
@@ -2832,57 +2837,69 @@
         }
 
         document.getElementById('submit-feed-post-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('submit-feed-post-btn');
             const text = document.getElementById('feed-post-text').value.trim();
             if (!text && (!feedFileInput.files || feedFileInput.files.length === 0)) return;
             
-            let attachedFiles = [];
-            if (feedFileInput.files && feedFileInput.files.length > 0) {
-                for (let i = 0; i < feedFileInput.files.length; i++) {
-                    const file = feedFileInput.files[i];
-                    const storageRef = ref(storage, `feed/posts/${Date.now()}_post_${i}`);
-                    const snapshot = await uploadBytes(storageRef, file);
-                    const downloadUrl = await getDownloadURL(snapshot.ref);
-                    attachedFiles.push(downloadUrl);
-                }
-            }
-
-            const postRef = await addDoc(collection(db, "globalFeed"), {
-                authorName: userDataRecord.fullName,
-                authorUsername: userDataRecord.username,
-                authorPhoto: userDataRecord.photoURL,
-                text: text,
-                attachedFile: attachedFiles[0] || "",
-                attachedFiles: attachedFiles,
-                verified: userDataRecord.verified || false,
-                adminAttached: userDataRecord.adminAttached || false,
-                likes: [],
-                comments: [],
-                timestamp: Date.now()
-            });
-
-            // Parse user tags
-            const userTags = text.match(/@([a-zA-Z0-9_]+)/g);
-            if (userTags) {
-                userTags.forEach(tag => {
-                    const cleanUsername = tag.replace('@', '').toLowerCase();
-                    const targetUser = globalCachedAllUsers.find(u => u.username === cleanUsername);
-                    if (targetUser && targetUser.uid !== currentUser.uid) {
-                        addDoc(collection(db, "notifications"), {
-                            toUid: targetUser.uid,
-                            fromUsername: userDataRecord.username,
-                            type: "tag_post",
-                            postId: postRef.id,
-                            text: text.slice(0, 50),
-                            timestamp: Date.now(),
-                            seen: false
-                        });
-                    }
-                });
-            }
+            btn.disabled = true;
+            btn.innerText = "Publishing...";
             
-            document.getElementById('feed-post-text').value = "";
-            feedFileInput.value = "";
-            feedFilePreview.style.display = 'none';
+            try {
+                let attachedFiles = [];
+                if (feedFileInput.files && feedFileInput.files.length > 0) {
+                    for (let i = 0; i < feedFileInput.files.length; i++) {
+                        const file = feedFileInput.files[i];
+                        const storageRef = ref(storage, `feed/posts/${Date.now()}_post_${i}`);
+                        const snapshot = await uploadBytes(storageRef, file);
+                        const downloadUrl = await getDownloadURL(snapshot.ref);
+                        attachedFiles.push(downloadUrl);
+                    }
+                }
+
+                const postRef = await addDoc(collection(db, "globalFeed"), {
+                    authorName: userDataRecord.fullName,
+                    authorUsername: userDataRecord.username,
+                    authorPhoto: userDataRecord.photoURL,
+                    text: text,
+                    attachedFile: attachedFiles[0] || "",
+                    attachedFiles: attachedFiles,
+                    verified: userDataRecord.verified || false,
+                    adminAttached: userDataRecord.adminAttached || false,
+                    likes: [],
+                    comments: [],
+                    timestamp: Date.now()
+                });
+
+                // Parse user tags
+                const userTags = text.match(/@([a-zA-Z0-9_]+)/g);
+                if (userTags) {
+                    userTags.forEach(tag => {
+                        const cleanUsername = tag.replace('@', '').toLowerCase();
+                        const targetUser = globalCachedAllUsers.find(u => u.username === cleanUsername);
+                        if (targetUser && targetUser.uid !== currentUser.uid) {
+                            addDoc(collection(db, "notifications"), {
+                                toUid: targetUser.uid,
+                                fromUsername: userDataRecord.username,
+                                type: "tag_post",
+                                postId: postRef.id,
+                                text: text.slice(0, 50),
+                                timestamp: Date.now(),
+                                seen: false
+                            });
+                        }
+                    });
+                }
+                
+                document.getElementById('feed-post-text').value = "";
+                feedFileInput.value = "";
+                feedFilePreview.style.display = 'none';
+            } catch (e) {
+                console.error("Post publication failed:", e);
+                alert("Failed to publish post.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Publish Post";
+            }
         });
 
         async function loadFriendsSidebarList() {
