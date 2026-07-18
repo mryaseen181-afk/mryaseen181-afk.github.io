@@ -2902,7 +2902,7 @@
                 feedFilePreview.style.display = 'none';
             } catch (e) {
                 console.error("Post publication failed:", e);
-                alert("Failed to publish post.");
+                alert("Failed to publish post: " + e.message + "\n\nStack: " + e.stack);
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Publish Post";
