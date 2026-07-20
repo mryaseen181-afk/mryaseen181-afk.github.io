@@ -1377,14 +1377,42 @@
 
     <div id="loading-screen">Loading...</div>
 
-    <div id="login-container" class="form-container" style="display: none;">
-        <div class="app-logo-title">Convofy</div>
+    <div id="login-container" class="form-container" style="display: none; max-width: 480px; text-align: center;">
+        <div class="app-logo-title" style="margin-bottom: 8px;">Convofy</div>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 24px; font-weight: 500;">
+            Where conversations flow naturally. A secure, real-time workspace & social platform for creators.
+        </p>
+
+        <!-- Company Value Propositions -->
+        <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start; width: 100%; padding: 16px; background: var(--bg-secondary); border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 24px; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-color);">
+                <span>⚡</span> Real-time DMs, presence, & typing indicators
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-color);">
+                <span>📸</span> Swipeable post carousels & 24h stories
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-color);">
+                <span>🔒</span> Private accounts, approvals, & tags security
+            </div>
+        </div>
+
         <div class="input-group" style="margin-bottom:12px;"><input type="email" id="login-email" placeholder="Email Address"></div>
         <div class="input-group" style="margin-bottom:20px;"><input type="password" id="login-password" placeholder="Password"></div>
-        <button id="email-primary-btn" class="main-btn">Sign In</button>
-        <button id="auth-toggle-mode-btn" class="secondary-btn">Create New Account</button>
-        <div style="margin:16px 0; color:var(--text-muted); font-size:13px; font-weight:600;">OR</div>
-        <button id="google-login-btn" class="secondary-btn" style="color: var(--accent-glow);">Log in with Google</button>
+        
+        <button id="email-primary-btn" class="main-btn" style="padding: 14px 24px;">Sign In</button>
+        <button id="auth-toggle-mode-btn" class="secondary-btn" style="margin-top: 8px; padding: 12px;">Create New Account</button>
+        
+        <div style="margin:16px 0; color:var(--text-muted); font-size:12px; font-weight:700; letter-spacing: 1px;">OR</div>
+        
+        <button id="google-login-btn" class="secondary-btn" style="color: var(--accent-glow); display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; margin-top: 0;">
+            <svg style="width:16px; height:16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12.24 10.285V13.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.866-3.577-7.866-8s3.536-8 7.866-8c2.46 0 4.105 1.025 5.047 1.926l2.427-2.334C17.955 2.192 15.34 1 12.24 1s-9 4.03-9 9 4.03 9 9 9c5.26 0 8.754-3.701 8.754-8.91 0-.61-.065-1.076-.145-1.505h-8.609z"/></svg>
+            Continue with Google
+        </button>
+
+        <!-- Company Footer -->
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 32px; font-weight: 500;">
+            © 2026 Convofy Technologies, Inc. All rights reserved.
+        </p>
     </div>
 
     <div id="profile-setup-container" class="form-container" style="display: none;">
